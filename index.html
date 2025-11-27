@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Triqueta</title>
+    <title>Artilugios - Proyecto Vivo</title>
+    <link rel="icon" type="image/png" href="logos.png">
     <style>
         * {
             margin: 0;
@@ -418,15 +419,16 @@
 .logo {
     display: flex;
     align-items: center;
-    gap: 12px; /* espacio entre logo y texto */
+    gap: 12px;
     letter-spacing: 2px;
 }
 
 .header-logo {
-    height: 32px; /* tamaño pequeño — ajusta si necesitas (ej. 24px, 40px) */
+    height: 32px;
     width: auto;
-    filter: brightness(0) invert(1); /* ⚠️ Solo si tu logo NO es blanco */
-    /* Si ya es blanco con fondo transparente, ELIMINA esta línea */
+    /* Elimina brightness/invert si tu logo es blanco */
+    /* filter: brightness(0) invert(1); ← COMENTA O ELIMINA ESTA LÍNEA */
+    animation: heartbeatGlowHeader 4s ease-in-out 4.5s infinite;
 }
 
 .logo-text {
@@ -435,7 +437,18 @@
     color: #d4af37;
     text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
     letter-spacing: 3px;
+    animation: heartbeatGlowHeader 4s ease-in-out 4.5s infinite;
 }
+
+@keyframes heartbeatGlowHeader {
+    0%, 100% {
+        filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.4));
+    }
+    50% {
+        filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.7));
+    }
+}
+
 #laurel {
     position: absolute;
     top: 50%;
@@ -534,7 +547,6 @@
 @keyframes heartbeatGlowHeader {
     0%, 100% {
         filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
-        transform: scale(1);
     }
     50% {
         filter: drop-shadow(0 0 24px rgba(212, 175, 55, 0.8));
