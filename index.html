@@ -436,7 +436,112 @@
     text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
     letter-spacing: 3px;
 }
-    </style>
+#laurel {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) translateY(48px) scale(0.991); /* ← actualizado */
+    opacity: 0;
+    pointer-events: none;
+    z-index: 3;
+    max-width: 120%;
+    height: auto;
+    background: transparent !important;
+    border: none !important;
+    filter: drop-shadow(0 0 0 rgba(212, 175, 55, 0));
+}
+
+@keyframes laurelRevealAndSpin {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) translateY(48px) scale(0.991) rotate(0deg); /* ← */
+    }
+    10% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) translateY(48px) scale(0.991) rotate(720deg); /* ← */
+    }
+}
+
+@keyframes laurelHeartbeat {
+    0%, 100% {
+        transform: translate(-50%, -50%) translateY(48px) scale(0.944) rotate(720deg);
+        filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.5));
+    }
+    50% {
+        transform: translate(-50%, -50%) translateY(48px) scale(0.98) rotate(720deg);
+        filter: drop-shadow(0 0 24px rgba(212, 175, 55, 0.8));
+    }
+}
+#laurel {
+    --laurel-scale: 0.944;
+    transform: translate(-50%, -50%) translateY(48px) scale(var(--laurel-scale));
+}
+.hero-symbol {
+    position: absolute;
+    opacity: 0;
+    z-index: 2;
+    max-height: 90px; /* Ajusta el tamaño según necesites */
+    height: auto;
+    width: auto;
+    filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.5));
+    background: transparent !important;
+    border: none !important;
+}
+
+#sol {
+    top: 50%;
+    left: 32%;
+    transform: translate(-50%, -50%) translateX(-100px); /* 100px a la izquierda del centro */
+}
+
+#luna {
+    top: 50%;
+    left: 64%;
+    transform: translate(-50%, -50%) translateX(100px); /* 100px a la derecha del centro */
+}
+
+@keyframes slideInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-100px) translateY(-50%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) translateY(-50%);
+    }
+}
+
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(100px) translateY(-50%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) translateY(-50%);
+    }
+}
+/* Aplicar latido sincronizado al logo y texto del header */
+.header-logo,
+.logo-text {
+    animation: heartbeatGlowHeader 4s ease-in-out 4.5s infinite;
+}
+
+/* Animación idéntica, pero sin escala en el texto (solo brillo) */
+@keyframes heartbeatGlowHeader {
+    0%, 100% {
+        filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
+        transform: scale(1);
+    }
+    50% {
+        filter: drop-shadow(0 0 24px rgba(212, 175, 55, 0.8));
+        transform: scale(1.03);
+    }
+}
+</style>
 </head>
 <body>
     <!-- Partículas de fondo (visible en toda la página) -->
@@ -451,16 +556,18 @@
         </div>
         <ul class="nav-links">
             <li><a href="#hero">INICIO</a></li>
-            <li><a href="#nosotros">NOSOTROS</a></li>
+            <li><a href="#nosotros">PROYECTO VIVO</a></li>
             <li><a href="#contacto">CONTACTO</a></li>
         </ul>
     </nav>
 </header>
     <!-- Hero -->
 <div id="hero">
-    <img src="logo.png" alt="Logo Artilugios" class="hero-logo" />
+    <img src="logo.png" alt="Logo Artilugios" class="hero-logo" id="hero-logo" />
+    <img src="laurel.png" alt="Laurel" id="laurel" />
+    <img src="sol.png" alt="Símbolo del Sol" class="hero-symbol" id="sol" />
+    <img src="luna.png" alt="Símbolo de la Luna" class="hero-symbol" id="luna" />
 </div>
-
     <!-- Secciones -->
     <div id="vivero" class="section">
         <button class="back-btn" onclick="goBack()">← VOLVER AL INICIO</button>
@@ -571,41 +678,178 @@
         </div>
     </footer>
 
-    <script>
-        // Crear partículas doradas
-        const particlesContainer = document.getElementById('particles');
-        for (let i = 0; i < 60; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.animationDuration = (Math.random() * 12 + 8) + 's';
-            particle.style.animationDelay = Math.random() * 5 + 's';
-            particle.style.setProperty('--drift', (Math.random() * 100 - 50) + 'px');
-            
-            // ✨ Opcional: tamaño variable para efecto más orgánico
-            const size = Math.random() * 4 + 2;
-            particle.style.width = size + 'px';
-            particle.style.height = size + 'px';
-            
-            particlesContainer.appendChild(particle);
-        }
+<script>
+    // --- Configuración ---
+    const PARTICLE_COUNT = 60;
+    const PULSE_INTERVAL = 4000; // cada 4 segundos
+    const PULSE_DURATION = 800;  // duración del impulso visual
+    const MAX_RADIUS = 300;      // radio máximo de la onda
 
-        function goBack() {
-            document.querySelectorAll('.section').forEach(section => {
-                section.classList.remove('active');
-            });
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+    // --- Partículas ---
+    const particlesContainer = document.getElementById('particles');
+    const particles = [];
 
-        window.addEventListener('hashchange', () => {
-            const hash = window.location.hash.substring(1);
-            if (['vivero', 'oraculo', 'santeria'].includes(hash)) {
-                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-                document.getElementById(hash)?.classList.add('active');
-            } else {
-                goBack();
-            }
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        // Posición inicial aleatoria
+        const x = Math.random() * 100;
+        const y = Math.random() * 100;
+        particle.style.left = `${x}%`;
+        particle.style.top = `${y}%`;
+        
+        // Propiedades personalizadas
+        const size = Math.random() * 4 + 2;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.animationDuration = `${Math.random() * 12 + 8}s`;
+        particle.style.animationDelay = `${Math.random() * 5}s`;
+        particle.style.setProperty('--drift', `${(Math.random() * 100 - 50)}px`);
+        
+        particlesContainer.appendChild(particle);
+        
+        // Guardamos datos útiles
+        particles.push({
+            el: particle,
+            x: x,
+            y: y,
+            originalLeft: x,
+            originalTop: y,
+            size: size
         });
-    </script>
+    }
+
+    // --- Función para latido con onda ---
+    function triggerPulse() {
+        const logo = document.getElementById('hero-logo');
+        if (!logo) return;
+
+        // 1. Coordenadas del logo en la pantalla
+        const rect = logo.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        // 2. Crear onda visual (opcional: círculo sutil)
+        const pulseWave = document.createElement('div');
+        pulseWave.style.position = 'fixed';
+        pulseWave.style.left = `${centerX}px`;
+        pulseWave.style.top = `${centerY}px`;
+        pulseWave.style.width = '0';
+        pulseWave.style.height = '0';
+        pulseWave.style.borderRadius = '50%';
+        pulseWave.style.pointerEvents = 'none';
+        pulseWave.style.zIndex = '1';
+        pulseWave.style.boxShadow = `0 0 0 0 rgba(212, 175, 55, 0.4)`;
+        document.body.appendChild(pulseWave);
+
+        // Animar la onda
+        pulseWave.animate([
+            { width: '0', height: '0', opacity: 0.6 },
+            { width: `${MAX_RADIUS * 2}px`, height: `${MAX_RADIUS * 2}px`, opacity: 0 }
+        ], {
+            duration: PULSE_DURATION,
+            easing: 'ease-out'
+        });
+
+        // Eliminar la onda después
+        setTimeout(() => {
+            pulseWave.remove();
+        }, PULSE_DURATION);
+
+// 3. Aplicar impulso + cambio de color a partículas cercanas
+particles.forEach(p => {
+    const particleRect = p.el.getBoundingClientRect();
+    const particleX = particleRect.left + particleRect.width / 2;
+    const particleY = particleRect.top + particleRect.height / 2;
+
+    const dx = particleX - centerX;
+    const dy = particleY - centerY;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance < MAX_RADIUS) {
+        const intensity = 1 - distance / MAX_RADIUS;
+
+        // --- Movimiento y escala ---
+        const offsetX = dx * intensity * 8;
+        const offsetY = dy * intensity * 8;
+
+        // --- Color dorado más intenso ---
+        // Dorado base: #d4af37 → Dorado intenso: #ffd700 (oro puro) o #e6c229
+        const goldBase = [212, 175, 55];    // #d4af37 en RGB
+        const goldIntense = [255, 215, 0];  // #ffd700 (oro brillante)
+        
+        const r = Math.round(goldBase[0] + (goldIntense[0] - goldBase[0]) * intensity);
+        const g = Math.round(goldBase[1] + (goldIntense[1] - goldBase[1]) * intensity);
+        const b = Math.round(goldBase[2] + (goldIntense[2] - goldBase[2]) * intensity);
+        
+        const intenseColor = `rgb(${r}, ${g}, ${b})`;
+        const gradient = `radial-gradient(circle, ${intenseColor} 0%, transparent 70%)`;
+
+        // Aplicar impulso visual + color
+        p.el.style.transition = 'transform 0.6s ease-out, opacity 0.6s ease-out, background 0.6s ease-out';
+        p.el.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${1 + intensity * 0.5})`;
+        p.el.style.opacity = `${0.7 + intensity * 0.3}`;
+        p.el.style.background = gradient;
+
+        // Restaurar estado original
+        setTimeout(() => {
+            p.el.style.transition = 'transform 1.2s ease-out, opacity 1.2s ease-out, background 1.2s ease-out';
+            p.el.style.transform = 'translate(0, 0) scale(1)';
+            p.el.style.opacity = '1';
+            p.el.style.background = `radial-gradient(circle, #d4af37 0%, transparent 70%)`;
+        }, 600);
+    }
+});
+    }
+
+    // --- Iniciar animación de latido ---
+    setTimeout(() => {
+        // Primera onda ~4.5s después del inicio (sincronizada con el logo)
+        triggerPulse();
+        // Repetir cada 4 segundos
+        setInterval(triggerPulse, PULSE_INTERVAL);
+    }, 4500);
+
+    // --- Navegación (sin cambios) ---
+    function goBack() {
+        document.querySelectorAll('.section').forEach(section => {
+            section.classList.remove('active');
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    window.addEventListener('hashchange', () => {
+        const hash = window.location.hash.substring(1);
+        if (['vivero', 'oraculo', 'santeria'].includes(hash)) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(hash)?.classList.add('active');
+        } else {
+            goBack();
+        }
+    });
+// --- Gestión del laurel ---
+function initLaurel() {
+    const laurel = document.getElementById('laurel');
+    if (!laurel) return;
+
+    // Solo la animación de aparición + giro
+    laurel.style.animation = 'laurelRevealAndSpin 4s ease-out forwards';
+    // ✅ Nada más. Se queda como está al final de la animación.
+}
+
+setTimeout(initLaurel, 7500);
+
+// Nueva función para las cartas sol y luna
+function showSymbols() {
+    const sol = document.getElementById('sol');
+    const luna = document.getElementById('luna');
+    if (sol) sol.style.animation = 'slideInFromLeft 1.2s ease-out forwards';
+    if (luna) luna.style.animation = 'slideInFromRight 1.2s ease-out forwards';
+}
+
+// Lanzar símbolos 4 segundos después del laurel (7.5s + 4s = 11.5s)
+setTimeout(showSymbols, 11500);
+</script>
 </body>
 </html>
