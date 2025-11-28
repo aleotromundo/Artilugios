@@ -447,12 +447,18 @@
                 justify-content: center;
             }
 
-            /* ← AGREGADO SEGÚN SOLICITUD */
-            #hero {
-                padding: 100px 20px 40px;
-                min-height: 90vh;
-            }
 
+            /* ← AGREGADO SEGÚN SOLICITUD */
+
+    .header-subtitle {
+        top: 100px;  /* ← AGREGAR esto para bajar el subtítulo en mobile */
+        padding: 15px 20px;  /* ← Opcional: reducir padding en mobile */
+    }
+    
+    #hero {
+        padding: 180px 20px 40px;  /* ← Ajustar también el hero para compensar */
+        min-height: 90vh;
+    }
             footer {
                 margin-top: 40px;
                 padding: 40px 20px 20px;
@@ -629,7 +635,7 @@ html {
 <!-- AGREGAR ESTO NUEVO -->
 <section class="header-subtitle">
     <h2>Proyecto vivo</h2>
-    <p>Portal místico de sabiduría ancestral. Conectando lo terrenal con lo divino desde tiempos inmemoriales.</p>
+    <p>Portal místico de sabiduría ancestral. Conectando lo terrenal con lo divino</p>
 </section>
 
     <div id="hero">
