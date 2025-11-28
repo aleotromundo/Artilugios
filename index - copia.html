@@ -15,12 +15,12 @@
         body {
             font-family: 'Cinzel', serif;
             overflow-x: hidden;
-            background: #000;
+            background: #000; /* Fondo base negro puro */
             color: #d4af37;
             position: relative;
         }
 
-        /* Partículas de fondo */
+        /* Partículas de fondo — ahora visibles en toda la página */
         .particles {
             position: fixed;
             top: 0;
@@ -28,7 +28,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 1;
+            z-index: 1; /* Fondo global */
         }
 
         .particle {
@@ -58,13 +58,13 @@
             }
         }
 
-        /* Header */
+        /* Header — encima de las partículas */
         header {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            background: rgba(10, 10, 10, 0.85);
+            background: rgba(10, 10, 10, 0.85); /* Ligeramente transparente */
             backdrop-filter: blur(8px);
             border-bottom: 1px solid rgba(212, 175, 55, 0.3);
             z-index: 500;
@@ -81,34 +81,11 @@
         }
 
         .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            letter-spacing: 2px;
-        }
-
-        .header-logo {
-            height: 32px;
-            width: auto;
-            animation: heartbeatGlowHeader 4s ease-in-out 4.5s infinite;
-        }
-
-        .logo-text {
             font-size: 1.5rem;
             font-weight: bold;
             color: #d4af37;
-            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
             letter-spacing: 3px;
-            animation: heartbeatGlowHeader 4s ease-in-out 4.5s infinite;
-        }
-
-        @keyframes heartbeatGlowHeader {
-            0%, 100% {
-                filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.4));
-            }
-            50% {
-                filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.7));
-            }
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
         }
 
         .nav-links {
@@ -145,37 +122,30 @@
             text-shadow: 0 0 15px rgba(212, 175, 55, 0.8);
         }
 
-        /* Hero – con logo animado */
+        /* Hero — con logo animado */
         #hero {
             min-height: 100vh;
-            background: transparent;
+            background: transparent; /* Totalmente transparente */
             position: relative;
             z-index: 2;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 80px 20px 20px;
+            padding-top: 80px;
         }
 
-.hero-container {
-    position: relative;
-    width: min(80vw, 550px);  /* ← Cambiar de 90vw, 700px a esto */
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
 .hero-logo {
     opacity: 0;
     transform: scale(0.8);
     animation: 
         fadeInLogo 1.2s ease-out 3s forwards,
         heartbeatGlow 4s ease-in-out 4.5s infinite;
-    width: 55%;  /* ← Cambiar de 45% a 55% o 60% */
+    max-width: 90%;
     height: auto;
-    position: relative;
-    z-index: 4;
+    max-height: 60vh;
+    /* ✅ Solo drop-shadow — sin box-shadow */
     filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.6));
+    /* Aseguramos que no haya fondo ni borde */
     background: transparent !important;
     border: none !important;
 }
@@ -186,109 +156,24 @@
                 transform: scale(1);
             }
         }
-
-        @keyframes heartbeatGlow {
-            0%, 100% {
-                transform: scale(1);
-                filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.6));
-            }
-            50% {
-                transform: scale(1.04);
-                filter: drop-shadow(0 0 28px rgba(212, 175, 55, 0.9));
-            }
-        }
-
-        #laurel {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            margin-top: 5%;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 3;
-            width: 100%;
-            height: auto;
-            background: transparent !important;
-            border: none !important;
-            filter: drop-shadow(0 0 0 rgba(212, 175, 55, 0));
-        }
-
-        @keyframes laurelRevealAndSpin {
-            0% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0.991) rotate(0deg);
-                margin-top: 5%;
-            }
-            10% {
-                opacity: 1;
-            }
-            100% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(0.991) rotate(720deg);
-                margin-top: 5%;
-            }
-        }
-
-        @keyframes laurelHeartbeat {
-            0%, 100% {
-                transform: translate(-50%, -50%) scale(0.944) rotate(720deg);
-                filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.5));
-                margin-top: 5%;
-            }
-            50% {
-                transform: translate(-50%, -50%) scale(0.98) rotate(720deg);
-                filter: drop-shadow(0 0 24px rgba(212, 175, 55, 0.8));
-                margin-top: 5%;
-            }
-        }
-
-        .hero-symbol {
-            position: absolute;
-            opacity: 0;
-            z-index: 2;
-            width: 12%;
-            height: auto;
-            filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.5));
-            background: transparent !important;
-            border: none !important;
-        }
-
-#sol {
-    top: 50%;  /* ← Cambiar de 28% a 50% */
-    left: 8%;
-    transform: translate(-50%, -50%);
+@keyframes fadeInLogo {
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
-#luna {
-    top: 50%;  /* ← Cambiar de 28% a 50% */
-    right: 8%;
-    transform: translate(50%, -50%);
+@keyframes heartbeatGlow {
+    0%, 100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.6));
+    }
+    50% {
+        transform: scale(1.04);
+        filter: drop-shadow(0 0 28px rgba(212, 175, 55, 0.9));
+    }
 }
-
-        @keyframes slideInFromLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-100px) translateY(-50%);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0) translateY(-50%);
-            }
-        }
-
-        @keyframes slideInFromRight {
-            from {
-                opacity: 0;
-                transform: translateX(100px) translateY(-50%);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0) translateY(-50%);
-            }
-        }
-
-        /* Secciones */
+        /* Secciones — fondos semitransparentes para ver partículas */
         .section {
             display: none;
             min-height: 100vh;
@@ -321,6 +206,7 @@
             z-index: 3;
         }
 
+        /* Fondo de sección con overlay sutil y transparente */
         #vivero .section-content::before,
         #oraculo .section-content::before,
         #santeria .section-content::before {
@@ -333,15 +219,15 @@
             z-index: -1;
             border-radius: 12px;
             backdrop-filter: blur(2px);
-            background: rgba(10, 27, 10, 0.4);
+            background: rgba(10, 27, 10, 0.4); /* Verde oscuro translúcido */
         }
 
         #oraculo .section-content::before {
-            background: rgba(26, 13, 27, 0.4);
+            background: rgba(26, 13, 27, 0.4); /* Púrpura oscuro translúcido */
         }
 
         #santeria .section-content::before {
-            background: rgba(27, 13, 13, 0.4);
+            background: rgba(27, 13, 13, 0.4); /* Rojo oscuro translúcido */
         }
 
         h1 {
@@ -424,7 +310,7 @@
             line-height: 1.6;
         }
 
-        /* Footer */
+        /* Footer — semitransparente para ver partículas */
         footer {
             background: rgba(10, 10, 10, 0.85);
             border-top: 1px solid rgba(212, 175, 55, 0.3);
@@ -501,7 +387,6 @@
             font-size: 0.9rem;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             h1 {
                 font-size: 2.5rem;
@@ -517,13 +402,9 @@
                 gap: 20px;
             }
 
-.hero-container {
-    width: 90vw;  /* ← Cambiar de 95vw a 90vw */
-}
-            .back-btn {
-                left: 10px;
-                padding: 10px 20px;
-                font-size: 0.9rem;
+            .hero-logo {
+                max-width: 80%;
+                max-height: 50vh;
             }
 
             .footer-content {
@@ -535,34 +416,171 @@
                 justify-content: center;
             }
         }
-    </style>
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    letter-spacing: 2px;
+}
+
+.header-logo {
+    height: 32px;
+    width: auto;
+    /* Elimina brightness/invert si tu logo es blanco */
+    /* filter: brightness(0) invert(1); ← COMENTA O ELIMINA ESTA LÍNEA */
+    animation: heartbeatGlowHeader 4s ease-in-out 4.5s infinite;
+}
+
+.logo-text {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #d4af37;
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+    letter-spacing: 3px;
+    animation: heartbeatGlowHeader 4s ease-in-out 4.5s infinite;
+}
+
+@keyframes heartbeatGlowHeader {
+    0%, 100% {
+        filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.4));
+    }
+    50% {
+        filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.7));
+    }
+}
+
+#laurel {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) translateY(48px) scale(0.991); /* ← actualizado */
+    opacity: 0;
+    pointer-events: none;
+    z-index: 3;
+    max-width: 120%;
+    height: auto;
+    background: transparent !important;
+    border: none !important;
+    filter: drop-shadow(0 0 0 rgba(212, 175, 55, 0));
+}
+
+@keyframes laurelRevealAndSpin {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) translateY(48px) scale(0.991) rotate(0deg); /* ← */
+    }
+    10% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) translateY(48px) scale(0.991) rotate(720deg); /* ← */
+    }
+}
+
+@keyframes laurelHeartbeat {
+    0%, 100% {
+        transform: translate(-50%, -50%) translateY(48px) scale(0.944) rotate(720deg);
+        filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.5));
+    }
+    50% {
+        transform: translate(-50%, -50%) translateY(48px) scale(0.98) rotate(720deg);
+        filter: drop-shadow(0 0 24px rgba(212, 175, 55, 0.8));
+    }
+}
+#laurel {
+    --laurel-scale: 0.944;
+    transform: translate(-50%, -50%) translateY(48px) scale(var(--laurel-scale));
+}
+.hero-symbol {
+    position: absolute;
+    opacity: 0;
+    z-index: 2;
+    max-height: 90px; /* Ajusta el tamaño según necesites */
+    height: auto;
+    width: auto;
+    filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.5));
+    background: transparent !important;
+    border: none !important;
+}
+
+#sol {
+    top: 50%;
+    left: 32%;
+    transform: translate(-50%, -50%) translateX(-100px); /* 100px a la izquierda del centro */
+}
+
+#luna {
+    top: 50%;
+    left: 64%;
+    transform: translate(-50%, -50%) translateX(100px); /* 100px a la derecha del centro */
+}
+
+@keyframes slideInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-100px) translateY(-50%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) translateY(-50%);
+    }
+}
+
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(100px) translateY(-50%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) translateY(-50%);
+    }
+}
+/* Aplicar latido sincronizado al logo y texto del header */
+.header-logo,
+.logo-text {
+    animation: heartbeatGlowHeader 4s ease-in-out 4.5s infinite;
+}
+
+/* Animación idéntica, pero sin escala en el texto (solo brillo) */
+@keyframes heartbeatGlowHeader {
+    0%, 100% {
+        filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
+    }
+    50% {
+        filter: drop-shadow(0 0 24px rgba(212, 175, 55, 0.8));
+        transform: scale(1.03);
+    }
+}
+</style>
 </head>
 <body>
+    <!-- Partículas de fondo (visible en toda la página) -->
     <div class="particles" id="particles"></div>
 
-    <header>
-        <nav>
-            <div class="logo">
-                <img src="logo.png" alt="Logo Artilugios" class="header-logo" />
-                <span class="logo-text">Artilugios</span>
-            </div>
-            <ul class="nav-links">
-                <li><a href="#hero">INICIO</a></li>
-                <li><a href="#nosotros">PROYECTO VIVO</a></li>
-                <li><a href="#contacto">CONTACTO</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <div id="hero">
-        <div class="hero-container">
-            <img src="logo.png" alt="Logo Artilugios" class="hero-logo" id="hero-logo" />
-            <img src="laurel.png" alt="Laurel" id="laurel" />
-            <img src="sol.png" alt="Símbolo del Sol" class="hero-symbol" id="sol" />
-            <img src="luna.png" alt="Símbolo de la Luna" class="hero-symbol" id="luna" />
+    <!-- Header -->
+<header>
+    <nav>
+        <div class="logo">
+            <img src="logo.png" alt="Logo Artilugios" class="header-logo" />
+            <span class="logo-text">Artilugios</span>
         </div>
-    </div>
-
+        <ul class="nav-links">
+            <li><a href="#hero">INICIO</a></li>
+            <li><a href="#nosotros">PROYECTO VIVO</a></li>
+            <li><a href="#contacto">CONTACTO</a></li>
+        </ul>
+    </nav>
+</header>
+    <!-- Hero -->
+<div id="hero">
+    <img src="logo.png" alt="Logo Artilugios" class="hero-logo" id="hero-logo" />
+    <img src="laurel.png" alt="Laurel" id="laurel" />
+    <img src="sol.png" alt="Símbolo del Sol" class="hero-symbol" id="sol" />
+    <img src="luna.png" alt="Símbolo de la Luna" class="hero-symbol" id="luna" />
+</div>
+    <!-- Secciones -->
     <div id="vivero" class="section">
         <button class="back-btn" onclick="goBack()">← VOLVER AL INICIO</button>
         <div class="section-content">
@@ -638,6 +656,7 @@
         </div>
     </div>
 
+    <!-- Footer -->
     <footer>
         <div class="footer-content">
             <div class="footer-section">
@@ -671,136 +690,178 @@
         </div>
     </footer>
 
-    <script>
-        // --- Configuración ---
-        const PARTICLE_COUNT = 60;
-        const PULSE_INTERVAL = 4000;
-        const PULSE_DURATION = 800;
-        const MAX_RADIUS = 300;
+<script>
+    // --- Configuración ---
+    const PARTICLE_COUNT = 60;
+    const PULSE_INTERVAL = 4000; // cada 4 segundos
+    const PULSE_DURATION = 800;  // duración del impulso visual
+    const MAX_RADIUS = 300;      // radio máximo de la onda
 
-        // --- Partículas ---
-        const particlesContainer = document.getElementById('particles');
-        const particles = [];
+    // --- Partículas ---
+    const particlesContainer = document.getElementById('particles');
+    const particles = [];
 
-        for (let i = 0; i < PARTICLE_COUNT; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            const x = Math.random() * 100;
-            const y = Math.random() * 100;
-            particle.style.left = `${x}%`;
-            particle.style.top = `${y}%`;
-            const size = Math.random() * 4 + 2;
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            particle.style.animationDuration = `${Math.random() * 12 + 8}s`;
-            particle.style.animationDelay = `${Math.random() * 5}s`;
-            particle.style.setProperty('--drift', `${(Math.random() * 100 - 50)}px`);
-            particlesContainer.appendChild(particle);
-            particles.push({ el: particle, x, y, size });
-        }
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        // Posición inicial aleatoria
+        const x = Math.random() * 100;
+        const y = Math.random() * 100;
+        particle.style.left = `${x}%`;
+        particle.style.top = `${y}%`;
+        
+        // Propiedades personalizadas
+        const size = Math.random() * 4 + 2;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.animationDuration = `${Math.random() * 12 + 8}s`;
+        particle.style.animationDelay = `${Math.random() * 5}s`;
+        particle.style.setProperty('--drift', `${(Math.random() * 100 - 50)}px`);
+        
+        particlesContainer.appendChild(particle);
+        
+        // Guardamos datos útiles
+        particles.push({
+            el: particle,
+            x: x,
+            y: y,
+            originalLeft: x,
+            originalTop: y,
+            size: size
+        });
+    }
 
-        // --- Latido con onda ---
-        function triggerPulse() {
-            const logo = document.getElementById('hero-logo');
-            if (!logo) return;
+    // --- Función para latido con onda ---
+    function triggerPulse() {
+        const logo = document.getElementById('hero-logo');
+        if (!logo) return;
 
-            const rect = logo.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
+        // 1. Coordenadas del logo en la pantalla
+        const rect = logo.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
 
-            const pulseWave = document.createElement('div');
-            pulseWave.style.position = 'fixed';
-            pulseWave.style.left = `${centerX}px`;
-            pulseWave.style.top = `${centerY}px`;
-            pulseWave.style.width = '0';
-            pulseWave.style.height = '0';
-            pulseWave.style.borderRadius = '50%';
-            pulseWave.style.pointerEvents = 'none';
-            pulseWave.style.zIndex = '1';
-            pulseWave.style.boxShadow = `0 0 0 0 rgba(212, 175, 55, 0.4)`;
-            document.body.appendChild(pulseWave);
+        // 2. Crear onda visual (opcional: círculo sutil)
+        const pulseWave = document.createElement('div');
+        pulseWave.style.position = 'fixed';
+        pulseWave.style.left = `${centerX}px`;
+        pulseWave.style.top = `${centerY}px`;
+        pulseWave.style.width = '0';
+        pulseWave.style.height = '0';
+        pulseWave.style.borderRadius = '50%';
+        pulseWave.style.pointerEvents = 'none';
+        pulseWave.style.zIndex = '1';
+        pulseWave.style.boxShadow = `0 0 0 0 rgba(212, 175, 55, 0.4)`;
+        document.body.appendChild(pulseWave);
 
-            pulseWave.animate([
-                { width: '0', height: '0', opacity: 0.6 },
-                { width: `${MAX_RADIUS * 2}px`, height: `${MAX_RADIUS * 2}px`, opacity: 0 }
-            ], {
-                duration: PULSE_DURATION,
-                easing: 'ease-out'
-            });
-
-            setTimeout(() => pulseWave.remove(), PULSE_DURATION);
-
-            particles.forEach(p => {
-                const particleRect = p.el.getBoundingClientRect();
-                const particleX = particleRect.left + particleRect.width / 2;
-                const particleY = particleRect.top + particleRect.height / 2;
-                const dx = particleX - centerX;
-                const dy = particleY - centerY;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < MAX_RADIUS) {
-                    const intensity = 1 - distance / MAX_RADIUS;
-                    const offsetX = dx * intensity * 8;
-                    const offsetY = dy * intensity * 8;
-                    const goldBase = [212, 175, 55];
-                    const goldIntense = [255, 215, 0];
-                    const r = Math.round(goldBase[0] + (goldIntense[0] - goldBase[0]) * intensity);
-                    const g = Math.round(goldBase[1] + (goldIntense[1] - goldBase[1]) * intensity);
-                    const b = Math.round(goldBase[2] + (goldIntense[2] - goldBase[2]) * intensity);
-                    const intenseColor = `rgb(${r}, ${g}, ${b})`;
-                    const gradient = `radial-gradient(circle, ${intenseColor} 0%, transparent 70%)`;
-
-                    p.el.style.transition = 'transform 0.6s ease-out, opacity 0.6s ease-out, background 0.6s ease-out';
-                    p.el.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${1 + intensity * 0.5})`;
-                    p.el.style.opacity = `${0.7 + intensity * 0.3}`;
-                    p.el.style.background = gradient;
-
-                    setTimeout(() => {
-                        p.el.style.transition = 'transform 1.2s ease-out, opacity 1.2s ease-out, background 1.2s ease-out';
-                        p.el.style.transform = 'translate(0, 0) scale(1)';
-                        p.el.style.opacity = '1';
-                        p.el.style.background = `radial-gradient(circle, #d4af37 0%, transparent 70%)`;
-                    }, 600);
-                }
-            });
-        }
-
-        setTimeout(() => {
-            triggerPulse();
-            setInterval(triggerPulse, PULSE_INTERVAL);
-        }, 4500);
-
-        // --- Navegación ---
-        function goBack() {
-            document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        window.addEventListener('hashchange', () => {
-            const hash = window.location.hash.substring(1);
-            if (['vivero', 'oraculo', 'santeria'].includes(hash)) {
-                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-                document.getElementById(hash)?.classList.add('active');
-            } else {
-                goBack();
-            }
+        // Animar la onda
+        pulseWave.animate([
+            { width: '0', height: '0', opacity: 0.6 },
+            { width: `${MAX_RADIUS * 2}px`, height: `${MAX_RADIUS * 2}px`, opacity: 0 }
+        ], {
+            duration: PULSE_DURATION,
+            easing: 'ease-out'
         });
 
-        // --- Gestión del laurel ---
-        function initLaurel() {
-            const laurel = document.getElementById('laurel');
-            if (laurel) laurel.style.animation = 'laurelRevealAndSpin 4s ease-out forwards';
-        }
-        setTimeout(initLaurel, 7500);
+        // Eliminar la onda después
+        setTimeout(() => {
+            pulseWave.remove();
+        }, PULSE_DURATION);
 
-        // --- Símbolos sol y luna ---
-        function showSymbols() {
-            const sol = document.getElementById('sol');
-            const luna = document.getElementById('luna');
-            if (sol) sol.style.animation = 'slideInFromLeft 1.2s ease-out forwards';
-            if (luna) luna.style.animation = 'slideInFromRight 1.2s ease-out forwards';
+// 3. Aplicar impulso + cambio de color a partículas cercanas
+particles.forEach(p => {
+    const particleRect = p.el.getBoundingClientRect();
+    const particleX = particleRect.left + particleRect.width / 2;
+    const particleY = particleRect.top + particleRect.height / 2;
+
+    const dx = particleX - centerX;
+    const dy = particleY - centerY;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance < MAX_RADIUS) {
+        const intensity = 1 - distance / MAX_RADIUS;
+
+        // --- Movimiento y escala ---
+        const offsetX = dx * intensity * 8;
+        const offsetY = dy * intensity * 8;
+
+        // --- Color dorado más intenso ---
+        // Dorado base: #d4af37 → Dorado intenso: #ffd700 (oro puro) o #e6c229
+        const goldBase = [212, 175, 55];    // #d4af37 en RGB
+        const goldIntense = [255, 215, 0];  // #ffd700 (oro brillante)
+        
+        const r = Math.round(goldBase[0] + (goldIntense[0] - goldBase[0]) * intensity);
+        const g = Math.round(goldBase[1] + (goldIntense[1] - goldBase[1]) * intensity);
+        const b = Math.round(goldBase[2] + (goldIntense[2] - goldBase[2]) * intensity);
+        
+        const intenseColor = `rgb(${r}, ${g}, ${b})`;
+        const gradient = `radial-gradient(circle, ${intenseColor} 0%, transparent 70%)`;
+
+        // Aplicar impulso visual + color
+        p.el.style.transition = 'transform 0.6s ease-out, opacity 0.6s ease-out, background 0.6s ease-out';
+        p.el.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${1 + intensity * 0.5})`;
+        p.el.style.opacity = `${0.7 + intensity * 0.3}`;
+        p.el.style.background = gradient;
+
+        // Restaurar estado original
+        setTimeout(() => {
+            p.el.style.transition = 'transform 1.2s ease-out, opacity 1.2s ease-out, background 1.2s ease-out';
+            p.el.style.transform = 'translate(0, 0) scale(1)';
+            p.el.style.opacity = '1';
+            p.el.style.background = `radial-gradient(circle, #d4af37 0%, transparent 70%)`;
+        }, 600);
+    }
+});
+    }
+
+    // --- Iniciar animación de latido ---
+    setTimeout(() => {
+        // Primera onda ~4.5s después del inicio (sincronizada con el logo)
+        triggerPulse();
+        // Repetir cada 4 segundos
+        setInterval(triggerPulse, PULSE_INTERVAL);
+    }, 4500);
+
+    // --- Navegación (sin cambios) ---
+    function goBack() {
+        document.querySelectorAll('.section').forEach(section => {
+            section.classList.remove('active');
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    window.addEventListener('hashchange', () => {
+        const hash = window.location.hash.substring(1);
+        if (['vivero', 'oraculo', 'santeria'].includes(hash)) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(hash)?.classList.add('active');
+        } else {
+            goBack();
         }
-        setTimeout(showSymbols, 11500);
-    </script>
+    });
+// --- Gestión del laurel ---
+function initLaurel() {
+    const laurel = document.getElementById('laurel');
+    if (!laurel) return;
+
+    // Solo la animación de aparición + giro
+    laurel.style.animation = 'laurelRevealAndSpin 4s ease-out forwards';
+    // ✅ Nada más. Se queda como está al final de la animación.
+}
+
+setTimeout(initLaurel, 7500);
+
+// Nueva función para las cartas sol y luna
+function showSymbols() {
+    const sol = document.getElementById('sol');
+    const luna = document.getElementById('luna');
+    if (sol) sol.style.animation = 'slideInFromLeft 1.2s ease-out forwards';
+    if (luna) luna.style.animation = 'slideInFromRight 1.2s ease-out forwards';
+}
+
+// Lanzar símbolos 4 segundos después del laurel (7.5s + 4s = 11.5s)
+setTimeout(showSymbols, 11500);
+</script>
 </body>
 </html>
