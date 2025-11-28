@@ -659,9 +659,9 @@ html {
         <div class="footer-content">
             <div class="footer-section">
                 <h3>CONTACTO</h3>
-                <p>📧 info@triqueta.com</p>
+                <p>📧 info@artilugios.com</p>
                 <p>📱 +598 XX XXX XXX</p>
-                <p>📍 Montevideo, Uruguay</p>
+                <p>📍 El Pinar, Uruguay</p>
             </div>
             <div class="footer-section">
                 <h3>HORARIOS</h3>
@@ -791,14 +791,16 @@ document.querySelectorAll('.nav-links a').forEach(link => {
         e.preventDefault();
         const hash = link.getAttribute('href').substring(1);
         
-        if (hash === 'contacto') {
-            const footer = document.getElementById('contacto');
-            if (footer) {
-                const footerTop = footer.offsetTop;
-                window.scrollTo({ top: footerTop, behavior: 'smooth' });
-            }
-        } else {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+if (hash === 'contacto') {
+    const footer = document.getElementById('contacto');
+    if (footer) {
+        const footerTop = footer.offsetTop;
+        window.scrollTo({ top: footerTop - 100, behavior: 'smooth' });  // ← AGREGAR - 100
+    }
+} 
+
+else {
+            window.scrollTo({ top: 110, behavior: 'smooth' });  // ← Ajusta el número a tu gusto
         }
         
         // Actualizar URL sin recargar
