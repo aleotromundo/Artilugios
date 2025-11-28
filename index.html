@@ -154,31 +154,32 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 80px 20px 20px;
+            padding: 100px 20px 60px;  /* ← Cambiado según solicitud */
         }
 
-.hero-container {
-    position: relative;
-    width: min(80vw, 550px);  /* ← Cambiar de 90vw, 700px a esto */
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.hero-logo {
-    opacity: 0;
-    transform: scale(0.8);
-    animation: 
-        fadeInLogo 1.2s ease-out 3s forwards,
-        heartbeatGlow 4s ease-in-out 4.5s infinite;
-    width: 65%;  /* ← Cambiar de 45% a 55% o 60% */
-    height: auto;
-    position: relative;
-    z-index: 4;
-    filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.6));
-    background: transparent !important;
-    border: none !important;
-}
+        .hero-container {
+            position: relative;
+            width: min(80vw, 550px);
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-logo {
+            opacity: 0;
+            transform: scale(0.8);
+            animation: 
+                fadeInLogo 1.2s ease-out 3s forwards,
+                heartbeatGlow 4s ease-in-out 4.5s infinite;
+            width: 65%;
+            height: auto;
+            position: relative;
+            z-index: 4;
+            filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.6));
+            background: transparent !important;
+            border: none !important;
+        }
 
         @keyframes fadeInLogo {
             to {
@@ -254,17 +255,17 @@
             border: none !important;
         }
 
-#sol {
-    top: 50%;  /* ← Cambiar de 28% a 50% */
-    left: 8%;
-    transform: translate(-50%, -50%);
-}
+        #sol {
+            top: 50%;
+            left: 8%;
+            transform: translate(-50%, -50%);
+        }
 
-#luna {
-    top: 50%;  /* ← Cambiar de 28% a 50% */
-    right: 8%;
-    transform: translate(50%, -50%);
-}
+        #luna {
+            top: 50%;
+            right: 8%;
+            transform: translate(50%, -50%);
+        }
 
         @keyframes slideInFromLeft {
             from {
@@ -429,7 +430,7 @@
             background: rgba(10, 10, 10, 0.85);
             border-top: 1px solid rgba(212, 175, 55, 0.3);
             padding: 60px 40px 30px;
-            margin-top: 100px;
+            margin-top: 60px;  /* ← Cambiado de 100px a 60px */
             position: relative;
             z-index: 2;
             backdrop-filter: blur(4px);
@@ -517,9 +518,10 @@
                 gap: 20px;
             }
 
-.hero-container {
-    width: 90vw;  /* ← Cambiar de 95vw a 90vw */
-}
+            .hero-container {
+                width: 90vw;
+            }
+
             .back-btn {
                 left: 10px;
                 padding: 10px 20px;
@@ -533,6 +535,17 @@
 
             .social-links {
                 justify-content: center;
+            }
+
+            /* ← AGREGADO SEGÚN SOLICITUD */
+            #hero {
+                padding: 100px 20px 40px;
+                min-height: 90vh;
+            }
+
+            footer {
+                margin-top: 40px;
+                padding: 40px 20px 20px;
             }
         }
     </style>
