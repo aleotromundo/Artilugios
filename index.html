@@ -147,16 +147,17 @@
         }
 
         /* Hero – con logo animado */
-        #hero {
-            min-height: 100vh;
-            background: transparent;
-            position: relative;
-            z-index: 2;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 148px 20px 60px;  /* ← Cambiado según solicitud */
-        }
+#hero {
+    min-height: 100vh;
+    background: transparent;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;  /* ← AGREGAR esto */
+    align-items: center;
+    justify-content: center;
+    padding: 100px 20px 60px;  /* ← Volver al original */
+}
 
 .hero-container {
     position: relative;
@@ -602,16 +603,17 @@ html {
     overflow: hidden;  /* ← Contener la explosión dentro del hero */
 }
 .header-subtitle {
-    position: fixed;
-    top: 80px;
-    left: 0;
-    right: 0;
-    background: rgba(10, 10, 10, 0.9);
-    backdrop-filter: blur(8px);
-    /* border-bottom: 1px solid rgba(212, 175, 55, 0.2); */ 
-    padding: 20px 40px;
-    z-index: 999;
+    position: relative;  /* ← Cambiar de fixed a relative */
+    top: auto;  /* ← Cambiar */
+    left: auto;
+    right: auto;
+    background: transparent;  /* ← Cambiar o sacar */
+    backdrop-filter: none;  /* ← Cambiar o sacar */
+    padding: 40px 20px 0;  /* ← Ajustar padding */
+    z-index: 4;
     text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .header-subtitle h2 {
@@ -638,25 +640,24 @@ html {
         </nav>
     </header>
 
-<!-- AGREGAR ESTO NUEVO -->
-<section class="header-subtitle">
-    <h2>Proyecto vivo</h2>
-    <p>Portal místico de sabiduría ancestral. Conectando lo terrenal con lo divino </p>
-</section>
-
-    <div id="hero">
-        <div class="hero-container">
-    <img src="logo.png" alt="Logo Artilugios" class="hero-logo" id="hero-logo" />
-    <img src="laurel.png" alt="Laurel" id="laurel" />
-    <img src="sol.png" alt="Símbolo del Sol" class="hero-symbol" id="sol" />
-    <img src="luna.png" alt="Símbolo de la Luna" class="hero-symbol" id="luna" />
-    
-    <!-- AGREGAR ESTOS 3 BOTONES -->
-    <button class="triqueta-btn" id="btn-norte">🌙</button>
-    <button class="triqueta-btn" id="btn-oeste">🔮</button>
-    <button class="triqueta-btn" id="btn-este">🌿</button>
-</div>
+<div id="hero">
+    <div class="hero-container">
+        <img src="logo.png" alt="Logo Artilugios" class="hero-logo" id="hero-logo" />
+        <img src="laurel.png" alt="Laurel" id="laurel" />
+        <img src="sol.png" alt="Símbolo del Sol" class="hero-symbol" id="sol" />
+        <img src="luna.png" alt="Símbolo de la Luna" class="hero-symbol" id="luna" />
+        
+        <button class="triqueta-btn" id="btn-norte">🌙</button>
+        <button class="triqueta-btn" id="btn-oeste">🔮</button>
+        <button class="triqueta-btn" id="btn-este">🌿</button>
     </div>
+    
+    <!-- ← MOVER ESTO ACÁ -->
+    <section class="header-subtitle">
+        <h2>Proyecto vivo</h2>
+        <p>Portal místico de sabiduría ancestral. Conectando lo terrenal con lo divino</p>
+    </section>
+</div>
 
     <footer id="contacto">
         <div class="footer-content">
