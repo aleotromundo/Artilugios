@@ -790,14 +790,27 @@
         }
 
         window.addEventListener('hashchange', () => {
-            const hash = window.location.hash.substring(1);
-            if (['vivero', 'oraculo', 'santeria'].includes(hash)) {
-                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-                document.getElementById(hash)?.classList.add('active');
-            } else {
-                goBack();
+    const hash = window.location.hash.substring(1);
+    if (['vivero', 'oraculo', 'santeria'].includes(hash)) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById(hash)?.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (hash === 'contacto') {
+        goBack();
+        setTimeout(() => {
+            const footer = document.getElementById('contacto');
+            if (footer) {
+                const footerTop = footer.offsetTop;
+                window.scrollTo({ top: footerTop, behavior: 'smooth' });
             }
-        });
+        }, 100);
+    } else if (hash === 'hero' || hash === 'nosotros') {
+        goBack();
+    } else {
+        goBack();
+    }
+});
+
 
         // --- Gestión del laurel ---
         function initLaurel() {
