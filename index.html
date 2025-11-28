@@ -67,7 +67,7 @@
             background: rgba(10, 10, 10, 0.85);
             backdrop-filter: blur(8px);
             border-bottom: 1px solid rgba(212, 175, 55, 0.3);
-            z-index: 500;
+            z-index: 1000;
             padding: 20px 0;
         }
 
@@ -571,10 +571,10 @@
 
     <header>
         <nav>
-            <div class="logo">
-                <img src="logo.png" alt="Logo Artilugios" class="header-logo" />
-                <span class="logo-text">Artilugios</span>
-            </div>
+<div class="logo" style="cursor: pointer;" onclick="location.reload()">
+    <img src="logo.png" alt="Logo Artilugios" class="header-logo" />
+    <span class="logo-text">Artilugios</span>
+</div>
             <ul class="nav-links">
                 <li><a href="#hero">INICIO</a></li>
                 <li><a href="#contacto">CONTACTO</a></li>
