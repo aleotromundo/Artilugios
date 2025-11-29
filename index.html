@@ -848,6 +848,56 @@ html {
         right: 20px;
     }
 }
+/* Ventana flotante para escritorio */
+.info-popup {
+    position: fixed;
+    right: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 320px;
+    background: rgba(10, 10, 10, 0.95);
+    border: 2px solid #d4af37;
+    border-radius: 12px;
+    padding: 30px;
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 40px rgba(212, 175, 55, 0.3);
+}
+
+#oraculoPopup {
+    right: auto;
+    left: 50px;
+}
+
+.info-popup.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.info-popup h3 {
+    color: #d4af37;
+    font-size: 2rem;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+    text-align: center;
+    text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+}
+
+.info-popup p {
+    color: #c4b088;
+    font-size: 1rem;
+    line-height: 1.8;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .info-popup {
+        display: none;
+    }
+}
     </style>
 </head>
 <body>
@@ -884,6 +934,20 @@ html {
     <p id="subtitle-description">Portal místico de sabiduría ancestral. Conectando lo terrenal con lo divino</p>
 </section>
 </div>
+</div>
+<div class="info-popup" id="santeriaPopup">
+    <h3>SANTERÍA</h3>
+    <p>Artículos para rituales y limpiezas energéticas. Velas, Inciensos, resinas, hierbas y elementos sagrados para tus ceremonias.</p>
+</div>
+
+<div class="info-popup" id="viveroPopup">
+    <h3>VIVERO</h3>
+    <p>Venta de plantas ornamentales, árboles frutales y de sombra. Encuentra la vegetación perfecta para tu jardín o espacio verde.</p>
+</div>
+
+<div class="info-popup" id="oraculoPopup">
+    <h3>ORÁCULO</h3>
+    <p>Lectura de Tarot, Runas y otras artes adivinatorias. Descubre los mensajes del universo y encuentra guía en tu camino espiritual.</p>
 </div>
 <button class="music-toggle" id="musicBtn">
     <i class="fas fa-volume-up"></i>
@@ -1215,104 +1279,59 @@ if (overlayText) {
 });
 // Funcionalidad del botón Santería
 const btnNorte = document.getElementById('btn-norte');
+const santeriaPopup = document.getElementById('santeriaPopup');
 
-// ESCRITORIO: Hover
 btnNorte.addEventListener('mouseenter', function() {
-    if (window.innerWidth > 768 && !santeriaClicked) {
-        // Desvanecer botón
-        this.classList.add('fading');
-        
-        // Crear texto superpuesto si no existe
-        if (!document.querySelector('.santeria-text-overlay')) {
-            const text = document.createElement('span');
-            text.className = 'santeria-text-overlay';
-            text.textContent = 'SANTERÍA';
-            document.querySelector('.hero-container').appendChild(text);
-            
-            setTimeout(() => text.classList.add('visible'), 10);
-        } else {
-            document.querySelector('.santeria-text-overlay').classList.add('visible');
-        }
+    if (window.innerWidth > 768) {
+        santeriaPopup.classList.add('visible');
     }
 });
 
 btnNorte.addEventListener('mouseleave', function() {
-    if (window.innerWidth > 768 && !santeriaClicked) {
-        // Mostrar botón
-        this.classList.remove('fading');
-        
-        // Ocultar texto
-        const text = document.querySelector('.santeria-text-overlay');
-        if (text) {
-            text.classList.remove('visible');
-        }
+    if (window.innerWidth > 768) {
+        santeriaPopup.classList.remove('visible');
     }
 });
-// Click
+
 btnNorte.addEventListener('click', function() {
     const isMobile = window.innerWidth <= 768;
     
     if (isMobile) {
-        // MÓVIL: Cambiar texto abajo
         const subtitle = document.getElementById('header-subtitle');
         const title = document.getElementById('subtitle-title');
         const description = document.getElementById('subtitle-description');
         
         title.innerHTML = '<a href="#" class="santeria-btn">SANTERÍA</a>';
-        description.innerHTML = '<p class="santeria-description">Artículos para rituales y limpiezas energéticas. Velas, Inciensos, recinas, hierbas y elementos sagrados para tus ceremonias.</p>';
+        description.innerHTML = '<p class="santeria-description">Artículos para rituales y limpiezas energéticas. Velas, Inciensos, resinas, hierbas y elementos sagrados para tus ceremonias.</p>';
         
         subtitle.style.opacity = '0';
         setTimeout(() => {
             subtitle.style.transition = 'opacity 0.6s ease';
             subtitle.style.opacity = '1';
         }, 100);
-    } else {
-        // ESCRITORIO: Fijar texto visible
-        santeriaClicked = true;
     }
 });
+
 // Funcionalidad del botón Vivero
 const btnEste = document.getElementById('btn-este');
+const viveroPopup = document.getElementById('viveroPopup');
 
-// ESCRITORIO: Hover
 btnEste.addEventListener('mouseenter', function() {
-    if (window.innerWidth > 768 && !viveroClicked) {
-        // Desvanecer botón
-        this.classList.add('fading');
-        
-        // Crear texto superpuesto si no existe
-        if (!document.querySelector('.vivero-text-overlay')) {
-            const text = document.createElement('span');
-            text.className = 'vivero-text-overlay';
-            text.textContent = 'VIVERO';
-            document.querySelector('.hero-container').appendChild(text);
-            
-            setTimeout(() => text.classList.add('visible'), 10);
-        } else {
-            document.querySelector('.vivero-text-overlay').classList.add('visible');
-        }
+    if (window.innerWidth > 768) {
+        viveroPopup.classList.add('visible');
     }
 });
 
 btnEste.addEventListener('mouseleave', function() {
-    if (window.innerWidth > 768 && !viveroClicked) {
-        // Mostrar botón
-        this.classList.remove('fading');
-        
-        // Ocultar texto
-        const text = document.querySelector('.vivero-text-overlay');
-        if (text) {
-            text.classList.remove('visible');
-        }
+    if (window.innerWidth > 768) {
+        viveroPopup.classList.remove('visible');
     }
 });
 
-// Click
 btnEste.addEventListener('click', function() {
     const isMobile = window.innerWidth <= 768;
     
     if (isMobile) {
-        // MÓVIL: Cambiar texto abajo
         const subtitle = document.getElementById('header-subtitle');
         const title = document.getElementById('subtitle-title');
         const description = document.getElementById('subtitle-description');
@@ -1325,53 +1344,29 @@ btnEste.addEventListener('click', function() {
             subtitle.style.transition = 'opacity 0.6s ease';
             subtitle.style.opacity = '1';
         }, 100);
-    } else {
-        // ESCRITORIO: Fijar texto visible
-        viveroClicked = true;
     }
 });
+
 // Funcionalidad del botón Oráculo
 const btnOeste = document.getElementById('btn-oeste');
+const oraculoPopup = document.getElementById('oraculoPopup');
 
-// ESCRITORIO: Hover
 btnOeste.addEventListener('mouseenter', function() {
-    if (window.innerWidth > 768 && !oraculoClicked) {
-        // Desvanecer botón
-        this.classList.add('fading');
-        
-        // Crear texto superpuesto si no existe
-        if (!document.querySelector('.oraculo-text-overlay')) {
-            const text = document.createElement('span');
-            text.className = 'oraculo-text-overlay';
-            text.textContent = 'ORÁCULO';
-            document.querySelector('.hero-container').appendChild(text);
-            
-            setTimeout(() => text.classList.add('visible'), 10);
-        } else {
-            document.querySelector('.oraculo-text-overlay').classList.add('visible');
-        }
+    if (window.innerWidth > 768) {
+        oraculoPopup.classList.add('visible');
     }
 });
 
 btnOeste.addEventListener('mouseleave', function() {
-    if (window.innerWidth > 768 && !oraculoClicked) {
-        // Mostrar botón
-        this.classList.remove('fading');
-        
-        // Ocultar texto
-        const text = document.querySelector('.oraculo-text-overlay');
-        if (text) {
-            text.classList.remove('visible');
-        }
+    if (window.innerWidth > 768) {
+        oraculoPopup.classList.remove('visible');
     }
 });
 
-// Click
 btnOeste.addEventListener('click', function() {
     const isMobile = window.innerWidth <= 768;
     
     if (isMobile) {
-        // MÓVIL: Cambiar texto abajo
         const subtitle = document.getElementById('header-subtitle');
         const title = document.getElementById('subtitle-title');
         const description = document.getElementById('subtitle-description');
@@ -1384,9 +1379,6 @@ btnOeste.addEventListener('click', function() {
             subtitle.style.transition = 'opacity 0.6s ease';
             subtitle.style.opacity = '1';
         }, 100);
-    } else {
-        // ESCRITORIO: Fijar texto visible
-        oraculoClicked = true;
     }
 });
 const music = document.getElementById('bgMusic');
