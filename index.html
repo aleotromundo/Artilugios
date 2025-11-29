@@ -173,8 +173,8 @@
     opacity: 0;
     transform: scale(0.8);
     animation: 
-        fadeInLogo 1.2s ease-out 3s forwards,
-        heartbeatGlow 4s ease-in-out 4.5s infinite;
+    fadeInLogo 1.2s ease-out 1.5s forwards,
+    heartbeatGlow 4s ease-in-out 2.5s infinite;
     width: 65%;
     height: auto;
     position: relative;
@@ -770,9 +770,9 @@ html {
         }
 
         setTimeout(() => {
-            triggerPulse();
-            setInterval(triggerPulse, PULSE_INTERVAL);
-        }, 4500);
+    triggerPulse();
+    setInterval(triggerPulse, PULSE_INTERVAL);
+}, 2500);
 
         // --- Navegación ---
 
@@ -804,7 +804,7 @@ else {
             const laurel = document.getElementById('laurel');
             if (laurel) laurel.style.animation = 'laurelRevealAndSpin 4s ease-out forwards';
         }
-        setTimeout(initLaurel, 7500);
+        setTimeout(initLaurel, 4000);
 
         // --- Símbolos sol y luna ---
         function showSymbols() {
@@ -813,7 +813,7 @@ else {
             if (sol) sol.style.animation = 'slideInFromLeft 1.2s ease-out forwards';
             if (luna) luna.style.animation = 'slideInFromRight 1.2s ease-out forwards';
         }
-        setTimeout(showSymbols, 11500);
+        setTimeout(showSymbols, 6000);
 // Efecto de onda expansiva al hacer clic en el logo
 let exploded = false;
 
