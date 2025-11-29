@@ -669,6 +669,120 @@ html {
 .santeria-text-overlay.visible {
     opacity: 1;
 }
+#btn-este.fading {
+    opacity: 0 !important;
+    transition: opacity 0.4s ease;
+}
+
+.vivero-text-overlay {
+    position: absolute;
+    bottom: 14%;
+    right: 10%;
+    transform: translate(50%, 50%);
+    color: #d4af37;
+    font-size: 1.5rem;
+    font-weight: bold;
+    letter-spacing: 3px;
+    text-shadow: 0 0 20px rgba(212, 175, 55, 1);
+    white-space: nowrap;
+    z-index: 6;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.vivero-text-overlay.visible {
+    opacity: 1;
+}
+
+.vivero-btn {
+    display: inline-block;
+    padding: 15px 40px;
+    background: rgba(212, 175, 55, 0.15);
+    border: 2px solid #d4af37;
+    border-radius: 8px;
+    color: #d4af37;
+    font-size: 1.8rem;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    text-decoration: none;
+    margin-bottom: 15px;
+    text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+    backdrop-filter: blur(5px);
+}
+
+.vivero-btn:hover {
+    background: rgba(212, 175, 55, 0.3);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+    transform: translateY(-2px);
+}
+
+.vivero-description {
+    font-size: 1rem;
+    color: #c4b088;
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto;
+}
+#btn-oeste.fading {
+    opacity: 0 !important;
+    transition: opacity 0.4s ease;
+}
+
+.oraculo-text-overlay {
+    position: absolute;
+    bottom: 14%;
+    left: 10%;
+    transform: translate(-50%, 50%);
+    color: #d4af37;
+    font-size: 1.5rem;
+    font-weight: bold;
+    letter-spacing: 3px;
+    text-shadow: 0 0 20px rgba(212, 175, 55, 1);
+    white-space: nowrap;
+    z-index: 6;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.oraculo-text-overlay.visible {
+    opacity: 1;
+}
+
+.oraculo-btn {
+    display: inline-block;
+    padding: 15px 40px;
+    background: rgba(212, 175, 55, 0.15);
+    border: 2px solid #d4af37;
+    border-radius: 8px;
+    color: #d4af37;
+    font-size: 1.8rem;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    text-decoration: none;
+    margin-bottom: 15px;
+    text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+    backdrop-filter: blur(5px);
+}
+
+.oraculo-btn:hover {
+    background: rgba(212, 175, 55, 0.3);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+    transform: translateY(-2px);
+}
+
+.oraculo-description {
+    font-size: 1rem;
+    color: #c4b088;
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto;
+}
     </style>
 </head>
 <body>
@@ -744,6 +858,8 @@ html {
 
 // AGREGAR ESTA LÍNEA AQUÍ ↓
 let santeriaClicked = false;
+let viveroClicked = false;
+let oraculoClicked = false;
 
         // --- Partículas ---
         const particlesContainer = document.getElementById('particles');
@@ -885,6 +1001,8 @@ document.getElementById('hero-logo').addEventListener('click', function() {
         // Si ya explotó, solo resetear
         exploded = false;
         santeriaClicked = false;
+	viveroClicked = false;
+	oraculoClicked = false;
         
         document.getElementById('subtitle-title').innerHTML = 'Proyecto vivo';
         document.getElementById('subtitle-description').innerHTML = 'Portal místico de sabiduría ancestral. Conectando lo terrenal con lo divino';
@@ -895,9 +1013,26 @@ document.getElementById('hero-logo').addEventListener('click', function() {
         
         const overlayText = document.querySelector('.santeria-text-overlay');
         if (overlayText) overlayText.remove();
+
+// Reset botón este
+const btnEste = document.getElementById('btn-este');
+btnEste.classList.remove('fading');
+btnEste.style.opacity = '1';
+
+const overlayVivero = document.querySelector('.vivero-text-overlay');
+if (overlayVivero) overlayVivero.remove();
+
+// Reset botón oeste
+const btnOeste = document.getElementById('btn-oeste');
+btnOeste.classList.remove('fading');
+btnOeste.style.opacity = '1';
+
+const overlayOraculo = document.querySelector('.oraculo-text-overlay');
+if (overlayOraculo) overlayOraculo.remove();
         
         return;
     }
+
     exploded = true;
     
     // AGREGAR ESTAS LÍNEAS AQUÍ ↓
@@ -1059,6 +1194,124 @@ btnNorte.addEventListener('click', function() {
     } else {
         // ESCRITORIO: Fijar texto visible
         santeriaClicked = true;
+    }
+});
+// Funcionalidad del botón Vivero
+const btnEste = document.getElementById('btn-este');
+
+// ESCRITORIO: Hover
+btnEste.addEventListener('mouseenter', function() {
+    if (window.innerWidth > 768 && !viveroClicked) {
+        // Desvanecer botón
+        this.classList.add('fading');
+        
+        // Crear texto superpuesto si no existe
+        if (!document.querySelector('.vivero-text-overlay')) {
+            const text = document.createElement('span');
+            text.className = 'vivero-text-overlay';
+            text.textContent = 'VIVERO';
+            document.querySelector('.hero-container').appendChild(text);
+            
+            setTimeout(() => text.classList.add('visible'), 10);
+        } else {
+            document.querySelector('.vivero-text-overlay').classList.add('visible');
+        }
+    }
+});
+
+btnEste.addEventListener('mouseleave', function() {
+    if (window.innerWidth > 768 && !viveroClicked) {
+        // Mostrar botón
+        this.classList.remove('fading');
+        
+        // Ocultar texto
+        const text = document.querySelector('.vivero-text-overlay');
+        if (text) {
+            text.classList.remove('visible');
+        }
+    }
+});
+
+// Click
+btnEste.addEventListener('click', function() {
+    const isMobile = window.innerWidth <= 768;
+    
+    if (isMobile) {
+        // MÓVIL: Cambiar texto abajo
+        const subtitle = document.getElementById('header-subtitle');
+        const title = document.getElementById('subtitle-title');
+        const description = document.getElementById('subtitle-description');
+        
+        title.innerHTML = '<a href="#" class="vivero-btn">VIVERO</a>';
+        description.innerHTML = '<p class="vivero-description">Venta de plantas ornamentales, árboles frutales y de sombra. Encuentra la vegetación perfecta para tu jardín o espacio verde.</p>';
+        
+        subtitle.style.opacity = '0';
+        setTimeout(() => {
+            subtitle.style.transition = 'opacity 0.6s ease';
+            subtitle.style.opacity = '1';
+        }, 100);
+    } else {
+        // ESCRITORIO: Fijar texto visible
+        viveroClicked = true;
+    }
+});
+// Funcionalidad del botón Oráculo
+const btnOeste = document.getElementById('btn-oeste');
+
+// ESCRITORIO: Hover
+btnOeste.addEventListener('mouseenter', function() {
+    if (window.innerWidth > 768 && !oraculoClicked) {
+        // Desvanecer botón
+        this.classList.add('fading');
+        
+        // Crear texto superpuesto si no existe
+        if (!document.querySelector('.oraculo-text-overlay')) {
+            const text = document.createElement('span');
+            text.className = 'oraculo-text-overlay';
+            text.textContent = 'ORÁCULO';
+            document.querySelector('.hero-container').appendChild(text);
+            
+            setTimeout(() => text.classList.add('visible'), 10);
+        } else {
+            document.querySelector('.oraculo-text-overlay').classList.add('visible');
+        }
+    }
+});
+
+btnOeste.addEventListener('mouseleave', function() {
+    if (window.innerWidth > 768 && !oraculoClicked) {
+        // Mostrar botón
+        this.classList.remove('fading');
+        
+        // Ocultar texto
+        const text = document.querySelector('.oraculo-text-overlay');
+        if (text) {
+            text.classList.remove('visible');
+        }
+    }
+});
+
+// Click
+btnOeste.addEventListener('click', function() {
+    const isMobile = window.innerWidth <= 768;
+    
+    if (isMobile) {
+        // MÓVIL: Cambiar texto abajo
+        const subtitle = document.getElementById('header-subtitle');
+        const title = document.getElementById('subtitle-title');
+        const description = document.getElementById('subtitle-description');
+        
+        title.innerHTML = '<a href="#" class="oraculo-btn">ORÁCULO</a>';
+        description.innerHTML = '<p class="oraculo-description">Lectura de Tarot, Runas y otras artes adivinatorias. Descubre los mensajes del universo y encuentra guía en tu camino espiritual.</p>';
+        
+        subtitle.style.opacity = '0';
+        setTimeout(() => {
+            subtitle.style.transition = 'opacity 0.6s ease';
+            subtitle.style.opacity = '1';
+        }, 100);
+    } else {
+        // ESCRITORIO: Fijar texto visible
+        oraculoClicked = true;
     }
 });
    </script>
