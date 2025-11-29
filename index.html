@@ -609,6 +609,39 @@ html {
     letter-spacing: 3px;
     margin-bottom: 10px;
     text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+}
+
+/* Botón de Santería */
+.santeria-btn {
+    display: inline-block;
+    padding: 15px 40px;
+    background: rgba(212, 175, 55, 0.15);
+    border: 2px solid #d4af37;
+    border-radius: 8px;
+    color: #d4af37;
+    font-size: 1.8rem;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    text-decoration: none;
+    margin-bottom: 15px;
+    text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+    backdrop-filter: blur(5px);
+}
+
+.santeria-btn:hover {
+    background: rgba(212, 175, 55, 0.3);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+    transform: translateY(-2px);
+}
+
+.santeria-description {
+    font-size: 1rem;
+    color: #c4b088;
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto;
+}
     </style>
 </head>
 <body>
@@ -640,10 +673,10 @@ html {
     </div>
     
     <!-- ← MOVER ESTO ACÁ -->
-    <section class="header-subtitle">
-        <h2>Proyecto vivo</h2>
-        <p>Portal místico de sabiduría ancestral. Conectando lo terrenal con lo divino</p>
-    </section>
+    <section class="header-subtitle" id="header-subtitle">
+    <h2 id="subtitle-title">Proyecto vivo</h2>
+    <p id="subtitle-description">Portal místico de sabiduría ancestral. Conectando lo terrenal con lo divino</p>
+</section>
 </div>
 
     <footer id="contacto">
@@ -902,7 +935,23 @@ document.getElementById('hero-logo').addEventListener('click', function() {
         }, 1000);
     }, 1000);
 });
-
+// Funcionalidad del botón Santería
+document.getElementById('btn-norte').addEventListener('click', function() {
+    const subtitle = document.getElementById('header-subtitle');
+    const title = document.getElementById('subtitle-title');
+    const description = document.getElementById('subtitle-description');
+    
+    // Cambiar contenido
+    title.innerHTML = '<a href="#" class="santeria-btn">SANTERÍA</a>';
+    description.innerHTML = '<p class="santeria-description">Religión afrocubana que fusiona creencias yorubas con el catolicismo. Honra a los Orishas, deidades que representan fuerzas de la naturaleza y aspectos de la vida humana.</p>';
+    
+    // Animación de aparición
+    subtitle.style.opacity = '0';
+    setTimeout(() => {
+        subtitle.style.transition = 'opacity 0.6s ease';
+        subtitle.style.opacity = '1';
+    }, 100);
+});
     </script>
 </body>
 </html>
