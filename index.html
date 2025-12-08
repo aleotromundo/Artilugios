@@ -1363,21 +1363,12 @@ if (overlayText) {
         }, 1000);
     }, 1000);
 });
+
 // Funcionalidad del botón Santería
 const btnNorte = document.getElementById('btn-norte');
 const santeriaPopup = document.getElementById('santeriaPopup');
 
-btnNorte.addEventListener('mouseenter', function() {
-    if (window.innerWidth > 768) {
-        santeriaPopup.classList.add('visible');
-    }
-});
-
-btnNorte.addEventListener('mouseleave', function() {
-    if (window.innerWidth > 768) {
-        santeriaPopup.classList.remove('visible');
-    }
-});
+// ... (listeners de mouseenter/mouseleave sin cambios) ...
 
 btnNorte.addEventListener('click', function() {
     const isMobile = window.innerWidth <= 768;
@@ -1388,14 +1379,22 @@ btnNorte.addEventListener('click', function() {
         const title = document.getElementById('subtitle-title');
         const description = document.getElementById('subtitle-description');
         
-        // CORRECCIÓN: El título ahora tiene el enlace directo a santeria.html
-        title.innerHTML = '<a href="santeria.html" class="santeria-btn">SANTERÍA</a>';
+        // El título ahora es el botón de Santería.
+        title.innerHTML = '<a href="santeria.html" class="santeria-btn">SANTERÍA</a>'; // <--- ESTO YA ES UN BOTÓN CON ENLACE
         description.innerHTML = '<p class="santeria-description">Artículos para rituales y limpiezas energéticas. Velas, Inciensos, resinas, hierbas y elementos sagrados para tus ceremonias.</p>';
         
         subtitle.style.opacity = '0';
         setTimeout(() => {
             subtitle.style.transition = 'opacity 0.6s ease';
             subtitle.style.opacity = '1';
+            
+            // AÑADE ESTAS LÍNEAS PARA HACER SCROLL:
+            const offset = 140; // Ajusta el valor para centrar la descripción deseada
+            window.scrollTo({ 
+                top: subtitle.offsetTop - offset, 
+                behavior: 'smooth' 
+            });
+            
         }, 100);
     } else {
         // En escritorio, hace navegación directa al hacer clic en el botón vela (🕯️)
