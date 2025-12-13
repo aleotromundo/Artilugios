@@ -4,41 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Artilugios - Proyecto Vivo</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" media="(prefers-color-scheme: light)">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" media="(prefers-color-scheme: light)">
-    <link rel="icon" type="image/x-icon" href="favicon.ico" media="(prefers-color-scheme: light)">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-dark-32x32.png" media="(prefers-color-scheme: dark)">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-dark-16x16.png" media="(prefers-color-scheme: dark)">
-    <link rel="icon" type="image/x-icon" href="favicon-dark.ico" media="(prefers-color-scheme: dark)">
-    <link rel="apple-touch-icon" sizes="180x180" href="favicon-32x32.png">
-    <meta name="description" content="Portal místico de sabiduría ancestral. Santería, Vivero y Oráculo. Conectando lo terrenal con lo divino en El Pinar, Uruguay.">
-    <meta name="keywords" content="santería, tarot, oráculo, vivero, plantas, rituales, inciensos, velas, El Pinar, Uruguay">
-    <meta name="author" content="Artilugios">
-    <meta property="og:title" content="Artilugios - Proyecto Vivo">
-    <meta property="og:description" content="Portal místico de sabiduría ancestral. Santería, Vivero y Oráculo. Conectando lo terrenal con lo divino.">
-    <meta property="og:image" content="https://artilugios.vercel.app/logo.jpg">
-    <meta property="og:url" content="https://artilugios.vercel.app">
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="Artilugios">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Artilugios - Proyecto Vivo">
-    <meta name="twitter:description" content="Portal místico de sabiduría ancestral. Santería, Vivero y Oráculo.">
-    <meta name="twitter:image" content="https://artilugios.vercel.app/logo.jpg">
-    <meta name="theme-color" content="#d4af37">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <audio id="bgMusic" loop>
-        <source src="musica.mp3" type="audio/mpeg">
-    </audio>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" media="(prefers-color-scheme: light)">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" media="(prefers-color-scheme: light)">
+<link rel="icon" type="image/x-icon" href="favicon.ico" media="(prefers-color-scheme: light)">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-dark-32x32.png" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-dark-16x16.png" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/x-icon" href="favicon-dark.ico" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" sizes="180x180" href="favicon-32x32.png">
+<meta name="description" content="Portal místico de sabiduría ancestral. Santería, Vivero y Oráculo. Conectando lo terrenal con lo divino en El Pinar, Uruguay.">
+<meta name="keywords" content="santería, tarot, oráculo, vivero, plantas, rituales, inciensos, velas, El Pinar, Uruguay">
+<meta name="author" content="Artilugios">
+<meta property="og:title" content="Artilugios - Proyecto Vivo">
+<meta property="og:description" content="Portal místico de sabiduría ancestral. Santería, Vivero y Oráculo. Conectando lo terrenal con lo divino.">
+<meta property="og:image" content="https://artilugios.vercel.app/logo.jpg">
+<meta property="og:url" content="https://artilugios.vercel.app">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Artilugios">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Artilugios - Proyecto Vivo">
+<meta name="twitter:description" content="Portal místico de sabiduría ancestral. Santería, Vivero y Oráculo.">
+<meta name="twitter:image" content="https://artilugios.vercel.app/logo.jpg">
+<meta name="theme-color" content="#d4af37">
+    	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<audio id="bgMusic" loop>
+    <source src="musica.mp3" type="audio/mpeg">
+</audio>
     <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            -webkit-tap-highlight-color: transparent;
         }
         body {
             font-family: 'Cinzel', serif;
@@ -46,7 +51,9 @@
             background: #000;
             color: #d4af37;
             position: relative;
+	    overflow-x: hidden;  /* ← Ya está, pero asegurate que esté */
         }
+        /* Partículas de fondo */
         .particles {
             position: fixed;
             top: 0;
@@ -81,6 +88,7 @@
                 opacity: 0;
             }
         }
+        /* Header */
         header {
             position: fixed;
             top: 0;
@@ -156,8 +164,9 @@
         .nav-links a:hover {
             text-shadow: 0 0 15px rgba(212, 175, 55, 0.8);
         }
+        /* Botón de Hamburguesa */
         .hamburger-menu {
-            display: none;
+            display: none; /* Oculto por defecto en escritorio */
             background: transparent;
             border: none;
             color: #d4af37;
@@ -171,45 +180,46 @@
             color: #fff;
             text-shadow: 0 0 10px rgba(212, 175, 55, 0.8);
         }
-        #hero {
-            min-height: 100vh;
-            background: transparent;
-            position: relative;
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 160px 20px 60px;
-        }
-        .hero-container {
-            position: relative;
-            width: min(80vw, 550px);
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: -46px;
-        }
+        /* Hero – con logo animado */
+#hero {
+    min-height: 100vh;
+    background: transparent;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;  /* ← AGREGAR esto */
+    align-items: center;
+    justify-content: center;
+    padding: 160px 20px 60px;  /* ← Volver al original */
+}
+.hero-container {
+    position: relative;
+    width: min(80vw, 550px);
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -46px;  /* ← AGREGAR esta línea */
+}
         .hero-logo {
-            opacity: 0;
-            transform: scale(0.8);
-            animation: 
-                fadeInLogo 1.2s ease-out 1.5s forwards,
-                heartbeatGlow 4s ease-in-out 2.5s infinite;
-            width: 65%;
-            height: auto;
-            position: relative;
-            z-index: 4;
-            filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.6));
-            background: transparent !important;
-            border: none !important;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-        }
-        .hero-logo:active {
-            transform: scale(0.95);
-        }
+    opacity: 0;
+    transform: scale(0.8);
+    animation: 
+    fadeInLogo 1.2s ease-out 1.5s forwards,
+    heartbeatGlow 4s ease-in-out 2.5s infinite;
+    width: 65%;
+    height: auto;
+    position: relative;
+    z-index: 4;
+    filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.6));
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer;  /* ← AGREGAR */
+    transition: transform 0.2s ease;  /* ← AGREGAR */
+}
+.hero-logo:active {
+    transform: scale(0.95);
+}
         @keyframes fadeInLogo {
             to {
                 opacity: 1;
@@ -308,23 +318,25 @@
                 transform: translateX(0) translateY(-50%);
             }
         }
-        @keyframes explodeOut {
-            0% {
-                opacity: 1;
-                transform: translate(var(--start-x), var(--start-y)) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translate(var(--end-x), var(--end-y)) scale(0.3);
-            }
-        }
-        .exploding {
-            animation: explodeOut 0.8s ease-out forwards !important;
-        }
-        .hero-logo.clicked {
-            animation: none !important;
-            transform: scale(1) !important;
-        }
+/* Animaciones para clic en el logo */
+@keyframes explodeOut {
+    0% {
+        opacity: 1;
+        transform: translate(var(--start-x), var(--start-y)) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(var(--end-x), var(--end-y)) scale(0.3);
+    }
+}
+.exploding {
+    animation: explodeOut 0.8s ease-out forwards !important;
+}
+.hero-logo.clicked {
+    animation: none !important;
+    transform: scale(1) !important;
+}
+        /* Secciones */
         .section-content {
             max-width: 1200px;
             margin: 0 auto;
@@ -350,11 +362,12 @@
             position: relative;
             z-index: 4;
         }
+        /* Footer */
         footer {
             background: rgba(10, 10, 10, 0.85);
             border-top: 1px solid rgba(212, 175, 55, 0.3);
             padding: 60px 40px 30px;
-            margin-top: 60px;
+            margin-top: 60px;  /* ← Cambiado de 100px a 60px */
             position: relative;
             z-index: 2;
             backdrop-filter: blur(4px);
@@ -417,490 +430,499 @@
             color: #8b7355;
             font-size: 0.9rem;
         }
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2.5rem;
-            }
-            header {
-                padding: 15px 0;
-            }
-            nav {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-                padding: 0 20px;
-            }
-            .hamburger-menu {
-                display: block;
-                order: 2;
-            }
-            .logo {
-                order: 1;
-            }
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background: rgba(10, 10, 10, 0.95);
-                border-top: 1px solid rgba(212, 175, 55, 0.3);
-                padding: 20px 0;
-                text-align: center;
-            }
-            .nav-links.active {
-                display: flex;
-            }
-            .nav-links li {
-                margin: 10px 0;
-            }
-            .nav-links a {
-                font-size: 1.2rem;
-                padding: 10px 0;
-                display: block;
-            }
-            .hero-container {
-                width: 90vw;
-            }
-            #hero {
-                padding: 161px 20px 40px;
-                min-height: 90vh;
-            }
-            footer {
-                margin-top: 40px;
-                padding: 40px 20px 20px;
-            }
-            .footer-content {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-            .social-links {
-                justify-content: center;
-            }
-            .header-subtitle {
-                padding: 30px 20px 0;
-            }
-            .header-subtitle h2 {
-                font-size: 1.4rem;
-                margin-bottom: 8px;
-            }
-            .header-subtitle p {
-                font-size: 0.9rem;
-            }
-            .triqueta-btn {
-                width: 50px;
-                height: 50px;
-                font-size: 1.5rem;
-            }
-            #btn-norte {
-                top: 4% !important;
-                left: 50% !important;
-                transform: translate(-50%, -50%) !important;
-            }
-            #btn-oeste {
-                bottom: 5% !important;
-                left: 5% !important;
-            }
-            #btn-este {
-                bottom: 5% !important;
-                right: 5% !important;
-            }
-        }
-        .triqueta-btn {
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            border: 2px solid #d4af37;
-            border-radius: 50%;
-            background: rgba(212, 175, 55, 0.1);
-            backdrop-filter: blur(5px);
-            color: #d4af37;
-            font-size: 1.8rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            opacity: 0;
-            z-index: 5;
-            transition: all 0.3s ease;
-            font-family: 'Cinzel', serif;
-            pointer-events: none;
-        }
-        .triqueta-btn:hover {
-            background: rgba(212, 175, 55, 0.3);
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.6);
-            transform: scale(1.1);
-        }
-        .triqueta-btn.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        #btn-norte {
-            top: 6%;
-            left: 45%;
-            transform: translate(-50%, -50%);
-            pointer-events: auto;
-        }
-        #btn-norte::before {
-            content: '';
-            position: absolute;
-            top: -10px;
-            left: -10px;
-            right: -10px;
-            bottom: -10px;
-            pointer-events: auto;
-        }
-        #btn-oeste {
-            bottom: 14%;
-            left: 10%;
-            transform: translate(-50%, 50%);
-        }
-        #btn-este {
-            bottom: 14%;
-            right: 10%;
-            transform: translate(50%, 50%);
-        }
-        @keyframes btnAppear {
-            from {
-                opacity: 0;
-                transform: translate(var(--tx), var(--ty)) scale(0);
-            }
-            to {
-                opacity: 1;
-                transform: translate(var(--tx), var(--ty)) scale(1);
-            }
-        }
-        @keyframes logoReappear {
-            0% {
-                opacity: 0;
-                transform: scale(0.5);
-                filter: drop-shadow(0 0 0 rgba(212, 175, 55, 0));
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1);
-                filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.6));
-            }
-        }
-        .hero-logo.reappearing {
-            animation: logoReappear 1.5s ease-out forwards, heartbeatGlow 4s ease-in-out 1.5s infinite !important;
-        }
-        html {
-            overflow-x: hidden;
-        }
-        #hero {
-            overflow: hidden;
-        }
-        .header-subtitle {
-            position: relative;
-            top: auto;
-            left: auto;
-            right: auto;
-            background: transparent;
-            backdrop-filter: none;
-            padding: 40px 20px 0;
-            z-index: 4;
-            text-align: center;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .header-subtitle h2 {
-            color: #d4af37;
-            font-size: 1.8rem;
-            letter-spacing: 3px;
-            margin-bottom: 10px;
-            text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
-        }
-        .santeria-btn {
-            display: inline-block;
-            padding: 15px 40px;
-            background: rgba(212, 175, 55, 0.15);
-            border: 2px solid #d4af37;
-            border-radius: 8px;
-            color: #d4af37;
-            font-size: 1.8rem;
-            letter-spacing: 3px;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            text-decoration: none;
-            margin-bottom: 15px;
-            text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
-            backdrop-filter: blur(5px);
-        }
-        .santeria-btn:hover {
-            background: rgba(212, 175, 55, 0.3);
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
-            transform: translateY(-2px);
-        }
-        .santeria-description {
-            font-size: 1rem;
-            color: #c4b088;
-            line-height: 1.6;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        #btn-norte.fading {
-            opacity: 0 !important;
-            transition: opacity 0.4s ease;
-        }
-        .santeria-text-overlay {
-            position: absolute;
-            top: 10%;
-            left: 52%;
-            transform: translate(-50%, -50%);
-            color: #d4af37;
-            font-size: 2.1rem;
-            font-weight: bold;
-            letter-spacing: 3px;
-            text-shadow: 0 0 20px rgba(212, 175, 55, 1);
-            white-space: nowrap;
-            z-index: 6;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            pointer-events: auto;
-            cursor: pointer;
-        }
-        .santeria-text-overlay.visible {
-            opacity: 1;
-        }
-        #btn-este.fading {
-            opacity: 0 !important;
-            transition: opacity 0.4s ease;
-        }
-        .vivero-text-overlay {
-            position: absolute;
-            bottom: 14%;
-            right: 10%;
-            transform: translate(50%, 50%);
-            color: #d4af37;
-            font-size: 1.5rem;
-            font-weight: bold;
-            letter-spacing: 3px;
-            text-shadow: 0 0 20px rgba(212, 175, 55, 1);
-            white-space: nowrap;
-            z-index: 6;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            pointer-events: auto;
-            cursor: pointer;
-        }
-        .vivero-text-overlay.visible {
-            opacity: 1;
-        }
-        .vivero-btn {
-            display: inline-block;
-            padding: 15px 40px;
-            background: rgba(212, 175, 55, 0.15);
-            border: 2px solid #d4af37;
-            border-radius: 8px;
-            color: #d4af37;
-            font-size: 1.8rem;
-            letter-spacing: 3px;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            text-decoration: none;
-            margin-bottom: 15px;
-            text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
-            backdrop-filter: blur(5px);
-        }
-        .vivero-btn:hover {
-            background: rgba(212, 175, 55, 0.3);
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
-            transform: translateY(-2px);
-        }
-        .vivero-description {
-            font-size: 1rem;
-            color: #c4b088;
-            line-height: 1.6;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        #btn-oeste.fading {
-            opacity: 0 !important;
-            transition: opacity 0.4s ease;
-        }
-        .oraculo-text-overlay {
-            position: absolute;
-            bottom: 14%;
-            left: 10%;
-            transform: translate(-50%, 50%);
-            color: #d4af37;
-            font-size: 1.5rem;
-            font-weight: bold;
-            letter-spacing: 3px;
-            text-shadow: 0 0 20px rgba(212, 175, 55, 1);
-            white-space: nowrap;
-            z-index: 6;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            pointer-events: auto;
-            cursor: pointer;
-        }
-        .oraculo-text-overlay.visible {
-            opacity: 1;
-        }
-        .oraculo-btn {
-            display: inline-block;
-            padding: 15px 40px;
-            background: rgba(212, 175, 55, 0.15);
-            border: 2px solid #d4af37;
-            border-radius: 8px;
-            color: #d4af37;
-            font-size: 1.8rem;
-            letter-spacing: 3px;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            text-decoration: none;
-            margin-bottom: 15px;
-            text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
-            backdrop-filter: blur(5px);
-        }
-        .oraculo-btn:hover {
-            background: rgba(212, 175, 55, 0.3);
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
-            transform: translateY(-2px);
-        }
-        .oraculo-description {
-            font-size: 1rem;
-            color: #c4b088;
-            line-height: 1.6;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        .music-toggle {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
-            background: rgba(212, 175, 55, 0.15);
-            border: 2px solid #d4af37;
-            border-radius: 50%;
-            color: #d4af37;
-            font-size: 1.3rem;
-            cursor: pointer;
-            z-index: 1001;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: float 3s ease-in-out infinite;
-        }
-        .music-toggle:hover {
-            background: rgba(212, 175, 55, 0.3);
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        @media (max-width: 768px) {
-            .music-toggle {
-                width: 40px;
-                height: 40px;
-                font-size: 1rem;
-                bottom: 20px;
-                right: 20px;
-            }
-        }
-        .info-popup {
-            position: fixed;
-            right: 50px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 320px;
-            background: rgba(10, 10, 10, 0.95);
-            border: 2px solid #d4af37;
-            border-radius: 12px;
-            padding: 30px;
-            z-index: 999;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.4s ease;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 40px rgba(212, 175, 55, 0.3);
-        }
-        #oraculoPopup {
-            right: auto;
-            left: 50px;
-        }
-        .info-popup.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .info-popup h3 {
-            color: #d4af37;
-            font-size: 2rem;
-            letter-spacing: 3px;
-            margin-bottom: 20px;
-            text-align: center;
-            text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
-        }
-        .info-popup p {
-            color: #c4b088;
-            font-size: 1rem;
-            line-height: 1.8;
-            text-align: center;
-        }
-        @media (max-width: 768px) {
-            .info-popup {
-                display: none;
-            }
-        }
+/* Responsive */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2.5rem;
+    }
+    header {
+        padding: 15px 0;
+    }
+    nav {
+        /* Cambiado: Volver a layout horizontal para el logo y el botón */
+        flex-direction: row; 
+        justify-content: space-between; /* Espaciar logo y botón */
+        align-items: center;
+        padding: 0 20px;
+    }
+    /* Mostrar el botón de hamburguesa */
+    .hamburger-menu {
+        display: block; 
+        order: 2; /* Colocar el botón a la derecha (opcional, si el logo está a la izquierda) */
+    }
+    .logo {
+        order: 1; /* Colocar el logo a la izquierda */
+    }
+    /* Ocultar y reorganizar el menú de enlaces en móvil */
+    .nav-links {
+        display: none; /* Ocultar por defecto */
+        flex-direction: column;
+        position: absolute; /* Sacarlo del flujo */
+        top: 100%; /* Justo debajo del header */
+        left: 0;
+        width: 100%;
+        background: rgba(10, 10, 10, 0.95);
+        border-top: 1px solid rgba(212, 175, 55, 0.3);
+        padding: 20px 0;
+        text-align: center;
+    }
+    .nav-links.active { /* Clase que se agregará con JS */
+        display: flex;
+    }
+    .nav-links li {
+        margin: 10px 0;
+    }
+    .nav-links a {
+        font-size: 1.2rem;
+        padding: 10px 0;
+        display: block;
+    }
+    .hero-container {
+        width: 90vw;
+    }
+    #hero {
+        padding: 161px 20px 40px;
+        min-height: 90vh;
+    }
+    footer {
+        margin-top: 40px;
+        padding: 40px 20px 20px;
+    }
+    .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    .social-links {
+        justify-content: center;
+    }
+    .header-subtitle {
+        padding: 30px 20px 0;
+    }
+    .header-subtitle h2 {
+        font-size: 1.4rem;
+        margin-bottom: 8px;
+    }
+    .header-subtitle p {
+        font-size: 0.9rem;
+    }
+    .triqueta-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+    #btn-norte {
+    top: 4% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+}
+#btn-oeste {
+    bottom: 5% !important;
+    left: 5% !important;
+}
+#btn-este {
+    bottom: 5% !important;
+    right: 5% !important;
+}
+}
+/* Botones de la triqueta - ESCRITORIO */
+.triqueta-btn {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border: 2px solid #d4af37;
+    border-radius: 50%;
+    background: rgba(212, 175, 55, 0.1);
+    backdrop-filter: blur(5px);
+    color: #d4af37;
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    z-index: 5;
+    transition: all 0.3s ease;
+    font-family: 'Cinzel', serif;
+    pointer-events: none;
+}
+.triqueta-btn:hover {
+    background: rgba(212, 175, 55, 0.3);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.6);
+    transform: scale(1.1);
+}
+.triqueta-btn.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+#btn-norte {
+    top: 6%;
+    left: 45%;
+    transform: translate(-50%, -50%);
+    pointer-events: auto;  /* ← AGREGAR */
+}
+#btn-norte::before {  /* ← AGREGAR TODO ESTO */
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    pointer-events: auto;
+}
+#btn-oeste {
+    bottom: 14%;
+    left: 10%;
+    transform: translate(-50%, 50%);
+}
+#btn-este {
+    bottom: 14%;
+    right: 10%;
+    transform: translate(50%, 50%);
+}
+@keyframes btnAppear {
+    from {
+        opacity: 0;
+        transform: translate(var(--tx), var(--ty)) scale(0);
+    }
+    to {
+        opacity: 1;
+        transform: translate(var(--tx), var(--ty)) scale(1);
+    }
+}
+/* Animación de reaparición del logo */
+@keyframes logoReappear {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+        filter: drop-shadow(0 0 0 rgba(212, 175, 55, 0));
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+        filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.6));
+    }
+}
+.hero-logo.reappearing {
+    animation: logoReappear 1.5s ease-out forwards, heartbeatGlow 4s ease-in-out 1.5s infinite !important;
+}
+html {
+    overflow-x: hidden;
+}
+#hero {
+    overflow: hidden;  /* ← Contener la explosión dentro del hero */
+}
+.header-subtitle {
+    position: relative;  /* ← Cambiar de fixed a relative */
+    top: auto;  /* ← Cambiar */
+    left: auto;
+    right: auto;
+    background: transparent;  /* ← Cambiar o sacar */
+    backdrop-filter: none;  /* ← Cambiar o sacar */
+    padding: 40px 20px 0;  /* ← Ajustar padding */
+    z-index: 4;
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+}
+.header-subtitle h2 {
+    color: #d4af37;
+    font-size: 1.8rem;
+    letter-spacing: 3px;
+    margin-bottom: 10px;
+    text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+}
+/* Botón de Santería */
+.santeria-btn {
+    display: inline-block;
+    padding: 15px 40px;
+    background: rgba(212, 175, 55, 0.15);
+    border: 2px solid #d4af37;
+    border-radius: 8px;
+    color: #d4af37;
+    font-size: 1.8rem;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    text-decoration: none;
+    margin-bottom: 15px;
+    text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+    backdrop-filter: blur(5px);
+}
+.santeria-btn:hover {
+    background: rgba(212, 175, 55, 0.3);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+    transform: translateY(-2px);
+}
+.santeria-description {
+    font-size: 1rem;
+    color: #c4b088;
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto;
+}
+#btn-norte.fading {
+    opacity: 0 !important;
+    transition: opacity 0.4s ease;
+}
+.santeria-text-overlay {
+    position: absolute;
+    top: 10%;
+    left: 52%;
+    transform: translate(-50%, -50%);
+    color: #d4af37;
+    font-size: 2.1rem;
+    font-weight: bold;
+    letter-spacing: 3px;
+    text-shadow: 0 0 20px rgba(212, 175, 55, 1);
+    white-space: nowrap;
+    z-index: 6;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: auto;
+    cursor: pointer;
+}
+.santeria-text-overlay.visible {
+    opacity: 1;
+}
+#btn-este.fading {
+    opacity: 0 !important;
+    transition: opacity 0.4s ease;
+}
+.vivero-text-overlay {
+    position: absolute;
+    bottom: 14%;
+    right: 10%;
+    transform: translate(50%, 50%);
+    color: #d4af37;
+    font-size: 1.5rem;
+    font-weight: bold;
+    letter-spacing: 3px;
+    text-shadow: 0 0 20px rgba(212, 175, 55, 1);
+    white-space: nowrap;
+    z-index: 6;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: auto;
+    cursor: pointer;
+}
+.vivero-text-overlay.visible {
+    opacity: 1;
+}
+.vivero-btn {
+    display: inline-block;
+    padding: 15px 40px;
+    background: rgba(212, 175, 55, 0.15);
+    border: 2px solid #d4af37;
+    border-radius: 8px;
+    color: #d4af37;
+    font-size: 1.8rem;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    text-decoration: none;
+    margin-bottom: 15px;
+    text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+    backdrop-filter: blur(5px);
+}
+.vivero-btn:hover {
+    background: rgba(212, 175, 55, 0.3);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+    transform: translateY(-2px);
+}
+.vivero-description {
+    font-size: 1rem;
+    color: #c4b088;
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto;
+}
+#btn-oeste.fading {
+    opacity: 0 !important;
+    transition: opacity 0.4s ease;
+}
+.oraculo-text-overlay {
+    position: absolute;
+    bottom: 14%;
+    left: 10%;
+    transform: translate(-50%, 50%);
+    color: #d4af37;
+    font-size: 1.5rem;
+    font-weight: bold;
+    letter-spacing: 3px;
+    text-shadow: 0 0 20px rgba(212, 175, 55, 1);
+    white-space: nowrap;
+    z-index: 6;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: auto;
+    cursor: pointer;
+}
+.oraculo-text-overlay.visible {
+    opacity: 1;
+}
+.oraculo-btn {
+    display: inline-block;
+    padding: 15px 40px;
+    background: rgba(212, 175, 55, 0.15);
+    border: 2px solid #d4af37;
+    border-radius: 8px;
+    color: #d4af37;
+    font-size: 1.8rem;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    text-decoration: none;
+    margin-bottom: 15px;
+    text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+    backdrop-filter: blur(5px);
+}
+.oraculo-btn:hover {
+    background: rgba(212, 175, 55, 0.3);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+    transform: translateY(-2px);
+}
+.oraculo-description {
+    font-size: 1rem;
+    color: #c4b088;
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto;
+}
+.music-toggle {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    background: rgba(212, 175, 55, 0.15);
+    border: 2px solid #d4af37;
+    border-radius: 50%;
+    color: #d4af37;
+    font-size: 1.3rem;
+    cursor: pointer;
+    z-index: 1001;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: float 3s ease-in-out infinite;
+}
+.music-toggle:hover {
+    background: rgba(212, 175, 55, 0.3);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+}
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+@media (max-width: 768px) {
+    .music-toggle {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+        bottom: 20px;
+        right: 20px;
+    }
+}
+/* Ventana flotante para escritorio */
+.info-popup {
+    position: fixed;
+    right: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 320px;
+    background: rgba(10, 10, 10, 0.95);
+    border: 2px solid #d4af37;
+    border-radius: 12px;
+    padding: 30px;
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 40px rgba(212, 175, 55, 0.3);
+}
+#oraculoPopup {
+    right: auto;
+    left: 50px;
+}
+.info-popup.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+.info-popup h3 {
+    color: #d4af37;
+    font-size: 2rem;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+    text-align: center;
+    text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+}
+.info-popup p {
+    color: #c4b088;
+    font-size: 1rem;
+    line-height: 1.8;
+    text-align: center;
+}
+@media (max-width: 768px) {
+    .info-popup {
+        display: none;
+    }
+}
     </style>
 </head>
 <body>
     <div class="particles" id="particles"></div>
     <header>
         <nav>
-            <div class="logo" style="cursor: pointer;" id="logoHeader">
-                <img src="logo.png" alt="Logo Artilugios" class="header-logo" />
-                <span class="logo-text">Artilugios</span>
-            </div>
+<div class="logo" style="cursor: pointer;" id="logoHeader">
+    <img src="logo.png" alt="Logo Artilugios" class="header-logo" />
+    <span class="logo-text">Artilugios</span>
+</div>
             <button class="hamburger-menu" id="hamburgerBtn" aria-label="Menú de Navegación">
                 <i class="fas fa-bars"></i>
             </button>
             <ul class="nav-links" id="navLinks">
-                <li><a href="index.html">INICIO</a></li>
-                <li><a href="santeria.html">SANTERÍA</a></li>
-                <li><a href="vivero.html">VIVERO</a></li>
-                <li><a href="oraculo.html">ORÁCULO</a></li>
-                <li><a href="#contacto">CONTACTO</a></li>
-            </ul>
+    <li><a href="index.html">INICIO</a></li>
+    <li><a href="santeria.html">SANTERÍA</a></li>
+    <li><a href="vivero.html">VIVERO</a></li>
+    <li><a href="oraculo.html">ORÁCULO</a></li>
+    <li><a href="#contacto">CONTACTO</a></li>
+</ul>
         </nav>
     </header>
-    <div id="hero">
-        <div class="hero-container">
-            <img src="logo.png" alt="Logo Art.ilugios" class="hero-logo" id="hero-logo" />
-            <img src="laurel.png" alt="Laurel" id="laurel" />
-            <img src="sol.png" alt="Símbolo del Sol" class="hero-symbol" id="sol" />
-            <img src="luna.png" alt="Símbolo de la Luna" class="hero-symbol" id="luna" />
-            <button class="triqueta-btn" id="btn-norte">🕯️</button>
-            <button class="triqueta-btn" id="btn-oeste">🔮</button>
-            <button class="triqueta-btn" id="btn-este">🌿</button>
-        </div>
-        <section class="header-subtitle" id="header-subtitle">
-            <h2 id="subtitle-title">Proyecto vivo</h2>
-            <p id="subtitle-description">Portal místico de sabiduría ancestral. Conectando lo terrenal con lo divino</p>
-        </section>
+<div id="hero">
+    <div class="hero-container">
+        <img src="logo.png" alt="Logo Art.ilugios" class="hero-logo" id="hero-logo" />
+        <img src="laurel.png" alt="Laurel" id="laurel" />
+        <img src="sol.png" alt="Símbolo del Sol" class="hero-symbol" id="sol" />
+        <img src="luna.png" alt="Símbolo de la Luna" class="hero-symbol" id="luna" />
+        <button class="triqueta-btn" id="btn-norte">🕯️</button>
+        <button class="triqueta-btn" id="btn-oeste">🔮</button>
+        <button class="triqueta-btn" id="btn-este">🌿</button>
     </div>
-    <div class="info-popup" id="santeriaPopup">
-        <h3>SANTERÍA</h3>
-        <p>Artículos para rituales y limpiezas energéticas. Velas, Inciensos, resinas, hierbas y elementos sagrados para tus ceremonias.</p>
-    </div>
-    <div class="info-popup" id="viveroPopup">
-        <h3>VIVERO</h3>
-        <p>Venta de plantas ornamentales, árboles frutales y de sombra. Encuentra la vegetación perfecta para tu jardín o espacio verde.</p>
-    </div>
-    <div class="info-popup" id="oraculoPopup">
-        <h3>ORÁCULO</h3>
-        <p>Lectura de Tarot, Runas y otras artes adivinatorias. Descubre los mensajes del universo y encuentra guía en tu camino espiritual.</p>
-    </div>
-    <button class="music-toggle" id="musicBtn">
-        <i class="fas fa-volume-up"></i>
-    </button>
+    <section class="header-subtitle" id="header-subtitle">
+    <h2 id="subtitle-title">Proyecto vivo</h2>
+    <p id="subtitle-description">Portal místico de sabiduría ancestral. Conectando lo terrenal con lo divino</p>
+</section>
+</div>
+</div>
+<div class="info-popup" id="santeriaPopup">
+    <h3>SANTERÍA</h3>
+    <p>Artículos para rituales y limpiezas energéticas. Velas, Inciensos, resinas, hierbas y elementos sagrados para tus ceremonias.</p>
+</div>
+<div class="info-popup" id="viveroPopup">
+    <h3>VIVERO</h3>
+    <p>Venta de plantas ornamentales, árboles frutales y de sombra. Encuentra la vegetación perfecta para tu jardín o espacio verde.</p>
+</div>
+<div class="info-popup" id="oraculoPopup">
+    <h3>ORÁCULO</h3>
+    <p>Lectura de Tarot, Runas y otras artes adivinatorias. Descubre los mensajes del universo y encuentra guía en tu camino espiritual.</p>
+</div>
+<button class="music-toggle" id="musicBtn">
+    <i class="fas fa-volume-up"></i>
+</button>
     <footer id="contacto">
         <div class="footer-content">
             <div class="footer-section">
@@ -918,26 +940,27 @@
             <div class="footer-section">
                 <h3>SÍGUENOS</h3>
                 <div class="social-links">
-                    <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="#" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-                    <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
-                </div>
+    <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+    <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+    <a href="#" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+    <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+</div>
             </div>
         </div>
         <div class="footer-bottom">
             <p>&copy; 2025 Artilugios - Proyecto vivo. Todos los derechos reservados.</p>
-        </div>
     </footer>
     <script>
+        // --- Configuración ---
         const PARTICLE_COUNT = 60;
         const PULSE_INTERVAL = 4000;
         const PULSE_DURATION = 800;
         const MAX_RADIUS = 300;
-        let santeriaClicked = false;
-        let viveroClicked = false;
-        let oraculoClicked = false;
-        let exploded = false;
+// AGREGAR ESTA LÍNEA AQUÍ ↓
+let santeriaClicked = false;
+let viveroClicked = false;
+let oraculoClicked = false;
+        // --- Partículas ---
         const particlesContainer = document.getElementById('particles');
         const particles = [];
         for (let i = 0; i < PARTICLE_COUNT; i++) {
@@ -956,6 +979,7 @@
             particlesContainer.appendChild(particle);
             particles.push({ el: particle, x, y, size });
         }
+        // --- Latido con onda ---
         function triggerPulse() {
             const logo = document.getElementById('hero-logo');
             if (!logo) return;
@@ -1013,30 +1037,37 @@
             });
         }
         setTimeout(() => {
-            triggerPulse();
-            setInterval(triggerPulse, PULSE_INTERVAL);
-        }, 2500);
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', (e) => {
-                const href = link.getAttribute('href');
-                if (href.startsWith('#')) {
-                    e.preventDefault();
-                    const hash = href.substring(1);
-                    if (hash === 'contacto') {
-                        const footer = document.getElementById('contacto');
-                        if (footer) {
-                            window.scrollTo({ top: footer.offsetTop - 100, behavior: 'smooth' });
-                        }
-                    }
-                    window.history.pushState(null, '', `#${hash}`);
+    triggerPulse();
+    setInterval(triggerPulse, PULSE_INTERVAL);
+}, 2500);
+        // --- Navegación ---
+// Manejo de la navegación del header - CORREGIDO para permitir la navegación a archivos
+document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', (e) => {
+        const href = link.getAttribute('href');
+        // Solo interceptamos y manejamos anclas (links que empiezan con #)
+        if (href.startsWith('#')) {
+            e.preventDefault();
+            const hash = href.substring(1);
+            if (hash === 'contacto') {
+                const footer = document.getElementById('contacto');
+                if (footer) {
+                    window.scrollTo({ top: footer.offsetTop - 100, behavior: 'smooth' });
                 }
-            });
-        });
+            } 
+            // Si hay otros anclas, el navegador actualizará la URL:
+            window.history.pushState(null, '', `#${hash}`);
+        }
+        // Si el href NO empieza con '#', como 'santeria.html', permitimos la navegación normal.
+    });
+});
+        // --- Gestión del laurel ---
         function initLaurel() {
             const laurel = document.getElementById('laurel');
             if (laurel) laurel.style.animation = 'laurelRevealAndSpin 4s ease-out forwards';
         }
         setTimeout(initLaurel, 4000);
+        // --- Símbolos sol y luna ---
         function showSymbols() {
             const sol = document.getElementById('sol');
             const luna = document.getElementById('luna');
@@ -1045,7 +1076,8 @@
         }
         setTimeout(showSymbols, 7000);
 
-        // === 🔁 FUNCIÓN UNIFICADA: TOGGLE ENTRE LOGO Y BOTONES ===
+        // === ✅ AGREGADO: Función unificada para logo e INICIO ===
+        let exploded = false;
         const music = document.getElementById('bgMusic');
         const musicBtn = document.getElementById('musicBtn');
         let isPlaying = true;
@@ -1068,7 +1100,6 @@
             const desc = document.getElementById('subtitle-description');
 
             if (exploded) {
-                // → Colapsar
                 exploded = false;
                 santeriaClicked = false;
                 viveroClicked = false;
@@ -1087,7 +1118,6 @@
                 return;
             }
 
-            // → Expandir
             exploded = true;
             title.textContent = 'Proyecto vivo';
             desc.textContent = 'Portal místico de sabiduría ancestral. Conectando lo terrenal con lo divino';
@@ -1159,20 +1189,21 @@
             });
         }
 
-        // === HOVER + CLICK EN 🕯️ SANTEÍA ===
-        const btnNorte = document.getElementById('btn-norte');
+        // === ✅ CORREGIDO: Hover en 🕯️ Santería ===
         const santeriaPopup = document.getElementById('santeriaPopup');
-        btnNorte.addEventListener('mouseenter', function() {
+        document.getElementById('btn-norte').addEventListener('mouseenter', function() {
             if (window.innerWidth > 768) {
                 santeriaPopup.classList.add('visible');
             }
         });
-        btnNorte.addEventListener('mouseleave', function() {
+        document.getElementById('btn-norte').addEventListener('mouseleave', function() {
             if (window.innerWidth > 768) {
                 santeriaPopup.classList.remove('visible');
             }
         });
-        btnNorte.addEventListener('click', function() {
+
+        // El resto del comportamiento del botón Santería (click) se mantiene
+        document.getElementById('btn-norte').addEventListener('click', function() {
             const isMobile = window.innerWidth <= 768;
             if (isMobile) {
                 const subtitle = document.getElementById('header-subtitle');
@@ -1192,7 +1223,7 @@
             }
         });
 
-        // === Vivero y Oráculo (sin cambios) ===
+        // === Vivero y Oráculo: se mantienen igual ===
         const btnEste = document.getElementById('btn-este');
         const viveroPopup = document.getElementById('viveroPopup');
         btnEste.addEventListener('mouseenter', function() {
@@ -1249,6 +1280,7 @@
             }
         });
 
+        // === Música y otros eventos (sin cambios) ===
         window.addEventListener('load', () => {
             music.play().catch(() => {
                 isPlaying = false;
