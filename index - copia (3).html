@@ -1372,17 +1372,6 @@ const santeriaPopup = document.getElementById('santeriaPopup');
 
 btnNorte.addEventListener('click', function() {
     const isMobile = window.innerWidth <= 768;
-// Funcionalidad del botón Santería - HOVER en escritorio
-btnNorte.addEventListener('mouseenter', function() {
-    if (window.innerWidth > 768) {
-        santeriaPopup.classList.add('visible');
-    }
-});
-btnNorte.addEventListener('mouseleave', function() {
-    if (window.innerWidth > 768) {
-        santeriaPopup.classList.remove('visible');
-    }
-});
     
     if (isMobile) {
         // En móvil, cambia el texto y el enlace del título para que sea navegable
