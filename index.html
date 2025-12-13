@@ -1366,52 +1366,6 @@ if (overlayText) {
 
 // Funcionalidad del botón Santería
 const btnNorte = document.getElementById('btn-norte');
-const santeriaPopup = document.getElementById('santeriaPopup');
-
-// ... (listeners de mouseenter/mouseleave sin cambios) ...
-
-btnNorte.addEventListener('click', function() {
-    const isMobile = window.innerWidth <= 768;
-// Funcionalidad del botón Santería - HOVER en escritorio
-btnNorte.addEventListener('mouseenter', function() {
-    if (window.innerWidth > 768) {
-        santeriaPopup.classList.add('visible');
-    }
-});
-btnNorte.addEventListener('mouseleave', function() {
-    if (window.innerWidth > 768) {
-        santeriaPopup.classList.remove('visible');
-    }
-});
-    
-    if (isMobile) {
-        // En móvil, cambia el texto y el enlace del título para que sea navegable
-        const subtitle = document.getElementById('header-subtitle');
-        const title = document.getElementById('subtitle-title');
-        const description = document.getElementById('subtitle-description');
-        
-        // El título ahora es el botón de Santería.
-        title.innerHTML = '<a href="santeria.html" class="santeria-btn">SANTERÍA</a>'; // <--- ESTO YA ES UN BOTÓN CON ENLACE
-        description.innerHTML = '<p class="santeria-description">Artículos para rituales y limpiezas energéticas. Velas, Inciensos, resinas, hierbas y elementos sagrados para tus ceremonias.</p>';
-        
-        subtitle.style.opacity = '0';
-        setTimeout(() => {
-            subtitle.style.transition = 'opacity 0.6s ease';
-            subtitle.style.opacity = '1';
-            
-            // AÑADE ESTAS LÍNEAS PARA HACER SCROLL:
-            const offset = 140; // Ajusta el valor para centrar la descripción deseada
-            window.scrollTo({ 
-                top: subtitle.offsetTop - offset, 
-                behavior: 'smooth' 
-            });
-            
-        }, 100);
-    } else {
-        // En escritorio, hace navegación directa al hacer clic en el botón vela (🕯️)
-        window.location.href = 'santeria.html';
-    }
-});
 
 // Funcionalidad del botón Vivero
 const btnEste = document.getElementById('btn-este');
