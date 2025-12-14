@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Oráculo - Artilugios</title>
+
+<link rel="icon" href="favicon.ico" />
+<meta name="description" content="Servicios de oráculos, mancias, cartas, piedras y péndulos." />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<audio id="bgMusic" loop autoplay>
+  <source src="musica-oraculo.mp3" type="audio/mpeg" />
+</audio>
+
+<style>
+:root{
+--bg:#1b120b;
+--card:#2a1b12;
+--accent:#c9a24d;
+--text:#f2e6c9;
+--muted:#cbbfa3;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+font-family:'Inter',sans-serif;
+background:url('img/oraculo-rustico.webp') center/cover fixed;
+color:var(--text);
+overflow-x:hidden
+}
+body::before{content:'';position:fixed;inset:0;background:rgba(20,12,6,.88);z-index:0}
+#particles{position:fixed;inset:0;pointer-events:none;z-index:5}
+.particle{
+position:absolute;
+width:6px;height:10px;
+border-radius:50% 50% 50% 50%;
+background:radial-gradient(circle at bottom,#ffd27d 0%,#ff9f43 40%,#b83a1b 70%,transparent 72%);
+filter:blur(.2px);
+opacity:.85;
+animation:flame 14s ease-in infinite
+}
+@keyframes flame{
+0%{transform:translateY(110vh) scale(.6);opacity:0}
+15%{opacity:.9}
+50%{transform:translateY(40vh) scale(1)}
+85%{opacity:.8}
+100%{transform:translateY(-20vh) scale(.8);opacity:0}
+}
+@keyframes rise{from{transform:translateY(100vh) scale(.6);opacity:0}20%,80%{opacity:1}to{transform:translateY(-120px) scale(1.2);opacity:0}}
+
+header{
+position:sticky;top:0;z-index:10;
+background:rgba(27,18,11,.9);
+backdrop-filter:blur(6px);
+border-bottom:1px solid rgba(201,162,77,.3)
+}
+nav{
+max-width:1200px;margin:auto;
+display:flex;align-items:center;justify-content:space-between;
+padding:18px 24px
+}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Cinzel',serif;color:var(--accent);letter-spacing:3px;cursor:pointer;text-decoration:none}
+.logo img{height:28px}
+nav a{color:var(--muted);text-decoration:none;font-size:.85rem;letter-spacing:2px}nav a:hover{color:var(--accent)}
+.menu-toggle{display:none;color:var(--accent);font-size:1.6rem;cursor:pointer}
+.nav-links{display:flex;gap:24px;list-style:none}
+@media(max-width:768px){
+.nav-links{position:fixed;top:70px;right:-100%;flex-direction:column;background:rgba(27,18,11,.98);width:100%;height:calc(100vh - 70px);padding:40px;transition:.4s;gap:30px}
+.nav-links.active{right:0}
+.menu-toggle{display:block}
+}
+
+main{position:relative;z-index:1}
+.section{max-width:1100px;margin:auto;padding:80px 24px}
+
+.hero{
+text-align:center;
+padding:160px 24px 140px;
+position:relative;
+width:100%;
+left:0;
+right:0;
+background:url('img/oraculo-mancias.webp') center/cover no-repeat;
+overflow:hidden
+}
+.hero::before{
+content:'';position:absolute;inset:0;
+background:linear-gradient(to bottom,rgba(10,6,3,.65),rgba(10,6,3,.9));
+z-index:0
+}
+.hero > *{position:relative;z-index:1}
+.hero h1{font-family:'Cinzel',serif;font-size:3.4rem;color:#f5e9c8;letter-spacing:6px;text-shadow:0 4px 18px rgba(0,0,0,.9)}
+.hero p{max-width:620px;margin:28px auto;font-size:1.1rem;line-height:1.9;color:#e6d6aa;text-shadow:0 2px 12px rgba(0,0,0,.85)}
+.hero button{
+margin-top:32px;padding:16px 34px;
+border-radius:40px;border:1px solid var(--accent);
+background:linear-gradient(120deg,rgba(201,162,77,.15),rgba(255,200,120,.35),rgba(201,162,77,.15));
+color:var(--accent);
+letter-spacing:3px;cursor:pointer;
+position:relative;overflow:hidden;
+box-shadow:0 0 20px rgba(201,162,77,.35);
+transition:.4s
+}
+.hero button::before{
+content:'';position:absolute;inset:0;
+background:linear-gradient(120deg,transparent,rgba(255,220,150,.8),transparent);
+transform:translateX(-100%);
+transition:.6s
+}
+.hero button:hover::before{transform:translateX(100%)}
+.hero button:hover{box-shadow:0 0 40px rgba(255,200,120,.7)}
+.hero button:hover{background:rgba(201,162,77,.15)}
+
+.grid{
+display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:28px
+}
+.card{
+background:var(--card);
+border:1px solid rgba(201,162,77,.25);
+border-radius:16px;
+padding:28px;
+text-align:center;
+position:relative;
+overflow:hidden;
+transition:transform .4s ease, box-shadow .4s ease
+}
+.card::before{
+content:'';position:absolute;inset:0;
+background:radial-gradient(circle at top,rgba(255,215,140,.35),transparent 60%);
+opacity:0;transition:.4s
+}
+.card:hover{
+transform:translateY(-10px) scale(1.02);
+box-shadow:0 30px 60px rgba(201,162,77,.45)
+}
+.card:hover::before{opacity:1}
+.card i{font-size:2.2rem;color:var(--accent);margin-bottom:14px;transition:.4s}
+.card:hover i{transform:scale(1.15);text-shadow:0 0 20px rgba(255,210,120,.9)}
+.card h3{font-family:'Cinzel',serif;font-size:1.4rem;margin-bottom:10px}
+.card p{font-size:.95rem;color:var(--muted);line-height:1.7}
+
+.oracle-box{text-align:center;margin-top:80px}
+.oracle-box button{margin-top:20px}
+#oracleMessage{margin-top:28px;font-family:'Cinzel',serif;font-size:1.4rem;color:#fff}
+
+/* Footer mejorado */
+footer {
+    background: rgba(20, 13, 8, 0.95);
+    border-top: 1px solid rgba(201, 162, 77, 0.3);
+    padding: 60px 40px 30px;
+    margin-top: 60px;
+    position: relative;
+    z-index: 5;
+    backdrop-filter: blur(4px);
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.footer-section h3 {
+    color: var(--accent);
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+    font-family: 'Cinzel', serif;
+}
+
+.footer-section p,
+.footer-section a {
+    color: var(--muted);
+    line-height: 1.8;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+.footer-section a:hover {
+    color: var(--accent);
+    text-shadow: 0 0 10px rgba(201, 162, 77, 0.5);
+    transform: translateX(5px);
+}
+
+.social-links {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.social-links a {
+    width: 40px;
+    height: 40px;
+    border: 2px solid rgba(201, 162, 77, 0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.social-links a:hover {
+    background: rgba(201, 162, 77, 0.2);
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(201, 162, 77, 0.5);
+    transform: translateY(-3px);
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 30px;
+    border-top: 1px solid rgba(201, 162, 77, 0.2);
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+/* Botón de música */
+.music-toggle {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    background: rgba(201, 162, 77, 0.15);
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    color: var(--accent);
+    font-size: 1.3rem;
+    cursor: pointer;
+    z-index: 1001;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: float 3s ease-in-out infinite;
+}
+
+.music-toggle:hover {
+    background: rgba(201, 162, 77, 0.3);
+    box-shadow: 0 0 20px rgba(201, 162, 77, 0.5);
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@media(max-width:600px){
+.hero h1{font-size:2.3rem}
+.footer-content {
+    grid-template-columns: 1fr;
+    gap: 30px;
+}
+}
+</style>
+</head>
+<body>
+<header>
+<nav>
+<a href="index.html" class="logo" id="logoHeader">
+    <img src="logo.png" alt="Logo Artilugios">
+    <span>ARTILUGIOS</span>
+</a>
+<div class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></div>
+<ul class="nav-links" id="navLinks">
+<li><a href="index.html">INICIO</a></li>
+<li><a href="santeria.html">SANTERÍA</a></li>
+<li><a href="vivero.html">VIVERO</a></li>
+<li><a href="oraculo.html">ORÁCULO</a></li>
+<li><a href="#contacto">CONTACTO</a></li>
+</ul>
+</nav>
+</header>
+
+<div id="particles"></div>
+
+<main>
+<section class="section hero">
+<h1>ORÁCULO</h1>
+<p>Lecturas conscientes a través de mancias ancestrales. Cartas, piedras y péndulos como herramientas de guía.</p>
+<button onclick="revelarMensaje()">MENSAJE DEL DÍA</button>
+</section>
+
+<section class="section">
+<h2 style="font-family:'Cinzel',serif;color:var(--accent);text-align:center;margin-bottom:50px;letter-spacing:3px">Mancias & Herramientas</h2>
+<div class="grid">
+<div class="card"><i class="fas fa-layer-group"></i><h3>Tarot & Cartas</h3><p>Tarot tradicional, tarot evolutivo y oráculos simbólicos. Lecturas generales, por pregunta o por ciclo.</p></div>
+<div class="card"><i class="fas fa-gem"></i><h3>Litomancia</h3><p>Interpretación energética mediante piedras y cristales elegidos según la consulta.</p></div>
+<div class="card"><i class="fas fa-compass"></i><h3>Radiestesia</h3><p>Trabajo con péndulos y gráficos para respuestas claras y alineadas.</p></div>
+<div class="card"><i class="fas fa-star"></i><h3>Mancias Integradas</h3><p>Combinación de cartas, intuición y símbolos para lecturas profundas.</p></div>
+<div class="card"><i class="fas fa-eye"></i><h3>Lectura Intuitiva</h3><p>Canalización directa sin herramientas físicas. Ideal para orientación general.</p></div>
+<div class="card"><i class="fas fa-moon"></i><h3>Ciclos & Energías</h3><p>Análisis energético de etapas, bloqueos y movimientos internos.</p></div>
+</div>
+</section>
+
+<section class="section">
+<h2 style="font-family:'Cinzel',serif;color:var(--accent);text-align:center;margin-bottom:40px;letter-spacing:3px">Cómo es una Consulta</h2>
+<div class="grid">
+<div class="card"><i class="fas fa-leaf"></i><h3>Intención</h3><p>La consulta comienza definiendo una intención clara y consciente.</p></div>
+<div class="card"><i class="fas fa-fire"></i><h3>Ritual</h3><p>Se prepara el espacio, las herramientas y la energía del momento.</p></div>
+<div class="card"><i class="fas fa-comment-dots"></i><h3>Mensaje</h3><p>El oráculo revela símbolos que se interpretan en diálogo.</p></div>
+<div class="card"><i class="fas fa-hands"></i><h3>Cierre</h3><p>La consulta se cierra integrando el mensaje a tu camino.</p></div>
+</div>
+</section>
+
+<section class="section oracle-box">
+<h2 style="font-family:'Cinzel',serif;color:var(--accent)">El Mensaje</h2>
+<div id="oracleMessage">El oráculo aguarda…</div>
+</section>
+</main>
+
+<button class="music-toggle" id="musicBtn">
+    <i class="fas fa-volume-up"></i>
+</button>
+
+<footer id="contacto">
+    <div class="footer-content">
+        <div class="footer-section">
+            <h3>CONTACTO</h3>
+            <p>📧 info@artilugios.com</p>
+            <p>📱 +598 XX XXX XXX</p>
+            <p>📍 El Pinar, Uruguay</p>
+        </div>
+        <div class="footer-section">
+            <h3>HORARIOS</h3>
+            <p>Lunes a Viernes: 10:00 - 19:00</p>
+            <p>Sábados: 10:00 - 14:00</p>
+            <p>Domingos: Cerrado</p>
+        </div>
+        <div class="footer-section">
+            <h3>SÍGUENOS</h3>
+            <div class="social-links">
+                <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 Artilugios - Proyecto vivo. Todos los derechos reservados.</p>
+    </div>
+</footer>
+
+<script>
+const mensajes=[
+"Lo esencial se revela en silencio.",
+"La respuesta llega cuando soltás la pregunta.",
+"Nada está detenido, todo se mueve.",
+"La intuición no grita, susurra.",
+"El ritual comienza en vos."
+];
+function revelarMensaje(){
+document.getElementById('oracleMessage').textContent=
+mensajes[Math.floor(Math.random()*mensajes.length)];
+}
+
+// Partículas
+const cont=document.getElementById('particles');
+for(let i=0;i<70;i++){
+const p=document.createElement('div');
+p.className='particle';
+p.style.left=Math.random()*100+'%';
+p.style.animationDuration=12+Math.random()*10+'s';
+p.style.animationDelay=Math.random()*6+'s';
+cont.appendChild(p);
+}
+
+// Menú hamburguesa
+document.getElementById('menuToggle').onclick=()=>{
+    const navLinks = document.getElementById('navLinks');
+    const icon = document.getElementById('menuToggle').querySelector('i');
+    navLinks.classList.toggle('active');
+    
+    if(navLinks.classList.contains('active')) {
+        icon.classList.remove('fa-bars');
+        icon.classList.add('fa-times');
+    } else {
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+    }
+};
+
+// Logo click
+document.getElementById('logoHeader').addEventListener('click', (e) => {
+    e.preventDefault();
+    window.location.href = 'index.html';
+});
+
+// Música
+const music = document.getElementById('bgMusic');
+const musicBtn = document.getElementById('musicBtn');
+let isPlaying = true;
+
+window.addEventListener('load', () => {
+    music.play().catch(() => {
+        isPlaying = false;
+        musicBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+    });
+});
+
+musicBtn.addEventListener('click', () => {
+    if (isPlaying) {
+        music.pause();
+        musicBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+    } else {
+        music.play();
+        musicBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+    }
+    isPlaying = !isPlaying;
+});
+
+// Cerrar menú al hacer clic en enlaces
+document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', () => {
+        if (window.innerWidth <= 768) {
+            document.getElementById('navLinks').classList.remove('active');
+            const icon = document.getElementById('menuToggle').querySelector('i');
+            icon.classList.remove('fa-times');
+            icon.classList.add('fa-bars');
+        }
+    });
+});
+</script>
+</body>
+</html>

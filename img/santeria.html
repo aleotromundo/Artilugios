@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Santería - Artilugios</title>
 
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
 
-    <meta name="description" content="Artículos y medicinas ancestrales para rituales: Velas, Inciensos, Hierbas y Rituales. Tu portal místico en El Pinar, Uruguay.">
-    <meta name="keywords" content="santería, velas, inciensos, rituales, hierbas mágicas, medicinas ancestrales, El Pinar, Uruguay">
-    <meta property="og:title" content="Santería - Artilugios">
-    <meta property="og:description" content="Artículos y medicinas ancestrales para rituales.">
-    <meta property="og:image" content="https://artilugios.vercel.app/logo.jpg">
-    <meta property="og:url" content="https://artilugios.vercel.app/santeria.html">
+<meta name="description" content="Artículos y medicinas ancestrales para rituales: Velas, Inciensos, Hierbas y Rituales. Tu portal místico en El Pinar, Uruguay.">
+<meta name="keywords" content="santería, velas, inciensos, rituales, hierbas mágicas, medicinas ancestrales, El Pinar, Uruguay">
+<meta property="og:title" content="Santería - Artilugios">
+<meta property="og:description" content="Artículos y medicinas ancestrales para rituales.">
+<meta property="og:image" content="https://artilugios.vercel.app/logo.jpg">
+<meta property="og:url" content="https://artilugios.vercel.app/santeria.html">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
@@ -23,6 +23,7 @@
     </audio>
 
     <style>
+        /* Estilos base copiados de index.html */
         * {
             margin: 0;
             padding: 0;
@@ -37,14 +38,19 @@
         body {
             font-family: 'Cinzel', serif;
             overflow-x: hidden;
-            background-image: url('img/alquimia.jpg');
+            
+            /* --- FONDO DE SANTERÍA --- */
+            background-image: url('img/alquimia.jpg'); /* ¡REEMPLAZA ESTA URL CON TU IMAGEN DE JARDÍN! */
             background-size: cover;
             background-attachment: fixed;
             background-position: center;
+            /* ------------------------- */
+            
             color: #d4af37;
             position: relative;
         }
-
+        
+        /* Capa oscura (Overlay) para hacer la imagen de fondo más sutil y el texto legible */
         body::before {
             content: '';
             position: fixed;
@@ -52,7 +58,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.5); /* Negro semi-transparente */
             z-index: 0;
             pointer-events: none;
         }
@@ -66,6 +72,7 @@
             pointer-events: none;
             z-index: 1;
         }
+/* ... (el resto de los estilos de partículas se mantiene) ... */
 
         .particle {
             position: absolute;
@@ -95,11 +102,11 @@
         }
 
         header {
-            position: fixed;
+            position: sticky; 
             top: 0;
             left: 0;
             right: 0;
-            background: rgba(10, 10, 10, 0.95);
+            background: rgba(10, 10, 10, 0.85);
             backdrop-filter: blur(8px);
             border-bottom: 1px solid rgba(212, 175, 55, 0.3);
             z-index: 1000;
@@ -120,8 +127,6 @@
             align-items: center;
             gap: 12px;
             letter-spacing: 2px;
-            cursor: pointer;
-            text-decoration: none;
         }
 
         .header-logo {
@@ -137,11 +142,25 @@
             letter-spacing: 3px;
         }
 
-        .nav-links {
-            display: flex;
-            gap: 25px;
-            list-style: none;
-        }
+.nav-links {
+	            display: flex;
+	            gap: 40px;
+	            list-style: none;
+	        }
+
+	        /* Corrección: Ocultar el menú de navegación en móvil por defecto */
+	        @media (max-width: 768px) {
+	            .nav-links {
+	                /* En móvil, el menú es un overlay. Lo ocultamos completamente en el estado cerrado
+	                   para que no interfiera con el layout de la barra de navegación. */
+	                display: none; 
+	                /* Las propiedades de overlay (position: fixed, transform: translateX(100%))
+	                   se mantienen en el bloque de media query original. */
+	            }
+	            .nav-links.open {
+	                display: flex; /* Lo mostramos como flex cuando está abierto */
+	            }
+	        }
 
         .nav-links a {
             color: #d4af37;
@@ -150,7 +169,6 @@
             letter-spacing: 2px;
             transition: all 0.3s ease;
             position: relative;
-            white-space: nowrap;
         }
 
         .nav-links a::after {
@@ -172,31 +190,34 @@
             text-shadow: 0 0 15px rgba(212, 175, 55, 0.8);
         }
 
-        /* Botón hamburguesa */
-        .hamburger-menu {
-            display: none;
-            background: transparent;
-            border: none;
-            color: #d4af37;
-            font-size: 1.8rem;
-            cursor: pointer;
-            z-index: 1001;
-            padding: 10px;
-            transition: color 0.3s ease;
-        }
+/* --- NUEVOS ESTILOS PARA LA HAMBURGUESA --- */
 
-        .hamburger-menu:hover {
-            color: #fff;
-            text-shadow: 0 0 10px rgba(212, 175, 55, 0.8);
-        }
+	        .hamburger-menu {
+	            display: none; /* Oculto por defecto en escritorio */
+	            background: transparent;
+	            border: none;
+	            color: #d4af37;
+	            font-size: 1.5rem;
+	            cursor: pointer;
+	            z-index: 1010; 
+	            transition: all 0.3s ease;
+	        }
 
+	        /* Corrección: Asegurar que el botón de hamburguesa se muestre en móvil */
+	        @media (max-width: 768px) {
+	            .hamburger-menu {
+	                display: block; /* Mostrar en móvil */
+	            }
+	        }
+
+        /* Footer */
         footer {
             background: rgba(10, 10, 10, 0.85);
             border-top: 1px solid rgba(212, 175, 55, 0.3);
             padding: 60px 40px 30px;
             margin-top: 60px;
             position: relative;
-            z-index: 5;
+            z-index: 5; /* Asegura que esté sobre el overlay */
             backdrop-filter: blur(4px);
         }
 
@@ -266,6 +287,7 @@
             font-size: 0.9rem;
         }
 
+        /* Botón de música */
         .music-toggle {
             position: fixed;
             bottom: 30px;
@@ -287,15 +309,12 @@
             animation: float 3s ease-in-out infinite;
         }
 
-        .music-toggle:hover {
-            background: rgba(212, 175, 55, 0.3);
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
-        }
-
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
         }
+
+        /* --- ESTILOS ESPECÍFICOS DE SANTERÍA (Cueva Ancestral) --- */
 
         .santeria-main {
             padding: 120px 20px 60px;
@@ -324,6 +343,7 @@
             font-weight: 400;
         }
 
+        /* Estilos de la Curandera/Cueva Ancestral (ESTE YA ES EL EFECTO CRISTAL) */
         .ancestral-cueva {
             max-width: 1200px;
             margin: 0 auto;
@@ -332,15 +352,17 @@
             border-radius: 15px;
             padding: 40px;
             box-shadow: 0 0 60px rgba(212, 175, 55, 0.2);
-            backdrop-filter: blur(10px);
-            z-index: 3;
+            backdrop-filter: blur(10px); /* El efecto de cristal */
+            z-index: 3; /* Asegura que esté sobre el overlay */
         }
 
+        /* Barra de Búsqueda */
         .search-bar {
             display: flex;
             justify-content: center;
             margin-bottom: 40px;
         }
+/* ... (el resto de los estilos se mantiene) ... */
 
         .search-bar input {
             width: 100%;
@@ -367,6 +389,7 @@
             box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
         }
 
+        /* Filtros/Categorías */
         .filters {
             display: flex;
             justify-content: center;
@@ -396,12 +419,14 @@
             box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
         }
 
+        /* Grid de Productos */
         .product-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 40px;
         }
 
+        /* Tarjeta de Producto (Muy Moderna) */
         .product-card {
             background: rgba(20, 20, 20, 0.7);
             border: 1px solid rgba(212, 175, 55, 0.3);
@@ -480,35 +505,53 @@
         /* Responsive */
         @media (max-width: 768px) {
             .section-header h1 {
-                font-size: 2.8rem;
+                font-size: 3rem;
             }
             .section-header h2 {
-                font-size: 1.1rem;
-            }
-            nav {
-                padding: 0 20px;
-            }
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background: rgba(10, 10, 10, 0.98);
-                border-top: 1px solid rgba(212, 175, 55, 0.3);
-                padding: 20px 0;
-                text-align: center;
-                gap: 20px;
+                font-size: 1.2rem;
             }
             
-            .nav-links.active { 
-                display: flex;
-            }
-            
+            /* --- ESTILOS DE HAMBURGUESA EN MÓVIL --- */
+
+            /* 1. Mostrar el botón de hamburguesa */
             .hamburger-menu {
-                display: block;
+                display: block; 
             }
+            
+            /* 2. Estilo del nav y logo en móvil */
+            header nav {
+                padding: 0 20px;
+                /* Resetear la flex direction que podría estar en otro lado */
+                flex-direction: row; 
+            }
+
+/* 3. Ocultar y estilizar el menú principal como un overlay */
+	            .nav-links {
+	                /* Eliminamos el 'display: flex' de aquí, ya que lo manejamos en la media query de arriba */
+	                flex-direction: column;
+	                position: fixed;
+	                top: 0;
+	                right: 0;
+	                width: 70%; 
+	                height: 100%;
+	                background: #000000; /* Fondo negro sólido */ 
+	                border-left: 1px solid rgba(212, 175, 55, 0.3);
+	                padding-top: 100px;
+	                transform: translateX(100%); /* Oculto fuera de la vista */
+	                transition: transform 0.5s cubic-bezier(0.7, 0, 0.3, 1);
+	                z-index: 1000;
+	                gap: 30px;
+	                align-items: center;
+	            }
+
+            /* 4. Clase para mostrar el menú */
+            .nav-links.open {
+                transform: translateX(0); /* Mostrar el menú */
+                box-shadow: -10px 0 30px rgba(0, 0, 0, 0.7);
+            }
+            
+            /* --- RESTO DE ESTILOS MÓVILES --- */
+            
             .ancestral-cueva {
                 padding: 20px;
             }
@@ -520,37 +563,35 @@
                 gap: 10px;
             }
             .filter-btn {
-                padding: 8px 12px;
+                padding: 8px 15px;
                 font-size: 0.8rem;
             }
-            .product-grid {
-                grid-template-columns: 1fr;
-                gap: 30px;
-            }
         }
+
     </style>
 </head>
 <body>
     <div class="particles" id="particles"></div>
-
+    
     <header>
-        <nav>
-            <a href="index.html" class="logo" id="logoHeader">
-                <img src="logo.png" alt="Logo Artilugios" class="header-logo" />
-                <span class="logo-text">Artilugios</span>
-            </a>
-            <button class="hamburger-menu" id="hamburgerBtn" aria-label="Menú de Navegación">
-                <i class="fas fa-bars"></i>
-            </button>
-            <ul class="nav-links" id="navLinks">
-                <li><a href="index.html">INICIO</a></li>
-                <li><a href="santeria.html">SANTERÍA</a></li>
-                <li><a href="vivero.html">VIVERO</a></li>
-                <li><a href="oraculo.html">ORÁCULO</a></li>
-                <li><a href="#contacto">CONTACTO</a></li>
-            </ul>
-        </nav>
-    </header>
+    <nav>
+        <a href="index.html" class="logo">
+            <img src="logo.png" alt="Logo Artilugios" class="header-logo" />
+            <span class="logo-text">Artilugios</span>
+        </a>
+        
+        <button class="hamburger-menu" id="hamburgerBtn">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <ul class="nav-links" id="navLinks"> 
+            <li><a href="index.html">INICIO</a></li>
+            <li class="active"><a href="santeria.html">SANTERÍA</a></li> <li><a href="vivero.html">VIVERO</a></li>
+            <li><a href="oraculo.html">ORÁCULO</a></li>
+            <li><a href="#contacto">CONTACTO</a></li>
+        </ul>
+    </nav>
+</header>
 
     <main class="santeria-main">
         <section class="section-header">
@@ -572,6 +613,7 @@
             </div>
 
             <div class="product-grid">
+
                 <div class="product-card">
                     <div class="product-image-container">
                         <i class="fas fa-hand-holding-heart"></i>
@@ -607,7 +649,7 @@
                         <a href="#" class="buy-btn">COMPRAR</a>
                     </div>
                 </div>
-
+                
                 <div class="product-card">
                     <div class="product-image-container">
                         <i class="fas fa-crosshairs"></i>
@@ -619,6 +661,7 @@
                         <a href="#" class="buy-btn">COMPRAR</a>
                     </div>
                 </div>
+                
             </div>
         </div>
     </main>
@@ -631,7 +674,7 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h3>CONTACTO</h3>
-                <p>📧 info@artilugios.com</p>
+                <p>📧 info@art.ilugios.com</p>
                 <p>📱 +598 XX XXX XXX</p>
                 <p>📍 El Pinar, Uruguay</p>
             </div>
@@ -657,9 +700,11 @@
     </footer>
 
     <script>
-        // Partículas
+        // --- JS para partículas y música (copiado de index.html) ---
+
         const PARTICLE_COUNT = 60;
         const particlesContainer = document.getElementById('particles');
+
         for (let i = 0; i < PARTICLE_COUNT; i++) {
             const particle = document.createElement('div');
             particle.className = 'particle';
@@ -697,43 +742,32 @@
             }
             isPlaying = !isPlaying;
         });
-
-        // Logo click - Redirigir a index
-        document.getElementById('logoHeader').addEventListener('click', (e) => {
-            e.preventDefault();
-            window.location.href = 'index.html';
-        });
-
-        // Menú hamburguesa
+        
+        // --- JS para el Menú Hamburguesa ---
         const hamburgerBtn = document.getElementById('hamburgerBtn');
         const navLinks = document.getElementById('navLinks');
 
-        if (hamburgerBtn && navLinks) {
-            hamburgerBtn.addEventListener('click', () => {
-                navLinks.classList.toggle('active');
+        hamburgerBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('open');
+            
+            // Cambiar el ícono: X si está abierto, barras si está cerrado
+            if (navLinks.classList.contains('open')) {
+                hamburgerBtn.innerHTML = '<i class="fas fa-times"></i>'; 
+            } else {
+                hamburgerBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
 
-                const icon = hamburgerBtn.querySelector('i');
-                if (navLinks.classList.contains('active')) {
-                    icon.classList.remove('fa-bars');
-                    icon.classList.add('fa-times');
-                } else {
-                    icon.classList.remove('fa-times');
-                    icon.classList.add('fa-bars');
+        // Cerrar el menú al hacer clic en cualquier enlace (para que navegue)
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (navLinks.classList.contains('open')) {
+                    navLinks.classList.remove('open');
+                    hamburgerBtn.innerHTML = '<i class="fas fa-bars"></i>';
                 }
             });
+        });
 
-            // Cerrar menú al hacer clic en un enlace
-            navLinks.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', () => {
-                    if (window.innerWidth <= 768) {
-                        navLinks.classList.remove('active');
-                        const icon = hamburgerBtn.querySelector('i');
-                        icon.classList.remove('fa-times');
-                        icon.classList.add('fa-bars');
-                    }
-                });
-            });
-        }
     </script>
 </body>
 </html>
