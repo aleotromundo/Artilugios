@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Artilugios - Proyecto Vivo</title>
-    <!-- UNICO CAMBIO: IMPORTACIÓN DE FUENTE CINZEL -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
-    
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" media="(prefers-color-scheme: light)">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" media="(prefers-color-scheme: light)">
     <link rel="icon" type="image/x-icon" href="favicon.ico" media="(prefers-color-scheme: light)">
@@ -900,7 +897,7 @@
     </div>
     <div class="info-popup" id="oraculoPopup">
         <h3>ORÁCULO</h3>
-        <p>Lectura de Tarot, Runas y otras artes adivinariaas. Descubre los mensajes del universo y encuentra guía en tu camino espiritual.</p>
+        <p>Lectura de Tarot, Runas y otras artes adivinatorias. Descubre los mensajes del universo y encuentra guía en tu camino espiritual.</p>
     </div>
     <button class="music-toggle" id="musicBtn">
         <i class="fas fa-volume-up"></i>
@@ -1156,7 +1153,7 @@
             }, 1000);
         });
 
-        // BOTON NORTE (SANTERÍA)
+        // === ✅ CORRECCIÓN AQUÍ: Hover completo para Santería ===
         const btnNorte = document.getElementById('btn-norte');
         const santeriaPopup = document.getElementById('santeriaPopup');
 
@@ -1193,7 +1190,6 @@
             }
         });
 
-        // BOTON ESTE (VIVERO)
         const btnEste = document.getElementById('btn-este');
         const viveroPopup = document.getElementById('viveroPopup');
         btnEste.addEventListener('mouseenter', function() {
@@ -1212,21 +1208,16 @@
                 const subtitle = document.getElementById('header-subtitle');
                 const title = document.getElementById('subtitle-title');
                 const description = document.getElementById('subtitle-description');
-                title.innerHTML = '<a href="vivero.html" class="vivero-btn">VIVERO</a>';
+                title.innerHTML = '<a href="#" class="vivero-btn">VIVERO</a>';
                 description.innerHTML = '<p class="vivero-description">Venta de plantas ornamentales, árboles frutales y de sombra. Encuentra la vegetación perfecta para tu jardín o espacio verde.</p>';
                 subtitle.style.opacity = '0';
                 setTimeout(() => {
                     subtitle.style.transition = 'opacity 0.6s ease';
                     subtitle.style.opacity = '1';
-                    const offset = 140;
-                    window.scrollTo({ top: subtitle.offsetTop - offset, behavior: 'smooth' });
                 }, 100);
-            } else {
-                window.location.href = 'vivero.html';
             }
         });
 
-        // BOTON OESTE (ORÁCULO)
         const btnOeste = document.getElementById('btn-oeste');
         const oraculoPopup = document.getElementById('oraculoPopup');
         btnOeste.addEventListener('mouseenter', function() {
@@ -1245,17 +1236,13 @@
                 const subtitle = document.getElementById('header-subtitle');
                 const title = document.getElementById('subtitle-title');
                 const description = document.getElementById('subtitle-description');
-                title.innerHTML = '<a href="oraculo.html" class="oraculo-btn">ORÁCULO</a>';
+                title.innerHTML = '<a href="#" class="oraculo-btn">ORÁCULO</a>';
                 description.innerHTML = '<p class="oraculo-description">Lectura de Tarot, Runas y otras artes adivinatorias. Descubre los mensajes del universo y encuentra guía en tu camino espiritual.</p>';
                 subtitle.style.opacity = '0';
                 setTimeout(() => {
                     subtitle.style.transition = 'opacity 0.6s ease';
                     subtitle.style.opacity = '1';
-                    const offset = 140;
-                    window.scrollTo({ top: subtitle.offsetTop - offset, behavior: 'smooth' });
                 }, 100);
-            } else {
-                window.location.href = 'oraculo.html';
             }
         });
 
