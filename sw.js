@@ -2,7 +2,7 @@
 const CACHE_NAME = 'artilugios-panel-v1';
 const ASSETS = [
   '/',
-  './panel2.html',
+  './panel.html',
   './manifest.json',
   './logo-192.png',
   './logo-512.png'
