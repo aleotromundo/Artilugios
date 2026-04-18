@@ -2,7 +2,7 @@
   "name": "Artilugios Panel",
   "short_name": "Panel",
   "description": "Panel de gestión de productos — Artilugios",
-  "start_url": "./panel.html",
+  "start_url": "./panel2.html",
   "display": "standalone",
   "background_color": "#110a05",
   "theme_color": "#1a0f07",
