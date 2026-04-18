@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Artilugios - Proyecto Vivo</title>
-    <!-- IMPORTACIÓN DE FUENTE CINZEL -->
+    <!-- UNICO CAMBIO: IMPORTACIÓN DE FUENTE CINZEL -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" media="(prefers-color-scheme: light)">
@@ -867,8 +867,7 @@
                 <i class="fas fa-bars"></i>
             </button>
             <ul class="nav-links" id="navLinks">
-                <!-- CAMBIO AQUÍ: ID btn-nav-inicio agregado y href modificado -->
-                <li><a href="#" id="btn-nav-inicio">INICIO</a></li>
+                <li><a href="index.html" onclick="document.getElementById('hero-logo').click(); return false;">INICIO</a></li>
                 <li><a href="santeria.html">SANTERÍA</a></li>
                 <li><a href="vivero.html">VIVERO</a></li>
                 <li><a href="oraculo.html">ORÁCULO</a></li>
@@ -878,7 +877,7 @@
     </header>
     <div id="hero">
         <div class="hero-container">
-            <img src="logo.png" alt="Logo Artilugios" class="hero-logo" id="hero-logo" />
+            <img src="logo.png" alt="Logo Art.ilugios" class="hero-logo" id="hero-logo" />
             <img src="laurel.png" alt="Laurel" id="laurel" />
             <img src="sol.png" alt="Símbolo del Sol" class="hero-symbol" id="sol" />
             <img src="luna.png" alt="Símbolo de la Luna" class="hero-symbol" id="luna" />
@@ -901,7 +900,7 @@
     </div>
     <div class="info-popup" id="oraculoPopup">
         <h3>ORÁCULO</h3>
-        <p>Lectura de Tarot, Runas y otras artes adivinarias. Descubre los mensajes del universo y encuentra guía en tu camino espiritual.</p>
+        <p>Lectura de Tarot, Runas y otras artes adivinariaas. Descubre los mensajes del universo y encuentra guía en tu camino espiritual.</p>
     </div>
     <button class="music-toggle" id="musicBtn">
         <i class="fas fa-volume-up"></i>
@@ -910,7 +909,7 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h3>CONTACTO</h3>
-                <p>📧 info@artilugios.com</p>
+                <p>📧 info@art.ilugios.com</p>
                 <p>📱 +598 XX XXX XXX</p>
                 <p>📍 El Pinar, Uruguay</p>
             </div>
@@ -1023,7 +1022,7 @@
         document.querySelectorAll('.nav-links a').forEach(link => {
             link.addEventListener('click', (e) => {
                 const href = link.getAttribute('href');
-                if (href.startsWith('#') && link.id !== 'btn-nav-inicio') {
+                if (href.startsWith('#')) {
                     e.preventDefault();
                     const hash = href.substring(1);
                     if (hash === 'contacto') {
@@ -1309,33 +1308,6 @@
                 });
             });
         }
-
-        // =========================================================
-        // NUEVO: Lógica para el botón INICIO de la barra de navegación
-        // =========================================================
-        document.getElementById('btn-nav-inicio').addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // 1. Subir al tope de la página de forma suave
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            
-            // 2. Si estamos en un celular, cerramos el menú hamburguesa
-            if (window.innerWidth <= 768) {
-                const navLinks = document.getElementById('navLinks');
-                const hamburgerBtn = document.getElementById('hamburgerBtn');
-                navLinks.classList.remove('active');
-                if (hamburgerBtn.querySelector('i')) {
-                    hamburgerBtn.querySelector('i').classList.remove('fa-times');
-                    hamburgerBtn.querySelector('i').classList.add('fa-bars');
-                }
-            }
-
-            // 3. Esperamos a que termine el scroll (aprox 600ms) y detonamos la animación
-            setTimeout(() => {
-                const heroLogo = document.getElementById('hero-logo');
-                if (heroLogo) heroLogo.click();
-            }, 600);
-        });
     </script>
 </body>
 </html>
