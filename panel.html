@@ -53,13 +53,24 @@ body { font-family: 'Crimson Pro', Georgia, serif; background: var(--bg); color:
 
 /* GRID & CARDS */
 .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-top:20px; }
-.product-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.product-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: opacity var(--trans); }
+.product-card.inactivo { opacity: 0.45; }
 .product-img { width: 100%; height: 160px; object-fit: cover; }
 .product-body { padding: 16px; }
 .product-name { font-family: 'Cinzel', serif; font-size: .95rem; color: var(--text); margin-bottom: 5px; }
-.product-actions { display: flex; gap: 8px; margin-top: 12px; }
+.product-actions { display: flex; gap: 8px; margin-top: 12px; align-items: center; }
 .action-btn { flex: 1; padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); color: var(--muted); cursor: pointer; font-family: 'Crimson Pro', serif;}
 .action-btn.delete:hover { color: #e74c3c; border-color: rgba(231,76,60,.4); }
+
+/* TOGGLE ACTIVO */
+.toggle-wrap { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+.toggle-label { font-family: 'Cinzel', serif; font-size: .7rem; letter-spacing: 1px; color: var(--muted); }
+.toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-slider { position: absolute; inset: 0; background: var(--surface2); border: 1px solid var(--border); border-radius: 24px; cursor: pointer; transition: background var(--trans), border-color var(--trans); }
+.toggle-slider::before { content: ''; position: absolute; left: 3px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; background: var(--muted); border-radius: 50%; transition: transform var(--trans), background var(--trans); }
+.toggle input:checked + .toggle-slider { background: rgba(46,204,113,.15); border-color: var(--success); }
+.toggle input:checked + .toggle-slider::before { transform: translate(20px, -50%); background: var(--success); }
 
 /* MODAL */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.8); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .3s ease; }
@@ -203,7 +214,7 @@ function renderProducts() {
     const grid = document.getElementById('productsGrid');
     const list = currentSection === 'all' ? allProducts : allProducts.filter(p => p.seccion === currentSection);
     grid.innerHTML = list.map(p => `
-        <div class="product-card">
+        <div class="product-card ${p.activo ? '' : 'inactivo'}" id="card-${p.id}">
             <img src="${p.imagen_url || 'https://via.placeholder.com/300x200?text=Sin+Foto'}" class="product-img">
             <div class="product-body">
                 <div class="product-name">${p.nombre}</div>
@@ -212,9 +223,39 @@ function renderProducts() {
                     <button class="action-btn" onclick="openModal('${p.id}')">Editar</button>
                     <button class="action-btn delete" onclick="deleteProd('${p.id}')">Borrar</button>
                 </div>
+                <div class="toggle-wrap">
+                    <label class="toggle">
+                        <input type="checkbox" ${p.activo ? 'checked' : ''} onchange="toggleActivo('${p.id}', this.checked)"/>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label" id="toggle-label-${p.id}">${p.activo ? 'VISIBLE' : 'OCULTO'}</span>
+                </div>
             </div>
         </div>
     `).join('');
+}
+
+async function toggleActivo(id, activo) {
+    // Actualizar visualmente la card al instante
+    const card = document.getElementById('card-' + id);
+    const label = document.getElementById('toggle-label-' + id);
+    if(activo) {
+        card.classList.remove('inactivo');
+        label.textContent = 'VISIBLE';
+    } else {
+        card.classList.add('inactivo');
+        label.textContent = 'OCULTO';
+    }
+    // Actualizar en Supabase
+    const { error } = await sb.from('productos').update({ activo }).eq('id', id);
+    if(error) {
+        showToast('Error al guardar');
+    } else {
+        // Actualizar en memoria local también
+        const prod = allProducts.find(p => p.id === id);
+        if(prod) prod.activo = activo;
+        showToast(activo ? 'Producto visible' : 'Producto oculto');
+    }
 }
 
 // Comprimir a WEBP
@@ -242,7 +283,6 @@ function openModal(id=null) {
     document.getElementById('modalOverlay').classList.add('open');
     document.getElementById('productId').value = id || '';
     document.getElementById('imgFile').value = '';
-    
     fotosGuardadas = [];
     fotosNuevas = [];
     
