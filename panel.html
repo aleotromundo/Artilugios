@@ -14,6 +14,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
 <!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
@@ -142,6 +146,41 @@ body { font-family: 'Crimson Pro', Georgia, serif; background: var(--bg); color:
 
 .analytics-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 @media (max-width: 600px) { .analytics-two-col { grid-template-columns: 1fr; } }
+
+/* ── MAP PICKER ── */
+#mapPickerOverlay { position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:500; display:none; align-items:center; justify-content:center; }
+#mapPickerOverlay.open { display:flex; }
+#mapPickerBox { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:20px; width:min(95vw,640px); }
+#mapPickerBox h3 { font-family:'Cinzel',serif; font-size:.85rem; letter-spacing:2px; color:var(--gold); margin-bottom:14px; }
+#mapSearchRow { display:flex; gap:8px; margin-bottom:12px; }
+#mapSearchInput { flex:1; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:10px 14px; color:var(--text); font-family:'Crimson Pro',serif; font-size:.95rem; outline:none; }
+#mapSearchInput:focus { border-color:var(--gold); }
+#mapSearchBtn { padding:10px 16px; background:linear-gradient(135deg,rgba(201,162,77,.15),rgba(201,162,77,.28)); border:1px solid var(--gold-dim); border-radius:var(--radius); color:var(--gold); font-family:'Cinzel',serif; font-size:.75rem; cursor:pointer; white-space:nowrap; }
+#mapLeaflet { width:100%; height:340px; border:1px solid var(--border); border-radius:var(--radius); z-index:1; }
+#mapGpsBtn { width:100%; padding:11px; background:linear-gradient(135deg,rgba(201,162,77,.1),rgba(201,162,77,.22)); border:1px solid var(--gold-dim); border-radius:var(--radius); color:var(--gold); font-family:'Cinzel',serif; font-size:.75rem; letter-spacing:2px; cursor:pointer; margin-bottom:10px; display:flex; align-items:center; justify-content:center; gap:8px; }
+#mapGpsBtn:hover { background:rgba(201,162,77,.3); }
+#mapPickerInfo { margin-top:10px; font-size:.82rem; color:var(--muted); font-family:'Cinzel',serif; letter-spacing:1px; min-height:18px; }
+#mapPickerActions { display:flex; gap:10px; margin-top:14px; }
+.btn-map-confirm { flex:1; padding:12px; background:var(--gold); border:none; border-radius:var(--radius); color:#000; font-family:'Cinzel',serif; font-weight:bold; cursor:pointer; }
+.btn-map-cancel  { padding:12px 18px; background:transparent; border:1px solid var(--border); color:var(--muted); border-radius:var(--radius); font-family:'Cinzel',serif; cursor:pointer; }
+.btn-map-pick { padding:6px 12px; background:transparent; border:1px solid var(--border); border-radius:8px; color:var(--muted); font-size:.75rem; font-family:'Cinzel',serif; cursor:pointer; margin-top:6px; }
+.btn-map-pick:hover { border-color:var(--gold); color:var(--gold); }
+
+/* ── CONTACTO FIELDS ── */
+.cf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 0; }
+@media (max-width: 560px) { .cf-row { grid-template-columns: 1fr; } }
+.cf-field-wrap { margin-bottom: 16px; }
+.cf-label-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.cf-label { font-family: 'Cinzel', serif; font-size: .72rem; letter-spacing: 1.5px; color: var(--muted); flex: 1; }
+.cf-toggle { width: 36px; height: 20px; flex-shrink: 0; }
+.cf-toggle .toggle-slider::before { width: 13px; height: 13px; }
+.cf-toggle input:checked + .toggle-slider { background: rgba(46,204,113,.15); border-color: var(--success); }
+.cf-toggle input:checked + .toggle-slider::before { transform: translate(16px, -50%); background: var(--success); }
+.cf-vis-label { font-family: 'Cinzel', serif; font-size: .65rem; letter-spacing: 1px; color: var(--muted); width: 44px; flex-shrink: 0; }
+.cf-input { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 11px 14px; color: var(--text); font-family: 'Crimson Pro', serif; font-size: .95rem; outline: none; transition: border-color var(--trans), opacity var(--trans); }
+.cf-input:focus { border-color: var(--gold); }
+.cf-input.oculto { opacity: .35; }
+
 </style>
 </head>
 <body>
@@ -175,6 +214,8 @@ body { font-family: 'Crimson Pro', Georgia, serif; background: var(--bg); color:
     <button class="tab-btn" onclick="switchTab('vivero', this)">VIVERO</button>
     <button class="tab-btn" onclick="switchTab('oraculo', this)">ORÁCULO</button>
     <button class="tab-btn" onclick="switchTab('analytics', this)">ANALYTICS</button>
+    <button class="tab-btn" onclick="switchTab('categorias', this)">CATEGORÍAS</button>
+    <button class="tab-btn" onclick="switchTab('contacto', this)">CONTACTO</button>
   </div>
 
   <!-- PRODUCTOS -->
@@ -184,6 +225,138 @@ body { font-family: 'Crimson Pro', Georgia, serif; background: var(--bg); color:
       <button class="btn-add" onclick="openModal()"><i class="fas fa-plus"></i> AGREGAR</button>
     </div>
     <div class="products-grid" id="productsGrid"></div>
+  </div>
+
+  <!-- CATEGORÍAS -->
+  <div class="main" id="tab-categorias" style="display:none;">
+    <div class="section-header">
+      <div class="section-title">CATEGORÍAS</div>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;">
+      <button class="range-btn active" id="catTab-santeria" onclick="switchCatSeccion('santeria')">SANTERÍA</button>
+      <button class="range-btn" id="catTab-vivero" onclick="switchCatSeccion('vivero')">VIVERO</button>
+      <button class="range-btn" id="catTab-oraculo" onclick="switchCatSeccion('oraculo')">ORÁCULO</button>
+    </div>
+    <div id="catList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px;"></div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <input type="text" id="nuevaCatInput" placeholder="Nueva categoría..." style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;color:var(--text);font-family:'Crimson Pro',serif;font-size:1rem;" />
+      <button class="btn-save" style="flex:0 0 auto;padding:12px 20px;" onclick="agregarCategoria()">AGREGAR</button>
+    </div>
+  </div>
+
+  <!-- CONTACTO -->
+  <div class="main" id="tab-contacto" style="display:none;">
+    <div class="section-header">
+      <div class="section-title">DATOS DE CONTACTO</div>
+      <button class="btn-add" onclick="guardarContacto()"><i class="fas fa-save"></i> GUARDAR</button>
+    </div>
+    <p style="color:var(--muted);font-size:.82rem;margin-bottom:24px;letter-spacing:1px;">
+      Editá el texto y usá el interruptor para mostrar u ocultar cada dato en el sitio.
+    </p>
+
+    <!-- Sección: Info -->
+    <div style="font-family:'Cinzel',serif;font-size:.78rem;color:var(--gold);letter-spacing:2px;margin-bottom:14px;">INFORMACIÓN</div>
+
+    <div class="cf-row">
+      <div class="cf-field-wrap">
+        <div class="cf-label-row">
+          <label class="cf-label"><i class="fas fa-envelope" style="margin-right:6px;opacity:.6"></i>EMAIL</label>
+          <label class="toggle cf-toggle"><input type="checkbox" id="vis-email" checked/><span class="toggle-slider"></span></label>
+          <span class="cf-vis-label" id="vislbl-email">VISIBLE</span>
+        </div>
+        <input type="email" id="c-email" class="cf-input" placeholder="info@artilugios.com" value="info@artilugios.com"/>
+      </div>
+      <div class="cf-field-wrap">
+        <div class="cf-label-row">
+          <label class="cf-label"><i class="fas fa-phone" style="margin-right:6px;opacity:.6"></i>TELÉFONO</label>
+          <label class="toggle cf-toggle"><input type="checkbox" id="vis-telefono" checked/><span class="toggle-slider"></span></label>
+          <span class="cf-vis-label" id="vislbl-telefono">VISIBLE</span>
+        </div>
+        <input type="text" id="c-telefono" class="cf-input" placeholder="+598 98 496 320" value="+598 98 496 320"/>
+      </div>
+    </div>
+
+    <div class="cf-field-wrap" style="margin-bottom:20px;">
+      <div class="cf-label-row">
+        <label class="cf-label"><i class="fas fa-map-marker-alt" style="margin-right:6px;opacity:.6"></i>DIRECCIÓN</label>
+        <label class="toggle cf-toggle"><input type="checkbox" id="vis-direccion" checked/><span class="toggle-slider"></span></label>
+        <span class="cf-vis-label" id="vislbl-direccion">VISIBLE</span>
+      </div>
+      <input type="text" id="c-direccion" class="cf-input" placeholder="El Pinar, Uruguay" value="El Pinar, Uruguay"/>
+      <input type="hidden" id="c-lat" value=""/>
+      <input type="hidden" id="c-lng" value=""/>
+      <button class="btn-map-pick" onclick="abrirMapPicker()"><i class="fas fa-map-marker-alt" style="margin-right:5px;"></i>ELEGIR EN EL MAPA</button>
+    </div>
+
+    <!-- Sección: Horarios -->
+    <div style="font-family:'Cinzel',serif;font-size:.78rem;color:var(--gold);letter-spacing:2px;margin-bottom:14px;margin-top:8px;">HORARIOS</div>
+
+    <div class="cf-field-wrap">
+      <div class="cf-label-row">
+        <label class="cf-label">LÍNEA 1</label>
+        <label class="toggle cf-toggle"><input type="checkbox" id="vis-horario1" checked/><span class="toggle-slider"></span></label>
+        <span class="cf-vis-label" id="vislbl-horario1">VISIBLE</span>
+      </div>
+      <input type="text" id="c-horario1" class="cf-input" placeholder="Lunes a Viernes: 10:00 - 19:00" value="Lunes a Viernes: 10:00 - 19:00"/>
+    </div>
+    <div class="cf-field-wrap">
+      <div class="cf-label-row">
+        <label class="cf-label">LÍNEA 2</label>
+        <label class="toggle cf-toggle"><input type="checkbox" id="vis-horario2" checked/><span class="toggle-slider"></span></label>
+        <span class="cf-vis-label" id="vislbl-horario2">VISIBLE</span>
+      </div>
+      <input type="text" id="c-horario2" class="cf-input" placeholder="Sábados: 10:00 - 14:00" value="Sábados: 10:00 - 14:00"/>
+    </div>
+    <div class="cf-field-wrap" style="margin-bottom:20px;">
+      <div class="cf-label-row">
+        <label class="cf-label">LÍNEA 3</label>
+        <label class="toggle cf-toggle"><input type="checkbox" id="vis-horario3" checked/><span class="toggle-slider"></span></label>
+        <span class="cf-vis-label" id="vislbl-horario3">VISIBLE</span>
+      </div>
+      <input type="text" id="c-horario3" class="cf-input" placeholder="Domingos: Cerrado" value="Domingos: Cerrado"/>
+    </div>
+
+    <!-- Sección: Redes -->
+    <div style="font-family:'Cinzel',serif;font-size:.78rem;color:var(--gold);letter-spacing:2px;margin-bottom:14px;margin-top:8px;">REDES SOCIALES</div>
+
+    <div class="cf-row">
+      <div class="cf-field-wrap">
+        <div class="cf-label-row">
+          <label class="cf-label"><i class="fab fa-facebook-f" style="margin-right:6px;opacity:.6"></i>FACEBOOK</label>
+          <label class="toggle cf-toggle"><input type="checkbox" id="vis-facebook"/><span class="toggle-slider"></span></label>
+          <span class="cf-vis-label" id="vislbl-facebook">OCULTO</span>
+        </div>
+        <input type="text" id="c-facebook" class="cf-input" placeholder="https://facebook.com/artilugios"/>
+      </div>
+      <div class="cf-field-wrap">
+        <div class="cf-label-row">
+          <label class="cf-label"><i class="fab fa-instagram" style="margin-right:6px;opacity:.6"></i>INSTAGRAM</label>
+          <label class="toggle cf-toggle"><input type="checkbox" id="vis-instagram"/><span class="toggle-slider"></span></label>
+          <span class="cf-vis-label" id="vislbl-instagram">OCULTO</span>
+        </div>
+        <input type="text" id="c-instagram" class="cf-input" placeholder="https://instagram.com/artilugios"/>
+      </div>
+    </div>
+    <div class="cf-row">
+      <div class="cf-field-wrap">
+        <div class="cf-label-row">
+          <label class="cf-label"><i class="fab fa-whatsapp" style="margin-right:6px;opacity:.6"></i>WHATSAPP</label>
+          <label class="toggle cf-toggle"><input type="checkbox" id="vis-whatsapp"/><span class="toggle-slider"></span></label>
+          <span class="cf-vis-label" id="vislbl-whatsapp">OCULTO</span>
+        </div>
+        <input type="text" id="c-whatsapp" class="cf-input" placeholder="098 496 320 o https://wa.me/598..."/>
+      </div>
+      <div class="cf-field-wrap">
+        <div class="cf-label-row">
+          <label class="cf-label"><i class="fab fa-youtube" style="margin-right:6px;opacity:.6"></i>YOUTUBE</label>
+          <label class="toggle cf-toggle"><input type="checkbox" id="vis-youtube"/><span class="toggle-slider"></span></label>
+          <span class="cf-vis-label" id="vislbl-youtube">OCULTO</span>
+        </div>
+        <input type="text" id="c-youtube" class="cf-input" placeholder="https://youtube.com/@artilugios"/>
+      </div>
+    </div>
+
+    <button class="btn-save" style="margin-top:16px;width:100%;" onclick="guardarContacto()">GUARDAR CAMBIOS</button>
   </div>
 
   <!-- ANALYTICS -->
@@ -217,7 +390,10 @@ body { font-family: 'Crimson Pro', Georgia, serif; background: var(--bg); color:
     <div class="form-group"><label>DESCRIPCIÓN LARGA (Al hacer clic)</label><textarea id="productDescLarga" rows="4" placeholder="Modo de uso, detalles del producto, propiedades..."></textarea></div>
     <div class="form-row">
       <div class="form-group"><label>PRECIO ($ UYU)</label><input type="number" id="productPrice"/></div>
-      <div class="form-group"><label>CATEGORÍA (Filtro)</label><input type="text" id="productCategory" placeholder="Ej: velas, hierbas"/></div>
+      <div class="form-group">
+        <label>CATEGORÍA (Filtro)</label>
+        <select id="productCategory"></select>
+      </div>
     </div>
     <div class="form-group">
       <label>GALERÍA DE IMÁGENES</label>
@@ -236,6 +412,24 @@ body { font-family: 'Crimson Pro', Georgia, serif; background: var(--bg); color:
 </div>
 
 <div class="toast" id="toast">Notificación</div>
+
+<!-- MAP PICKER MODAL -->
+<div id="mapPickerOverlay">
+  <div id="mapPickerBox">
+    <h3><i class="fas fa-map-marker-alt" style="margin-right:8px;"></i>ELEGIR UBICACIÓN</h3>
+    <button id="mapGpsBtn" onclick="usarGPS()"><i class="fas fa-location-arrow"></i> USAR MI UBICACIÓN ACTUAL</button>
+    <div id="mapSearchRow">
+      <input type="text" id="mapSearchInput" placeholder="O buscá la dirección..." onkeydown="if(event.key==='Enter')buscarEnMapa()"/>
+      <button id="mapSearchBtn" onclick="buscarEnMapa()">BUSCAR</button>
+    </div>
+    <div id="mapLeaflet"></div>
+    <div id="mapPickerInfo" style="margin-top:10px;">Tocá el mapa o arrastrá el pin para elegir la posición exacta.</div>
+    <div id="mapPickerActions">
+      <button class="btn-map-cancel" onclick="cerrarMapPicker()">CANCELAR</button>
+      <button class="btn-map-confirm" id="mapConfirmBtn" onclick="confirmarUbicacion()" disabled style="opacity:.5">CONFIRMAR UBICACIÓN</button>
+    </div>
+  </div>
+</div>
 
 <script>
 const { createClient } = supabase;
@@ -261,6 +455,8 @@ async function handleLogin() {
 async function showApp() {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').style.display = 'block';
+    initContactoToggles();
+    await cargarCategoriasDB();
     await loadProducts();
 }
 
@@ -273,14 +469,145 @@ async function loadProducts() {
 function switchTab(sec, btn) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    document.getElementById('tab-productos').style.display = sec === 'analytics' ? 'none' : 'block';
-    document.getElementById('tab-analytics').style.display = sec === 'analytics' ? 'block' : 'none';
+    document.getElementById('tab-productos').style.display  = (sec === 'analytics' || sec === 'categorias' || sec === 'contacto') ? 'none' : 'block';
+    document.getElementById('tab-analytics').style.display  = sec === 'analytics'  ? 'block' : 'none';
+    document.getElementById('tab-categorias').style.display = sec === 'categorias' ? 'block' : 'none';
+    document.getElementById('tab-contacto').style.display   = sec === 'contacto'   ? 'block' : 'none';
     if(sec === 'analytics') {
         loadAnalytics();
+    } else if(sec === 'categorias') {
+        loadCategorias();
+    } else if(sec === 'contacto') {
+        loadContacto();
     } else {
         currentSection = sec;
         renderProducts();
     }
+}
+
+// Campos con sus IDs de toggle y valores por defecto del sitio
+const CONTACTO_DEFAULTS = {
+    email:     { val: 'info@artilugios.com',          vis: true },
+    telefono:  { val: '+598 98 496 320',              vis: true },
+    direccion: { val: 'El Pinar, Uruguay',            vis: true },
+    horario1:  { val: 'Lunes a Viernes: 10:00 - 19:00', vis: true },
+    horario2:  { val: 'Sábados: 10:00 - 14:00',      vis: true },
+    horario3:  { val: 'Domingos: Cerrado',            vis: true },
+    facebook:  { val: '',                             vis: false },
+    instagram: { val: '',                             vis: false },
+    whatsapp:  { val: '098496320',                    vis: false },
+    youtube:   { val: '',                             vis: false },
+};
+
+function initContactoToggles() {
+    Object.keys(CONTACTO_DEFAULTS).forEach(key => {
+        const toggle = document.getElementById('vis-' + key);
+        const label  = document.getElementById('vislbl-' + key);
+        const input  = document.getElementById('c-' + key);
+        if (!toggle) return;
+        toggle.addEventListener('change', () => {
+            label.textContent = toggle.checked ? 'VISIBLE' : 'OCULTO';
+            label.style.color = toggle.checked ? 'var(--success)' : '';
+            input.classList.toggle('oculto', !toggle.checked);
+        });
+    });
+}
+
+function setToggle(key, checked) {
+    const toggle = document.getElementById('vis-' + key);
+    const label  = document.getElementById('vislbl-' + key);
+    const input  = document.getElementById('c-' + key);
+    if (!toggle) return;
+    toggle.checked = checked;
+    label.textContent = checked ? 'VISIBLE' : 'OCULTO';
+    label.style.color = checked ? 'var(--success)' : '';
+    input.classList.toggle('oculto', !checked);
+}
+
+async function loadContacto() {
+    // Primero aplicar defaults
+    Object.entries(CONTACTO_DEFAULTS).forEach(([key, cfg]) => {
+        const input = document.getElementById('c-' + key);
+        if (input) input.value = cfg.val;
+        setToggle(key, cfg.vis);
+    });
+    // Luego sobreescribir con lo que haya en Supabase
+    try {
+        const { data } = await sb.from('contacto_info').select('*').limit(1).single();
+        if (!data) return;
+        Object.keys(CONTACTO_DEFAULTS).forEach(key => {
+            const input = document.getElementById('c-' + key);
+            if (input && data[key] !== undefined && data[key] !== null) {
+                // Para redes: '#' significa oculto y sin URL real
+                const isRed = ['facebook','instagram','whatsapp','youtube'].includes(key);
+                if (isRed) {
+                    const visible = data[key] && data[key] !== '#';
+                    input.value = visible ? data[key] : '';
+                    setToggle(key, visible);
+                } else {
+                    input.value = data[key];
+                    const visKey = 'vis_' + key;
+                    if (data[visKey] !== undefined) setToggle(key, data[visKey]);
+                }
+            }
+        });
+    } catch(e) { /* usa defaults */ }
+}
+
+function normalizarWhatsapp(val) {
+    if (!val) return '';
+    if (val.startsWith('http')) return val;
+    let digits = val.replace(/\D/g, '');
+    if (digits.startsWith('0') && digits.length === 9) {
+        digits = '598' + digits.slice(1);
+    } else if (!digits.startsWith('598')) {
+        digits = '598' + digits;
+    }
+    return 'https://wa.me/c/' + digits;
+}
+
+async function guardarContacto() {
+    const btn = document.querySelector('#tab-contacto .btn-save');
+    btn.textContent = 'GUARDANDO...'; btn.disabled = true;
+
+    const payload = {};
+    ['email','telefono','direccion','horario1','horario2','horario3'].forEach(key => {
+        payload[key] = document.getElementById('c-' + key).value.trim();
+        payload['vis_' + key] = document.getElementById('vis-' + key).checked;
+    });
+    const latVal = document.getElementById('c-lat').value;
+    const lngVal = document.getElementById('c-lng').value;
+    if (latVal) payload['lat'] = parseFloat(latVal);
+    if (lngVal) payload['lng'] = parseFloat(lngVal);
+    ['facebook','instagram','youtube'].forEach(key => {
+        const vis = document.getElementById('vis-' + key).checked;
+        const val = document.getElementById('c-' + key).value.trim();
+        payload[key] = vis && val ? val : '#';
+    });
+    // WhatsApp: normalizar número al formato wa.me
+    const visWa = document.getElementById('vis-whatsapp').checked;
+    const valWa = document.getElementById('c-whatsapp').value.trim();
+    payload['whatsapp'] = visWa && valWa ? normalizarWhatsapp(valWa) : '#';
+
+    try {
+        const { data: existing } = await sb.from('contacto_info').select('id').eq('id', 1).maybeSingle();
+        let error;
+        if (existing) {
+            ({ error } = await sb.from('contacto_info').update(payload).eq('id', 1));
+        } else {
+            ({ error } = await sb.from('contacto_info').insert({ id: 1, ...payload }));
+        }
+        if (error) {
+            console.error('Supabase error:', JSON.stringify(error));
+            showToast('Error: ' + (error.message || 'ver consola'));
+        } else {
+            showToast('¡Contacto actualizado! ✓');
+        }
+    } catch(e) {
+        console.error(e);
+        showToast('Error: ' + e.message);
+    }
+    btn.textContent = 'GUARDAR CAMBIOS'; btn.disabled = false;
 }
 
 function renderProducts() {
@@ -543,6 +870,108 @@ function compressImageToWebP(file, maxWidth = 800, quality = 0.8) {
   });
 }
 
+const CATEGORIAS = {
+    santeria: ['velas', 'incienso', 'amuletos', 'cristales', 'hierbas', 'figuras'],
+    vivero:   ['ornamental', 'frutal', 'medicinal', 'interior'],
+    oraculo:  []
+};
+
+function actualizarCategorias(seccion, valorActual = '') {
+    const sel = document.getElementById('productCategory');
+    const opciones = CATEGORIAS[seccion] || [];
+    sel.innerHTML = opciones.length === 0
+        ? '<option value="">Sin categorías</option>'
+        : opciones.map(c => `<option value="${c}" ${c === valorActual ? 'selected' : ''}>${c.charAt(0).toUpperCase() + c.slice(1)}</option>`).join('');
+}
+
+document.getElementById('productSection').addEventListener('change', function() {
+    actualizarCategorias(this.value);
+});
+
+// ── CATEGORÍAS DINÁMICAS ─────────────────────────────────────
+let categoriasCache = {};
+let catSeccionActiva = 'santeria';
+
+async function cargarCategoriasDB() {
+    const { data } = await sb.from('categorias').select('*').order('nombre');
+    categoriasCache = {};
+    (data || []).forEach(c => {
+        if (!categoriasCache[c.seccion]) categoriasCache[c.seccion] = [];
+        categoriasCache[c.seccion].push(c);
+    });
+}
+
+function actualizarCategorias(seccion, valorActual) {
+    valorActual = valorActual || '';
+    const sel = document.getElementById('productCategory');
+    const opciones = categoriasCache[seccion] || [];
+    if (opciones.length === 0) {
+        sel.innerHTML = '<option value="">Sin categorias</option>';
+    } else {
+        sel.innerHTML = opciones.map(function(c) {
+            return '<option value="' + c.nombre + '"' + (c.nombre === valorActual ? ' selected' : '') + '>' + c.nombre.charAt(0).toUpperCase() + c.nombre.slice(1) + '</option>';
+        }).join('');
+    }
+}
+
+document.getElementById('productSection').addEventListener('change', function() {
+    actualizarCategorias(this.value);
+});
+
+// ── GESTIÓN DE CATEGORÍAS ────────────────────────────────────
+async function loadCategorias() {
+    await cargarCategoriasDB();
+    renderCatList();
+}
+
+function switchCatSeccion(sec) {
+    catSeccionActiva = sec;
+    document.querySelectorAll('[id^="catTab-"]').forEach(b => b.classList.remove('active'));
+    document.getElementById('catTab-' + sec).classList.add('active');
+    renderCatList();
+}
+
+function renderCatList() {
+    const list = document.getElementById('catList');
+    const cats = categoriasCache[catSeccionActiva] || [];
+    if (cats.length === 0) {
+        list.innerHTML = '<div style="color:var(--muted);font-size:.9rem;">Sin categorías. Agregá una abajo.</div>';
+        return;
+    }
+    list.innerHTML = cats.map(c => `
+        <div style="display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;">
+            <input type="text" value="${c.nombre}" id="catInput-${c.id}"
+                style="flex:1;background:transparent;border:none;color:var(--text);font-family:'Crimson Pro',serif;font-size:1rem;outline:none;" />
+            <button onclick="guardarCategoria('${c.id}')" style="padding:6px 14px;background:rgba(201,162,77,.15);border:1px solid var(--gold-dim);border-radius:8px;color:var(--gold);cursor:pointer;font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:1px;">GUARDAR</button>
+            <button onclick="borrarCategoria('${c.id}')" style="padding:6px 10px;background:transparent;border:1px solid rgba(192,57,43,.4);border-radius:8px;color:#e74c3c;cursor:pointer;"><i class="fas fa-trash"></i></button>
+        </div>
+    `).join('');
+}
+
+async function guardarCategoria(id) {
+    const nombre = document.getElementById('catInput-' + id).value.trim().toLowerCase();
+    if (!nombre) return;
+    const { error } = await sb.from('categorias').update({ nombre }).eq('id', id);
+    if (!error) { await loadCategorias(); showToast('Categoría guardada'); }
+    else showToast('Error al guardar');
+}
+
+async function borrarCategoria(id) {
+    if (!confirm('¿Borrar esta categoría?')) return;
+    const { error } = await sb.from('categorias').delete().eq('id', id);
+    if (!error) { await loadCategorias(); showToast('Categoría eliminada'); }
+    else showToast('Error al borrar');
+}
+
+async function agregarCategoria() {
+    const input = document.getElementById('nuevaCatInput');
+    const nombre = input.value.trim().toLowerCase();
+    if (!nombre) return;
+    const { error } = await sb.from('categorias').insert([{ seccion: catSeccionActiva, nombre }]);
+    if (!error) { input.value = ''; await loadCategorias(); showToast('Categoría agregada'); }
+    else showToast('Error al agregar');
+}
+
 function openModal(id=null) {
     document.getElementById('modalOverlay').classList.add('open');
     document.getElementById('productId').value = id || '';
@@ -557,7 +986,7 @@ function openModal(id=null) {
         document.getElementById('productDesc').value = p.descripcion || '';
         document.getElementById('productDescLarga').value = p.descripcion_larga || '';
         document.getElementById('productPrice').value = p.precio || '';
-        document.getElementById('productCategory').value = p.categoria || '';
+        actualizarCategorias(p.seccion, p.categoria || '');
         fotosGuardadas = p.galeria_urls && p.galeria_urls.length > 0 ? [...p.galeria_urls] : (p.imagen_url ? [p.imagen_url] : []);
     } else {
         document.getElementById('modalTitle').textContent = "NUEVO PRODUCTO";
@@ -565,7 +994,7 @@ function openModal(id=null) {
         document.getElementById('productDesc').value = '';
         document.getElementById('productDescLarga').value = '';
         document.getElementById('productPrice').value = '';
-        document.getElementById('productCategory').value = '';
+        actualizarCategorias(document.getElementById('productSection').value);
     }
     dibujarGaleria();
 }
@@ -627,7 +1056,8 @@ async function saveProduct() {
 async function deleteProd(id) {
     if(confirm("¿Eliminar este producto permanentemente?")) {
         await sb.from('productos').delete().eq('id', id);
-        await loadProducts(); showToast("Eliminado");
+        await cargarCategoriasDB();
+    await loadProducts(); showToast("Eliminado");
     }
 }
 
@@ -635,6 +1065,114 @@ function showToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg; t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── MAP PICKER ──────────────────────────────────────────────
+let _mapLat = null, _mapLng = null, _leafletMap = null, _leafletMarker = null;
+
+function initLeaflet(lat, lng) {
+    if (_leafletMap) {
+        _leafletMap.setView([lat, lng], 16);
+        _leafletMarker.setLatLng([lat, lng]);
+        ponerPin(lat, lng);
+        return;
+    }
+    _leafletMap = L.map('mapLeaflet').setView([lat, lng], 16);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(_leafletMap);
+
+    _leafletMarker = L.marker([lat, lng], { draggable: true }).addTo(_leafletMap);
+    _leafletMarker.on('dragend', function(e) {
+        const pos = e.target.getLatLng();
+        ponerPin(pos.lat, pos.lng);
+    });
+    _leafletMap.on('click', function(e) {
+        _leafletMarker.setLatLng(e.latlng);
+        ponerPin(e.latlng.lat, e.latlng.lng);
+    });
+}
+
+function ponerPin(lat, lng) {
+    _mapLat = lat; _mapLng = lng;
+    document.getElementById('mapPickerInfo').textContent = `📍 ${lat.toFixed(6)}, ${lng.toFixed(6)} — Podés seguir arrastrando el pin.`;
+    const btn = document.getElementById('mapConfirmBtn');
+    btn.disabled = false; btn.style.opacity = '1';
+}
+
+function abrirMapPicker() {
+    document.getElementById('mapPickerOverlay').classList.add('open');
+    const dirActual = document.getElementById('c-direccion').value.trim();
+    document.getElementById('mapSearchInput').value = dirActual;
+    const latGuardado = parseFloat(document.getElementById('c-lat').value);
+    const lngGuardado = parseFloat(document.getElementById('c-lng').value);
+    setTimeout(() => {
+        if (latGuardado && lngGuardado) {
+            initLeaflet(latGuardado, lngGuardado);
+        } else if (dirActual) {
+            buscarEnMapa();
+        } else {
+            initLeaflet(-34.8355, -56.0023); // Uruguay centro
+        }
+        if (_leafletMap) _leafletMap.invalidateSize();
+    }, 100);
+}
+
+function usarGPS() {
+    const btn = document.getElementById('mapGpsBtn');
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> DETECTANDO...';
+    btn.disabled = true;
+    if (!navigator.geolocation) {
+        showToast('Tu navegador no soporta geolocalización');
+        btn.innerHTML = '<i class="fas fa-location-arrow"></i> USAR MI UBICACIÓN ACTUAL';
+        btn.disabled = false;
+        return;
+    }
+    navigator.geolocation.getCurrentPosition(
+        (pos) => {
+            const lat = pos.coords.latitude, lng = pos.coords.longitude;
+            initLeaflet(lat, lng);
+            if (_leafletMap) _leafletMap.invalidateSize();
+            btn.innerHTML = '<i class="fas fa-location-arrow"></i> USAR MI UBICACIÓN ACTUAL';
+            btn.disabled = false;
+        },
+        (err) => {
+            showToast('No se pudo obtener la ubicación');
+            btn.innerHTML = '<i class="fas fa-location-arrow"></i> USAR MI UBICACIÓN ACTUAL';
+            btn.disabled = false;
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+    );
+}
+
+async function buscarEnMapa() {
+    const q = document.getElementById('mapSearchInput').value.trim();
+    if (!q) return;
+    document.getElementById('mapPickerInfo').textContent = 'Buscando...';
+    try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1`, { headers: { 'Accept-Language': 'es' } });
+        const data = await res.json();
+        if (!data.length) { document.getElementById('mapPickerInfo').textContent = 'No se encontró. Intentá con otra búsqueda.'; return; }
+        const { lat, lon } = data[0];
+        initLeaflet(parseFloat(lat), parseFloat(lon));
+        if (_leafletMap) _leafletMap.invalidateSize();
+    } catch(e) {
+        document.getElementById('mapPickerInfo').textContent = 'Error al buscar. Revisá la conexión.';
+    }
+}
+
+function confirmarUbicacion() {
+    if (!_mapLat || !_mapLng) return;
+    document.getElementById('c-lat').value = _mapLat;
+    document.getElementById('c-lng').value = _mapLng;
+    const q = document.getElementById('mapSearchInput').value.trim();
+    if (q) document.getElementById('c-direccion').value = q;
+    showToast('📍 Ubicación guardada');
+    cerrarMapPicker();
+}
+
+function cerrarMapPicker() {
+    document.getElementById('mapPickerOverlay').classList.remove('open');
 }
 
 // SERVICE WORKER

@@ -86,6 +86,21 @@
         #page-title { font-size: 4rem; text-align: center; margin-bottom: 5px; color: #c9a24d; text-shadow: 0 0 20px rgba(201, 162, 77, 0.5); letter-spacing: 4px; }
         #page-subtitle { font-size: 1.2rem; text-align: center; margin-bottom: 30px; color: #cbbfa3; letter-spacing: 2px; }
 
+        /* BUSCADOR Y FILTROS */
+        .search-bar-container { max-width: 600px; margin: 0 auto 30px; position: relative; }
+        #search-input {
+            width: 100%; padding: 15px 20px 15px 50px; font-size: 1.1rem; border: 2px solid #c9a24d;
+            border-radius: 30px; background: rgba(20, 12, 6, 0.8); color: #cbbfa3;
+            font-family: 'Cinzel', serif; transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        #search-input::placeholder { color: rgba(203, 191, 163, 0.5); }
+        #search-input:focus { outline: none; border-color: #e8c96a; box-shadow: 0 0 15px rgba(201, 162, 77, 0.5); }
+        .search-icon { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #c9a24d; font-size: 1.2rem; }
+
+        .tags-container { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-bottom: 40px; }
+        .tag { padding: 8px 18px; border-radius: 20px; border: 1px solid rgba(201, 162, 77, 0.4); background: rgba(201, 162, 77, 0.08); color: #cbbfa3; font-size: 0.9rem; cursor: pointer; transition: all 0.3s ease; font-family: 'Cinzel', serif; letter-spacing: 1px; }
+        .tag:hover, .tag.active { background: rgba(201, 162, 77, 0.25); border-color: #c9a24d; color: #e8c96a; box-shadow: 0 0 10px rgba(201, 162, 77, 0.3); }
+
         /* SECCIÓN MENSAJE DEL DÍA */
         .oracle-box { text-align: center; margin-bottom: 50px; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 10px; border: 1px dashed rgba(201,162,77,0.3); }
         .mensaje-btn { padding: 12px 30px; border-radius: 30px; border: 1px solid #c9a24d; background: rgba(201,162,77,0.1); color: #c9a24d; font-family: 'Cinzel', serif; font-weight: bold; letter-spacing: 2px; cursor: pointer; transition: 0.3s; }
@@ -207,6 +222,15 @@
                 <div id="oracleMessage"></div>
             </div>
             
+            <div class="search-bar-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="search" id="search-input" placeholder="Buscar servicio o lectura..." />
+            </div>
+
+            <div class="tags-container" id="tags-container">
+                <span class="tag active" data-tag="todos">Todos</span>
+            </div>
+
             <div class="product-grid" id="grid-oraculo">
                 <!-- Se llenará automáticamente -->
             </div>
@@ -249,29 +273,35 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h3>CONTACTO</h3>
-                <p>📧 info@artilugios.com</p>
-                <p>📱 +598 98 496 320</p>
-                <p>📍 El Pinar, Uruguay</p>
+                <p id="footer-email" onclick="copiarEmail(this)" title="Clic para copiar" style="cursor:pointer;">📧 info@artilugios.com</p>
+                <a id="footer-telefono" href="tel:+59898496320" title="Clic para llamar" style="cursor:pointer;">📱 +598 XX XXX XXX</a>
+                <p id="footer-direccion">📍 El Pinar, Uruguay</p>
+                <a id="btn-como-llegar" onclick="comoLlegar()" title="Cómo llegar" style="cursor:pointer;display:inline-flex;align-items:center;gap:8px;margin-top:4px;padding:7px 14px;border:1px solid rgba(201,162,77,0.4);border-radius:20px;font-size:.82rem;letter-spacing:1px;font-family:'Cinzel',serif;color:#c9a24d;transition:all .3s;">
+                  <i class="fas fa-route"></i> CÓMO LLEGAR
+                </a>
+                <div id="toast-copy" style="display:none;margin-top:6px;font-size:.8rem;color:#2ecc71;font-family:'Cinzel',serif;letter-spacing:1px;">✓ Copiado</div>
             </div>
             <div class="footer-section">
                 <h3>HORARIOS</h3>
-                <p>Lunes a Viernes: 10:00 - 19:00</p>
-                <p>Sábados: 10:00 - 14:00</p>
-                <p>Domingos: Cerrado</p>
+                <p id="footer-horario1">Lunes a Viernes: 10:00 - 19:00</p>
+                <p id="footer-horario2">Sábados: 10:00 - 14:00</p>
+                <p id="footer-horario3">Domingos: Cerrado</p>
             </div>
             <div class="footer-section">
                 <h3>SÍGUENOS</h3>
                 <div class="social-links">
-                    <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="#" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-                    <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a id="footer-facebook" href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a id="footer-instagram" href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a id="footer-whatsapp" href="#" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    <a id="footer-youtube" href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
                 </div>
             </div>
         </div>
         <div class="footer-bottom">
             <p>&copy; 2025 Artilugios - Proyecto vivo. Todos los derechos reservados.</p>
         </div>
+    
+
     </footer>
 
     <!-- SUPABASE -->
@@ -345,7 +375,7 @@
             document.getElementById('modalDesc').innerHTML = (prod.descripcion_larga || prod.descripcion || '').replace(/\n/g, '<br>');
 
             const msg = encodeURIComponent(`Hola, me interesa agendar una lectura/sesión de: ${prod.nombre}`);
-            document.getElementById('modalWppBtn').href = `https://wa.me/59898496320?text=${msg}`;
+            document.getElementById('modalWppBtn').href = `https://wa.me/${window._wppNum || '59898496320'}?text=${msg}`;
 
             galeriaActual = prod.galeria_urls && prod.galeria_urls.length > 0 ? prod.galeria_urls : (prod.imagen_url ? [prod.imagen_url] : []);
             indexActual = 0;
@@ -415,8 +445,50 @@
             }, 300);
         }
 
+        // BUSCADOR Y FILTROS
+        let tagActivo = 'todos';
+
+        function aplicarFiltros() {
+            const search = document.getElementById('search-input').value.toLowerCase();
+            const filtrados = allOracles.filter(p => {
+                const coincideTexto =
+                    p.nombre.toLowerCase().includes(search) ||
+                    (p.descripcion && p.descripcion.toLowerCase().includes(search)) ||
+                    (p.categoria && p.categoria.toLowerCase().includes(search));
+                const coincideTag = tagActivo === 'todos' ||
+                    (p.categoria && p.categoria.toLowerCase() === tagActivo);
+                return coincideTexto && coincideTag;
+            });
+            renderOraculo(filtrados);
+        }
+
+        function bindTags() {
+            document.querySelectorAll('.tag').forEach(tag => {
+                tag.addEventListener('click', () => {
+                    document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+                    tag.classList.add('active');
+                    tagActivo = tag.dataset.tag;
+                    aplicarFiltros();
+                });
+            });
+        }
+
+        async function cargarTags() {
+            const { data } = await sb.from('categorias').select('nombre').eq('seccion', 'oraculo').order('nombre');
+            const container = document.getElementById('tags-container');
+            const extras = (data || []).map(c =>
+                `<span class="tag" data-tag="${c.nombre}">${c.nombre.charAt(0).toUpperCase() + c.nombre.slice(1)}</span>`
+            ).join('');
+            container.innerHTML = '<span class="tag active" data-tag="todos">Todos</span>' + extras;
+            bindTags();
+        }
+
         // INICIALIZACIÓN
-        window.addEventListener('DOMContentLoaded', cargarOraculo);
+        window.addEventListener('DOMContentLoaded', async () => {
+            await cargarTags();
+            await cargarOraculo();
+            document.getElementById('search-input').addEventListener('input', aplicarFiltros);
+        });
 
         // UI: Partículas
         const PARTICLE_COUNT = 60;
@@ -484,5 +556,62 @@
 
     <!-- TRACKING: visita a sección -->
     <script>window._registrarVisita && window._registrarVisita('oraculo');</script>
+    <script>
+    (async function cargarContacto() {
+        try {
+            const { createClient } = supabase;
+            const sb2 = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+            const { data: d, error } = await sb2.from('contacto_info').select('*').eq('id', 1).maybeSingle();
+            if (error) { console.error('contacto_info error:', JSON.stringify(error)); return; }
+            if (!d) return;
+            const set  = (id, text) => { const el = document.getElementById(id); if(el) el.textContent = text; };
+            const hide = (id) => { const el = document.getElementById(id); if(el) el.style.display = 'none'; };
+            const show = (id) => { const el = document.getElementById(id); if(el) el.style.display = ''; };
+            if (d.email)     { const el = document.getElementById('footer-email');     if(el) { el.textContent = '📧 ' + d.email; el._emailVal = d.email; } }
+            if (d.telefono)  { const el = document.getElementById('footer-telefono');  if(el) { el.textContent = '📱 ' + d.telefono; el.href = 'tel:' + d.telefono.replace(/\s/g,''); } }
+            if (d.direccion) { const el = document.getElementById('footer-direccion'); if(el) { el.textContent = '📍 ' + d.direccion; el._dirVal = d.direccion; } }
+            if (d.horario1)  set('footer-horario1',  d.horario1);
+            if (d.horario2)  set('footer-horario2',  d.horario2);
+            if (d.horario3)  set('footer-horario3',  d.horario3);
+            if (d.vis_email     === false) hide('footer-email');     else show('footer-email');
+            if (d.vis_telefono  === false) hide('footer-telefono');  else show('footer-telefono');
+            if (d.vis_direccion === false) hide('footer-direccion'); else show('footer-direccion');
+            if (d.vis_horario1  === false) hide('footer-horario1');  else show('footer-horario1');
+            if (d.vis_horario2  === false) hide('footer-horario2');  else show('footer-horario2');
+            if (d.vis_horario3  === false) hide('footer-horario3');  else show('footer-horario3');
+            ['facebook','instagram','whatsapp','youtube'].forEach(r => {
+                const el = document.getElementById('footer-' + r);
+                if (!el) return;
+                if (d[r] && d[r] !== '#') { el.href = d[r]; show('footer-' + r); }
+                else { hide('footer-' + r); }
+            });
+            window._wppNum = d.whatsapp && d.whatsapp !== '#' ? (d.whatsapp.match(/(\d{6,15})/)||[])[1] : null;
+            window._ubicLat = d.lat || null;
+            window._ubicLng = d.lng || null;
+        } catch(e) { console.error('cargarContacto:', e); }
+    })();
+
+    function copiarEmail(el) {
+        const email = el._emailVal || el.textContent.replace('📧 ', '').trim();
+        navigator.clipboard.writeText(email).then(() => {
+            const toast = document.getElementById('toast-copy');
+            if (toast) { toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 2000); }
+        });
+    }
+
+    function comoLlegar() {
+        const lat = window._ubicLat, lng = window._ubicLng;
+        let destino;
+        if (lat && lng) {
+            destino = lat + ',' + lng;
+        } else {
+            const el = document.getElementById('footer-direccion');
+            const dir = el._dirVal || el.textContent.replace('📍 ', '').trim();
+            destino = encodeURIComponent(dir);
+        }
+        window.open('https://www.google.com/maps/dir/?api=1&destination=' + destino, '_blank');
+    }
+    </script>
+<script src="whatsapp-btn.js"></script>
 </body>
 </html>

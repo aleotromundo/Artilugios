@@ -96,7 +96,7 @@
 
         .tags-container { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-bottom: 50px; }
         .tag { padding: 8px 18px; border-radius: 20px; border: 1px solid #6C8255; background: rgba(139, 195, 74, 0.1); color: #A2CF6E; font-size: 0.9rem; cursor: pointer; transition: all 0.3s ease; }
-        .tag:hover { background: rgba(139, 195, 74, 0.3); border-color: #8BC34A; color: #FFF; }
+        .tag:hover, .tag.active { background: rgba(139, 195, 74, 0.3); border-color: #8BC34A; color: #FFF; box-shadow: 0 0 10px rgba(139, 195, 74, 0.3); }
 
         .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; padding: 20px 0; }
         .product-card { background: rgba(28, 53, 45, 0.8); border: 1px solid rgba(139, 195, 74, 0.3); border-radius: 10px; overflow: hidden; text-align: center; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; }
@@ -208,12 +208,8 @@
                 <input type="search" id="search-input" placeholder="Buscar por nombre o tipo de planta..." />
             </div>
             
-            <div class="tags-container">
-                <span class="tag">Todos</span>
-                <span class="tag">Ornamentales</span>
-                <span class="tag">Frutales</span>
-                <span class="tag">Medicinales</span>
-                <span class="tag">Interior</span>
+            <div class="tags-container" id="tags-container">
+                <span class="tag active" data-tag="todos">Todos</span>
             </div>
             
             <div class="product-grid" id="grid-vivero">
@@ -256,29 +252,35 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h3>CONTACTO</h3>
-                <p>📧 info@artilugios.com</p>
-                <p>📱 +598 98 496 320</p>
-                <p>📍 El Pinar, Uruguay</p>
+                <p id="footer-email" onclick="copiarEmail(this)" title="Clic para copiar" style="cursor:pointer;">📧 info@artilugios.com</p>
+                <a id="footer-telefono" href="tel:+59898496320" title="Clic para llamar" style="cursor:pointer;">📱 +598 XX XXX XXX</a>
+                <p id="footer-direccion">📍 El Pinar, Uruguay</p>
+                <a id="btn-como-llegar" onclick="comoLlegar()" title="Cómo llegar" style="cursor:pointer;display:inline-flex;align-items:center;gap:8px;margin-top:4px;padding:7px 14px;border:1px solid rgba(139,195,74,0.4);border-radius:20px;font-size:.82rem;letter-spacing:1px;font-family:'Cinzel',serif;color:#8BC34A;transition:all .3s;">
+                  <i class="fas fa-route"></i> CÓMO LLEGAR
+                </a>
+                <div id="toast-copy" style="display:none;margin-top:6px;font-size:.8rem;color:#2ecc71;font-family:'Cinzel',serif;letter-spacing:1px;">✓ Copiado</div>
             </div>
             <div class="footer-section">
                 <h3>HORARIOS</h3>
-                <p>Lunes a Viernes: 10:00 - 19:00</p>
-                <p>Sábados: 10:00 - 14:00</p>
-                <p>Domingos: Cerrado</p>
+                <p id="footer-horario1">Lunes a Viernes: 10:00 - 19:00</p>
+                <p id="footer-horario2">Sábados: 10:00 - 14:00</p>
+                <p id="footer-horario3">Domingos: Cerrado</p>
             </div>
             <div class="footer-section">
                 <h3>SÍGUENOS</h3>
                 <div class="social-links">
-                    <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="#" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-                    <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a id="footer-facebook" href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a id="footer-instagram" href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a id="footer-whatsapp" href="#" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    <a id="footer-youtube" href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
                 </div>
             </div>
         </div>
         <div class="footer-bottom">
             <p>&copy; 2025 Artilugios - Proyecto vivo. Todos los derechos reservados.</p>
         </div>
+    
+
     </footer>
 
     <!-- SUPABASE -->
@@ -350,7 +352,7 @@
             document.getElementById('modalDesc').innerHTML = (prod.descripcion_larga || prod.descripcion || '').replace(/\n/g, '<br>');
 
             const msg = encodeURIComponent(`Hola, me interesa la planta: ${prod.nombre}`);
-            document.getElementById('modalWppBtn').href = `https://wa.me/59898496320?text=${msg}`;
+            document.getElementById('modalWppBtn').href = `https://wa.me/${window._wppNum || '59898496320'}?text=${msg}`;
 
             galeriaActual = prod.galeria_urls && prod.galeria_urls.length > 0 ? prod.galeria_urls : (prod.imagen_url ? [prod.imagen_url] : ['img/jardin-fondo.jpg']);
             indexActual = 0;
@@ -389,19 +391,51 @@
             }
         }
 
-        // BUSCADOR
-        document.getElementById('search-input').addEventListener('input', (e) => {
-            const search = e.target.value.toLowerCase();
-            const filtrados = allPlants.filter(p => 
-                p.nombre.toLowerCase().includes(search) || 
-                (p.descripcion && p.descripcion.toLowerCase().includes(search)) ||
-                (p.categoria && p.categoria.toLowerCase().includes(search))
-            );
+        // BUSCADOR Y FILTROS
+        let tagActivo = 'todos';
+
+        function aplicarFiltros() {
+            const search = document.getElementById('search-input').value.toLowerCase();
+            const filtrados = allPlants.filter(p => {
+                const coincideTexto =
+                    p.nombre.toLowerCase().includes(search) ||
+                    (p.descripcion && p.descripcion.toLowerCase().includes(search)) ||
+                    (p.categoria && p.categoria.toLowerCase().includes(search));
+                const coincideTag = tagActivo === 'todos' ||
+                    (p.categoria && p.categoria.toLowerCase() === tagActivo);
+                return coincideTexto && coincideTag;
+            });
             renderVivero(filtrados);
-        });
+        }
+
+        function bindTags() {
+            document.querySelectorAll('.tag').forEach(tag => {
+                tag.addEventListener('click', () => {
+                    document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+                    tag.classList.add('active');
+                    tagActivo = tag.dataset.tag;
+                    aplicarFiltros();
+                });
+            });
+        }
+
+        async function cargarTags() {
+            const { data } = await sb.from('categorias').select('nombre').eq('seccion', 'vivero').order('nombre');
+            const container = document.getElementById('tags-container');
+            const extras = (data || []).map(c =>
+                `<span class="tag" data-tag="${c.nombre}">${c.nombre.charAt(0).toUpperCase() + c.nombre.slice(1)}</span>`
+            ).join('');
+            container.innerHTML = '<span class="tag active" data-tag="todos">Todos</span>' + extras;
+            bindTags();
+        }
+
+        document.getElementById('search-input').addEventListener('input', aplicarFiltros);
 
         // INICIALIZACIÓN
-        window.addEventListener('DOMContentLoaded', cargarVivero);
+        window.addEventListener('DOMContentLoaded', async () => {
+            await cargarTags();
+            await cargarVivero();
+        });
 
         // UI: Partículas
         const PARTICLE_COUNT = 60;
@@ -418,24 +452,7 @@
             particlesContainer.appendChild(particle);
         }
         
-        // UI: Música
-        const music = document.getElementById('bgMusic');
-        const musicBtn = document.getElementById('musicBtn');
-        let isPlaying = false;
-
-        window.addEventListener('load', () => {
-            music.play().then(() => {
-                isPlaying = true; musicBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
-            }).catch(() => {
-                isPlaying = false; musicBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
-            });
-        });
-
-        musicBtn.addEventListener('click', () => {
-            if (isPlaying) { music.pause(); musicBtn.innerHTML = '<i class="fas fa-volume-mute"></i>'; } 
-            else { music.play(); musicBtn.innerHTML = '<i class="fas fa-volume-up"></i>'; }
-            isPlaying = !isPlaying;
-        });
+        // Música gestionada por music-manager.js
 
         // UI: Navegación / Logo Header
         document.getElementById('logoHeader').addEventListener('click', (e) => {
@@ -469,5 +486,65 @@
 
     <!-- TRACKING: visita a sección -->
     <script>window._registrarVisita && window._registrarVisita('vivero');</script>
+    <script>
+    (async function cargarContacto() {
+        try {
+            const { createClient } = supabase;
+            const sb2 = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+            const { data: d, error } = await sb2.from('contacto_info').select('*').eq('id', 1).maybeSingle();
+            if (error) { console.error('contacto_info error:', JSON.stringify(error)); return; }
+            if (!d) return;
+            const set  = (id, text) => { const el = document.getElementById(id); if(el) el.textContent = text; };
+            const hide = (id) => { const el = document.getElementById(id); if(el) el.style.display = 'none'; };
+            const show = (id) => { const el = document.getElementById(id); if(el) el.style.display = ''; };
+            if (d.email)     { const el = document.getElementById('footer-email');     if(el) { el.textContent = '📧 ' + d.email; el._emailVal = d.email; } }
+            if (d.telefono)  { const el = document.getElementById('footer-telefono');  if(el) { el.textContent = '📱 ' + d.telefono; el.href = 'tel:' + d.telefono.replace(/\s/g,''); } }
+            if (d.direccion) { const el = document.getElementById('footer-direccion'); if(el) { el.textContent = '📍 ' + d.direccion; el._dirVal = d.direccion; } }
+            if (d.horario1)  set('footer-horario1',  d.horario1);
+            if (d.horario2)  set('footer-horario2',  d.horario2);
+            if (d.horario3)  set('footer-horario3',  d.horario3);
+            if (d.vis_email     === false) hide('footer-email');     else show('footer-email');
+            if (d.vis_telefono  === false) hide('footer-telefono');  else show('footer-telefono');
+            if (d.vis_direccion === false) hide('footer-direccion'); else show('footer-direccion');
+            if (d.vis_horario1  === false) hide('footer-horario1');  else show('footer-horario1');
+            if (d.vis_horario2  === false) hide('footer-horario2');  else show('footer-horario2');
+            if (d.vis_horario3  === false) hide('footer-horario3');  else show('footer-horario3');
+            ['facebook','instagram','whatsapp','youtube'].forEach(r => {
+                const el = document.getElementById('footer-' + r);
+                if (!el) return;
+                if (d[r] && d[r] !== '#') { el.href = d[r]; show('footer-' + r); }
+                else { hide('footer-' + r); }
+            });
+            window._wppNum = d.whatsapp && d.whatsapp !== '#' ? (d.whatsapp.match(/(\d{6,15})/)||[])[1] : null;
+            window._ubicLat = d.lat || null;
+            window._ubicLng = d.lng || null;
+        } catch(e) { console.error('cargarContacto:', e); }
+    })();
+
+    function copiarEmail(el) {
+        const email = el._emailVal || el.textContent.replace('📧 ', '').trim();
+        navigator.clipboard.writeText(email).then(() => {
+            const toast = document.getElementById('toast-copy');
+            if (toast) { toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 2000); }
+        });
+    }
+
+    function comoLlegar() {
+        const lat = window._ubicLat, lng = window._ubicLng;
+        let destino;
+        if (lat && lng) {
+            destino = lat + ',' + lng;
+        } else {
+            const el = document.getElementById('footer-direccion');
+            const dir = el._dirVal || el.textContent.replace('📍 ', '').trim();
+            destino = encodeURIComponent(dir);
+        }
+        window.open('https://www.google.com/maps/dir/?api=1&destination=' + destino, '_blank');
+    }
+    </script>
+<!-- MÚSICA PERSISTENTE -->
+    <script>var MUSIC_GROUP = "main";</script>
+    <script src="music-manager.js"></script>
+<script src="whatsapp-btn.js"></script>
 </body>
 </html>

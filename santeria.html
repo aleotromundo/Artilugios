@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400&display=swap" rel="stylesheet">
     
-    <audio id="bgMusic" loop><source src="musica.mp3" type="audio/mpeg"></audio>
+    <audio id="bgMusic" loop><source src="musica2.mp3" type="audio/mpeg"></audio>
 
     <style>
         /* ESTILOS GENERALES RECONSTRUIDOS */
@@ -87,6 +87,21 @@
         .music-toggle { position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; background: rgba(212, 175, 55, 0.15); border: 2px solid #d4af37; border-radius: 50%; color: #d4af37; font-size: 1.3rem; cursor: pointer; z-index: 1001; transition: all 0.3s ease; backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; animation: float 3s ease-in-out infinite; }
         .music-toggle:hover { background: rgba(212, 175, 55, 0.3); box-shadow: 0 0 20px rgba(212, 175, 55, 0.5); }
 
+        /* BUSCADOR Y FILTROS */
+        .search-bar-container { max-width: 600px; margin: 0 auto 30px; position: relative; }
+        #search-input {
+            width: 100%; padding: 15px 20px 15px 50px; font-size: 1.1rem; border: 2px solid #d4af37;
+            border-radius: 30px; background: rgba(10, 10, 10, 0.8); color: #c4b088;
+            font-family: 'Cinzel', serif; transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        #search-input::placeholder { color: rgba(196, 176, 136, 0.6); }
+        #search-input:focus { outline: none; border-color: #f0cc6a; box-shadow: 0 0 15px rgba(212, 175, 55, 0.5); }
+        .search-icon { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #d4af37; font-size: 1.2rem; }
+
+        .tags-container { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-bottom: 40px; }
+        .tag { padding: 8px 18px; border-radius: 20px; border: 1px solid rgba(212, 175, 55, 0.4); background: rgba(212, 175, 55, 0.08); color: #c4b088; font-size: 0.9rem; cursor: pointer; transition: all 0.3s ease; font-family: 'Cinzel', serif; letter-spacing: 1px; }
+        .tag:hover, .tag.active { background: rgba(212, 175, 55, 0.25); border-color: #d4af37; color: #f0cc6a; box-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
+
         /* RESPONSIVE MÓVIL */
         @media (max-width: 768px) {
             .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; width: 100%; background: rgba(10, 10, 10, 0.95); border-top: 1px solid rgba(212, 175, 55, 0.3); padding: 20px 0; text-align: center; }
@@ -123,6 +138,15 @@
         </section>
 
         <div class="ancestral-cueva">
+            <div class="search-bar-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="search" id="search-input" placeholder="Buscar por nombre o tipo de producto..." />
+            </div>
+
+            <div class="tags-container" id="tags-container">
+                <span class="tag active" data-tag="todos">Todos</span>
+            </div>
+
             <div class="product-grid" id="grid-santeria"></div>
         </div>
     </main>
@@ -161,29 +185,35 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h3>CONTACTO</h3>
-                <p>📧 info@artilugios.com</p>
-                <p>📱 +598 98 496 320</p>
-                <p>📍 El Pinar, Uruguay</p>
+                <p id="footer-email" onclick="copiarEmail(this)" title="Clic para copiar" style="cursor:pointer;">📧 info@artilugios.com</p>
+                <a id="footer-telefono" href="tel:+59898496320" title="Clic para llamar" style="cursor:pointer;">📱 +598 XX XXX XXX</a>
+                <p id="footer-direccion">📍 El Pinar, Uruguay</p>
+                <a id="btn-como-llegar" onclick="comoLlegar()" title="Cómo llegar" style="cursor:pointer;display:inline-flex;align-items:center;gap:8px;margin-top:4px;padding:7px 14px;border:1px solid rgba(212,175,55,0.4);border-radius:20px;font-size:.82rem;letter-spacing:1px;font-family:'Cinzel',serif;color:#d4af37;transition:all .3s;">
+                  <i class="fas fa-route"></i> CÓMO LLEGAR
+                </a>
+                <div id="toast-copy" style="display:none;margin-top:6px;font-size:.8rem;color:#2ecc71;font-family:'Cinzel',serif;letter-spacing:1px;">✓ Copiado</div>
             </div>
             <div class="footer-section">
                 <h3>HORARIOS</h3>
-                <p>Lunes a Viernes: 10:00 - 19:00</p>
-                <p>Sábados: 10:00 - 14:00</p>
-                <p>Domingos: Cerrado</p>
+                <p id="footer-horario1">Lunes a Viernes: 10:00 - 19:00</p>
+                <p id="footer-horario2">Sábados: 10:00 - 14:00</p>
+                <p id="footer-horario3">Domingos: Cerrado</p>
             </div>
             <div class="footer-section">
                 <h3>SÍGUENOS</h3>
                 <div class="social-links">
-                    <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="#" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-                    <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a id="footer-facebook" href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a id="footer-instagram" href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a id="footer-whatsapp" href="#" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    <a id="footer-youtube" href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
                 </div>
             </div>
         </div>
         <div class="footer-bottom">
             <p>&copy; 2025 Artilugios - Proyecto vivo. Todos los derechos reservados.</p>
         </div>
+    
+
     </footer>
 
     <!-- SUPABASE -->
@@ -200,6 +230,64 @@
         let galeriaActual = [];
         let indexActual = 0;
 
+        let tagActivo = 'todos';
+
+        function renderSanteria(data) {
+            const grid = document.getElementById('grid-santeria');
+            if (data.length === 0) {
+                grid.innerHTML = '<p style="color:#c4b088; text-align:center; width:100%; grid-column:1/-1;">No se encontraron productos.</p>';
+                return;
+            }
+            grid.innerHTML = data.map(p => {
+                const precio = p.precio ? `$${Number(p.precio).toLocaleString('es-UY')} UYU` : 'Consultar';
+                const imagen = p.imagen_url ? `<img src="${p.imagen_url}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : `<i class="fas fa-sparkles"></i>`;
+                return `
+                <div class="product-card" onclick="abrirModal('${p.id}')">
+                    <div class="product-image-container">${imagen}</div>
+                    <div class="product-info">
+                        <h3>${p.nombre}</h3>
+                        <div class="price">${precio}</div>
+                        <div class="ver-btn">VER DETALLE</div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function aplicarFiltros() {
+            const search = document.getElementById('search-input').value.toLowerCase();
+            const filtrados = allProducts.filter(p => {
+                const coincideTexto =
+                    p.nombre.toLowerCase().includes(search) ||
+                    (p.descripcion && p.descripcion.toLowerCase().includes(search)) ||
+                    (p.categoria && p.categoria.toLowerCase().includes(search));
+                const coincideTag = tagActivo === 'todos' ||
+                    (p.categoria && p.categoria.toLowerCase() === tagActivo);
+                return coincideTexto && coincideTag;
+            });
+            renderSanteria(filtrados);
+        }
+
+        async function cargarTags() {
+            const { data } = await sb.from('categorias').select('nombre').eq('seccion', 'santeria').order('nombre');
+            const container = document.getElementById('tags-container');
+            const extras = (data || []).map(c =>
+                `<span class="tag" data-tag="${c.nombre}">${c.nombre.charAt(0).toUpperCase() + c.nombre.slice(1)}</span>`
+            ).join('');
+            container.innerHTML = '<span class="tag active" data-tag="todos">Todos</span>' + extras;
+            bindTags();
+        }
+
+        function bindTags() {
+            document.querySelectorAll('.tag').forEach(tag => {
+                tag.addEventListener('click', () => {
+                    document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+                    tag.classList.add('active');
+                    tagActivo = tag.dataset.tag;
+                    aplicarFiltros();
+                });
+            });
+        }
+
         async function cargarSanteria() {
             const grid = document.getElementById('grid-santeria');
             grid.innerHTML = '<p style="color:#d4af37; text-align:center; width:100%;">Conectando...</p>';
@@ -213,21 +301,9 @@
 
             if (error) return;
             allProducts = data;
+            renderSanteria(data);
 
-            grid.innerHTML = data.map(p => {
-                const precio = p.precio ? `$${Number(p.precio).toLocaleString('es-UY')} UYU` : 'Consultar';
-                const imagen = p.imagen_url ? `<img src="${p.imagen_url}" loading="lazy" style="width:100%; height:100%; object-fit:cover;">` : `<i class="fas fa-sparkles"></i>`;
-
-                return `
-                <div class="product-card" onclick="abrirModal('${p.id}')">
-                    <div class="product-image-container">${imagen}</div>
-                    <div class="product-info">
-                        <h3>${p.nombre}</h3>
-                        <div class="price">${precio}</div>
-                        <div class="ver-btn">VER DETALLE</div>
-                    </div>
-                </div>`;
-            }).join('');
+            document.getElementById('search-input').addEventListener('input', aplicarFiltros);
         }
 
         // FUNCIÓN PARA ABRIR EL CATÁLOGO DETALLADO
@@ -240,7 +316,7 @@
             document.getElementById('modalDesc').innerHTML = (prod.descripcion_larga || prod.descripcion || '').replace(/\n/g, '<br>');
 
             const msg = encodeURIComponent(`Hola, quiero encargar: ${prod.nombre}`);
-            document.getElementById('modalWppBtn').href = `https://wa.me/59898496320?text=${msg}`;
+            document.getElementById('modalWppBtn').href = `https://wa.me/${window._wppNum || '59898496320'}?text=${msg}`;
 
             galeriaActual = prod.galeria_urls && prod.galeria_urls.length > 0 ? prod.galeria_urls : (prod.imagen_url ? [prod.imagen_url] : ['https://via.placeholder.com/800x800/000/d4af37?text=Sin+Imagen']);
             indexActual = 0;
@@ -279,7 +355,10 @@
             }
         }
 
-        window.addEventListener('DOMContentLoaded', cargarSanteria);
+        window.addEventListener('DOMContentLoaded', async () => {
+            await cargarTags();
+            await cargarSanteria();
+        });
 
         // UI: Partículas
         const pCont = document.getElementById('particles');
@@ -292,24 +371,7 @@
             pCont.appendChild(p);
         }
 
-        // UI: Música
-        const music = document.getElementById('bgMusic');
-        const musicBtn = document.getElementById('musicBtn');
-        let isPlaying = false;
-
-        window.addEventListener('load', () => {
-            music.play().then(() => {
-                isPlaying = true; musicBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
-            }).catch(() => {
-                isPlaying = false; musicBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
-            });
-        });
-
-        musicBtn.addEventListener('click', () => {
-            if (isPlaying) { music.pause(); musicBtn.innerHTML = '<i class="fas fa-volume-mute"></i>'; } 
-            else { music.play(); musicBtn.innerHTML = '<i class="fas fa-volume-up"></i>'; }
-            isPlaying = !isPlaying;
-        });
+        // Música gestionada por music-manager.js
 
         // UI: Menú Móvil
         const hamburgerBtn = document.getElementById('hamburgerBtn');
@@ -338,5 +400,65 @@
 
     <!-- TRACKING: visita a sección -->
     <script>window._registrarVisita && window._registrarVisita('santeria');</script>
+    <script>
+    (async function cargarContacto() {
+        try {
+            const { createClient } = supabase;
+            const sb2 = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+            const { data: d, error } = await sb2.from('contacto_info').select('*').eq('id', 1).maybeSingle();
+            if (error) { console.error('contacto_info error:', JSON.stringify(error)); return; }
+            if (!d) return;
+            const set  = (id, text) => { const el = document.getElementById(id); if(el) el.textContent = text; };
+            const hide = (id) => { const el = document.getElementById(id); if(el) el.style.display = 'none'; };
+            const show = (id) => { const el = document.getElementById(id); if(el) el.style.display = ''; };
+            if (d.email)     { const el = document.getElementById('footer-email');     if(el) { el.textContent = '📧 ' + d.email; el._emailVal = d.email; } }
+            if (d.telefono)  { const el = document.getElementById('footer-telefono');  if(el) { el.textContent = '📱 ' + d.telefono; el.href = 'tel:' + d.telefono.replace(/\s/g,''); } }
+            if (d.direccion) { const el = document.getElementById('footer-direccion'); if(el) { el.textContent = '📍 ' + d.direccion; el._dirVal = d.direccion; } }
+            if (d.horario1)  set('footer-horario1',  d.horario1);
+            if (d.horario2)  set('footer-horario2',  d.horario2);
+            if (d.horario3)  set('footer-horario3',  d.horario3);
+            if (d.vis_email     === false) hide('footer-email');     else show('footer-email');
+            if (d.vis_telefono  === false) hide('footer-telefono');  else show('footer-telefono');
+            if (d.vis_direccion === false) hide('footer-direccion'); else show('footer-direccion');
+            if (d.vis_horario1  === false) hide('footer-horario1');  else show('footer-horario1');
+            if (d.vis_horario2  === false) hide('footer-horario2');  else show('footer-horario2');
+            if (d.vis_horario3  === false) hide('footer-horario3');  else show('footer-horario3');
+            ['facebook','instagram','whatsapp','youtube'].forEach(r => {
+                const el = document.getElementById('footer-' + r);
+                if (!el) return;
+                if (d[r] && d[r] !== '#') { el.href = d[r]; show('footer-' + r); }
+                else { hide('footer-' + r); }
+            });
+            window._wppNum = d.whatsapp && d.whatsapp !== '#' ? (d.whatsapp.match(/(\d{6,15})/)||[])[1] : null;
+            window._ubicLat = d.lat || null;
+            window._ubicLng = d.lng || null;
+        } catch(e) { console.error('cargarContacto:', e); }
+    })();
+
+    function copiarEmail(el) {
+        const email = el._emailVal || el.textContent.replace('📧 ', '').trim();
+        navigator.clipboard.writeText(email).then(() => {
+            const toast = document.getElementById('toast-copy');
+            if (toast) { toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 2000); }
+        });
+    }
+
+    function comoLlegar() {
+        const lat = window._ubicLat, lng = window._ubicLng;
+        let destino;
+        if (lat && lng) {
+            destino = lat + ',' + lng;
+        } else {
+            const el = document.getElementById('footer-direccion');
+            const dir = el._dirVal || el.textContent.replace('📍 ', '').trim();
+            destino = encodeURIComponent(dir);
+        }
+        window.open('https://www.google.com/maps/dir/?api=1&destination=' + destino, '_blank');
+    }
+    </script>
+<!-- MÚSICA PERSISTENTE -->
+    <script>var MUSIC_GROUP = "santera";</script>
+    <script src="music-manager.js"></script>
+<script src="whatsapp-btn.js"></script>
 </body>
 </html>
