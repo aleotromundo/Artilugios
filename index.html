@@ -1120,11 +1120,13 @@
         setTimeout(showSymbols, 7000);
         let exploded = false;
         document.getElementById('hero-logo').addEventListener('click', function() {
-            if (!isPlaying && music.paused) {
-                music.play();
-                musicBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
-                isPlaying = true;
-            }
+            try {
+                if (typeof isPlaying !== 'undefined' && typeof music !== 'undefined' && !isPlaying && music.paused) {
+                    music.play();
+                    if (typeof musicBtn !== 'undefined') musicBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                    isPlaying = true;
+                }
+            } catch(e) { /* música gestionada por music-manager.js */ }
             if (exploded) {
                 exploded = false;
                 santeriaClicked = false;
