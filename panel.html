@@ -181,6 +181,11 @@ body { font-family: 'Crimson Pro', Georgia, serif; background: var(--bg); color:
 .cf-input:focus { border-color: var(--gold); }
 .cf-input.oculto { opacity: .35; }
 
+/* ── PHONE ICON PICKER ── */
+.icon-phone-opt { width:42px; height:42px; font-size:1.4rem; background:var(--surface2); border:2px solid var(--border); border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .2s ease; }
+.icon-phone-opt:hover { border-color:var(--gold-dim); transform:scale(1.1); }
+.icon-phone-opt.selected { border-color:var(--gold); background:rgba(201,162,77,.15); box-shadow:0 0 10px rgba(201,162,77,.3); }
+
 </style>
 </head>
 <body>
@@ -210,9 +215,9 @@ body { font-family: 'Crimson Pro', Georgia, serif; background: var(--bg); color:
 
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('all', this)">TODO</button>
-    <button class="tab-btn" onclick="switchTab('santeria', this)">SANTERÍA</button>
+    <button class="tab-btn" onclick="switchTab('santeria', this)">TIENDA ESOTÉRICA</button>
     <button class="tab-btn" onclick="switchTab('vivero', this)">VIVERO</button>
-    <button class="tab-btn" onclick="switchTab('oraculo', this)">ORÁCULO</button>
+    <button class="tab-btn" onclick="switchTab('oraculo', this)">MANCIAS Y SANACIÓN</button>
     <button class="tab-btn" onclick="switchTab('analytics', this)">ANALYTICS</button>
     <button class="tab-btn" onclick="switchTab('categorias', this)">CATEGORÍAS</button>
     <button class="tab-btn" onclick="switchTab('contacto', this)">CONTACTO</button>
@@ -233,9 +238,9 @@ body { font-family: 'Crimson Pro', Georgia, serif; background: var(--bg); color:
       <div class="section-title">CATEGORÍAS</div>
     </div>
     <div style="display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;">
-      <button class="range-btn active" id="catTab-santeria" onclick="switchCatSeccion('santeria')">SANTERÍA</button>
+      <button class="range-btn active" id="catTab-santeria" onclick="switchCatSeccion('santeria')">TIENDA ESOTÉRICA</button>
       <button class="range-btn" id="catTab-vivero" onclick="switchCatSeccion('vivero')">VIVERO</button>
-      <button class="range-btn" id="catTab-oraculo" onclick="switchCatSeccion('oraculo')">ORÁCULO</button>
+      <button class="range-btn" id="catTab-oraculo" onclick="switchCatSeccion('oraculo')">MANCIAS Y SANACIÓN</button>
     </div>
     <div id="catList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px;"></div>
     <div style="display:flex;gap:10px;align-items:center;">
@@ -265,6 +270,18 @@ body { font-family: 'Crimson Pro', Georgia, serif; background: var(--bg); color:
           <span class="cf-vis-label" id="vislbl-email">VISIBLE</span>
         </div>
         <input type="email" id="c-email" class="cf-input" placeholder="info@artilugios.com" value="info@artilugios.com"/>
+        <div style="margin-top:10px;">
+          <div style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px;">ÍCONO DEL EMAIL</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;" id="email-icon-picker">
+            <button type="button" onclick="seleccionarIconoEmail('fa-envelope')" class="icon-phone-opt" title="Sobre cerrado"><i class="fas fa-envelope"></i></button>
+            <button type="button" onclick="seleccionarIconoEmail('fa-paper-plane')" class="icon-phone-opt" title="Avión de papel"><i class="fas fa-paper-plane"></i></button>
+            <button type="button" onclick="seleccionarIconoEmail('fa-inbox')" class="icon-phone-opt" title="Bandeja de entrada"><i class="fas fa-inbox"></i></button>
+          </div>
+          <div style="margin-top:8px;font-size:.8rem;color:var(--muted);font-family:'Cinzel',serif;letter-spacing:1px;">
+            Seleccionado: <i id="email-icono-preview" class="fas fa-envelope" style="font-size:1.2rem;color:var(--gold);"></i>
+          </div>
+          <input type="hidden" id="c-email-icono" value="fa-envelope"/>
+        </div>
       </div>
       <div class="cf-field-wrap">
         <div class="cf-label-row">
@@ -273,6 +290,18 @@ body { font-family: 'Crimson Pro', Georgia, serif; background: var(--bg); color:
           <span class="cf-vis-label" id="vislbl-telefono">VISIBLE</span>
         </div>
         <input type="text" id="c-telefono" class="cf-input" placeholder="+598 98 496 320" value="+598 98 496 320"/>
+        <div style="margin-top:10px;">
+          <div style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px;">ÍCONO DEL TELÉFONO</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;" id="phone-icon-picker">
+            <button type="button" onclick="seleccionarIconoTel('☎️')" class="icon-phone-opt" title="Teléfono clásico">☎️</button>
+            <button type="button" onclick="seleccionarIconoTel('📞')" class="icon-phone-opt" title="Auricular">📞</button>
+            <button type="button" onclick="seleccionarIconoTel('🤙')" class="icon-phone-opt" title="Llamame">🤙</button>
+          </div>
+          <div style="margin-top:8px;font-size:.8rem;color:var(--muted);font-family:'Cinzel',serif;letter-spacing:1px;">
+            Seleccionado: <span id="tel-icono-preview" style="font-size:1.4rem;">☎️</span>
+          </div>
+          <input type="hidden" id="c-tel-icono" value="☎️"/>
+        </div>
       </div>
     </div>
 
@@ -286,6 +315,18 @@ body { font-family: 'Crimson Pro', Georgia, serif; background: var(--bg); color:
       <input type="hidden" id="c-lat" value=""/>
       <input type="hidden" id="c-lng" value=""/>
       <button class="btn-map-pick" onclick="abrirMapPicker()"><i class="fas fa-map-marker-alt" style="margin-right:5px;"></i>ELEGIR EN EL MAPA</button>
+      <div style="margin-top:10px;">
+        <div style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px;">ÍCONO DE UBICACIÓN</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;" id="dir-icon-picker">
+          <button type="button" onclick="seleccionarIconoDir('📍')" class="icon-phone-opt" title="Chinche rojo">📍</button>
+          <button type="button" onclick="seleccionarIconoDir('📌')" class="icon-phone-opt" title="Chinche amarillo">📌</button>
+          <button type="button" onclick="seleccionarIconoDir('fa-location-dot')" class="icon-phone-opt" title="Moderno Google Maps"><i class="fas fa-location-dot"></i></button>
+        </div>
+        <div style="margin-top:8px;font-size:.8rem;color:var(--muted);font-family:'Cinzel',serif;letter-spacing:1px;">
+          Seleccionado: <span id="dir-icono-preview" style="font-size:1.4rem;">📍</span>
+        </div>
+        <input type="hidden" id="c-dir-icono" value="📍"/>
+      </div>
     </div>
 
     <!-- Sección: Horarios -->
@@ -384,7 +425,7 @@ body { font-family: 'Crimson Pro', Georgia, serif; background: var(--bg); color:
       <button class="icon-btn" onclick="closeModal()"><i class="fas fa-times"></i></button>
     </div>
     <input type="hidden" id="productId"/>
-    <div class="form-group"><label>SECCIÓN</label><select id="productSection"><option value="santeria">Santería</option><option value="vivero">Vivero</option><option value="oraculo">Oráculo</option></select></div>
+    <div class="form-group"><label>SECCIÓN</label><select id="productSection"><option value="santeria">Tienda Esotérica</option><option value="vivero">Vivero</option><option value="oraculo">Mancias y Sanación</option></select></div>
     <div class="form-group"><label>NOMBRE</label><input type="text" id="productName"/></div>
     <div class="form-group"><label>DESCRIPCIÓN BREVE (Tarjeta)</label><input type="text" id="productDesc" placeholder="Se ve en el catálogo principal"/></div>
     <div class="form-group"><label>DESCRIPCIÓN LARGA (Al hacer clic)</label><textarea id="productDescLarga" rows="4" placeholder="Modo de uso, detalles del producto, propiedades..."></textarea></div>
@@ -551,6 +592,10 @@ async function loadContacto() {
                 }
             }
         });
+        // Cargar íconos si existen
+        if (data.tel_icono) seleccionarIconoTel(data.tel_icono);
+        if (data.email_icono) seleccionarIconoEmail(data.email_icono); else seleccionarIconoEmail('fa-envelope');
+        if (data.dir_icono) seleccionarIconoDir(data.dir_icono); else seleccionarIconoDir('📍');
     } catch(e) { /* usa defaults */ }
 }
 
@@ -575,6 +620,12 @@ async function guardarContacto() {
         payload[key] = document.getElementById('c-' + key).value.trim();
         payload['vis_' + key] = document.getElementById('vis-' + key).checked;
     });
+    const telIconoEl = document.getElementById('c-tel-icono');
+    if (telIconoEl) payload['tel_icono'] = telIconoEl.value;
+    const emailIconoEl = document.getElementById('c-email-icono');
+    if (emailIconoEl) payload['email_icono'] = emailIconoEl.value;
+    const dirIconoEl = document.getElementById('c-dir-icono');
+    if (dirIconoEl) payload['dir_icono'] = dirIconoEl.value;
     const latVal = document.getElementById('c-lat').value;
     const lngVal = document.getElementById('c-lng').value;
     if (latVal) payload['lat'] = parseFloat(latVal);
@@ -1173,6 +1224,46 @@ function confirmarUbicacion() {
 
 function cerrarMapPicker() {
     document.getElementById('mapPickerOverlay').classList.remove('open');
+}
+
+// PHONE ICON PICKER
+function seleccionarIconoDir(icono) {
+    document.getElementById('c-dir-icono').value = icono;
+    const preview = document.getElementById('dir-icono-preview');
+    if (icono.startsWith('fa-')) {
+        preview.innerHTML = '<i class="fas ' + icono + '" style="color:var(--gold);"></i>';
+    } else {
+        preview.textContent = icono;
+    }
+    document.querySelectorAll('#dir-icon-picker .icon-phone-opt').forEach(btn => {
+        const fa = btn.querySelector('i');
+        const isEmoji = !fa;
+        if (isEmoji) {
+            btn.classList.toggle('selected', btn.textContent.trim() === icono);
+        } else {
+            btn.classList.toggle('selected', fa.classList.contains(icono));
+        }
+    });
+}
+
+function seleccionarIconoTel(icono) {
+    document.getElementById('c-tel-icono').value = icono;
+    document.getElementById('tel-icono-preview').textContent = icono;
+    document.querySelectorAll('#phone-icon-picker .icon-phone-opt').forEach(btn => {
+        btn.classList.toggle('selected', btn.textContent.trim() === icono);
+    });
+}
+
+function seleccionarIconoEmail(icono) {
+    document.getElementById('c-email-icono').value = icono;
+    const preview = document.getElementById('email-icono-preview');
+    preview.className = 'fas ' + icono;
+    preview.style.fontSize = '1.2rem';
+    preview.style.color = 'var(--gold)';
+    document.querySelectorAll('#email-icon-picker .icon-phone-opt').forEach(btn => {
+        const btnIcon = btn.querySelector('i');
+        btn.classList.toggle('selected', btnIcon && btnIcon.classList.contains(icono));
+    });
 }
 
 // SERVICE WORKER

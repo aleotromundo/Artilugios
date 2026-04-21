@@ -190,9 +190,9 @@
             </button>
             <ul class="nav-links" id="navLinks">
                 <li><a href="index.html">INICIO</a></li>
-                <li><a href="santeria.html">SANTERÍA</a></li>
+                <li><a href="tienda.html">TIENDA ESOTÉRICA</a></li>
                 <li><a href="vivero.html">VIVERO</a></li>
-                <li><a href="oraculo.html">ORÁCULO</a></li>
+                <li><a href="sanacion.html">MANCIAS Y SANACIÓN</a></li>
                 <li><a href="#contacto">CONTACTO</a></li>
             </ul>
         </nav>
@@ -252,9 +252,9 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h3>CONTACTO</h3>
-                <p id="footer-email" onclick="copiarEmail(this)" title="Clic para copiar" style="cursor:pointer;">📧 info@artilugios.com</p>
-                <a id="footer-telefono" href="tel:+59898496320" title="Clic para llamar" style="cursor:pointer;">📱 +598 XX XXX XXX</a>
-                <p id="footer-direccion">📍 El Pinar, Uruguay</p>
+                <p id="footer-email" onclick="copiarEmail(this)" title="Clic para copiar" style="cursor:pointer;"><i class="fas fa-envelope" id="footer-email-icon"></i> info@artilugios.com</p>
+                <a id="footer-telefono" href="tel:+59898496320" title="Clic para llamar" style="cursor:pointer;">☎️ +598 XX XXX XXX</a>
+                <p id="footer-direccion"><span id="footer-dir-icon">📍</span> El Pinar, Uruguay</p>
                 <a id="btn-como-llegar" onclick="comoLlegar()" title="Cómo llegar" style="cursor:pointer;display:inline-flex;align-items:center;gap:8px;margin-top:4px;padding:7px 14px;border:1px solid rgba(139,195,74,0.4);border-radius:20px;font-size:.82rem;letter-spacing:1px;font-family:'Cinzel',serif;color:#8BC34A;transition:all .3s;">
                   <i class="fas fa-route"></i> CÓMO LLEGAR
                 </a>
@@ -497,9 +497,33 @@
             const set  = (id, text) => { const el = document.getElementById(id); if(el) el.textContent = text; };
             const hide = (id) => { const el = document.getElementById(id); if(el) el.style.display = 'none'; };
             const show = (id) => { const el = document.getElementById(id); if(el) el.style.display = ''; };
-            if (d.email)     { const el = document.getElementById('footer-email');     if(el) { el.textContent = '📧 ' + d.email; el._emailVal = d.email; } }
-            if (d.telefono)  { const el = document.getElementById('footer-telefono');  if(el) { el.textContent = '📱 ' + d.telefono; el.href = 'tel:' + d.telefono.replace(/\s/g,''); } }
-            if (d.direccion) { const el = document.getElementById('footer-direccion'); if(el) { el.textContent = '📍 ' + d.direccion; el._dirVal = d.direccion; } }
+            if (d.email) {
+                const el = document.getElementById('footer-email');
+                if (el) {
+                    const faClass = d.email_icono || 'fa-envelope';
+                    const iconEl = document.getElementById('footer-email-icon');
+                    if (iconEl) { iconEl.className = 'fas ' + faClass; }
+                    el.childNodes[el.childNodes.length - 1].textContent = ' ' + d.email;
+                    el._emailVal = d.email;
+                }
+            }
+            if (d.telefono)  { const el = document.getElementById('footer-telefono');  if(el) { const ico = d.tel_icono || '☎️'; el.textContent = ico + ' ' + d.telefono; el.href = 'tel:' + d.telefono.replace(/\s/g,''); } }
+            if (d.direccion) {
+                const el = document.getElementById('footer-direccion');
+                if (el) {
+                    const dirIco = d.dir_icono || '📍';
+                    const iconEl = document.getElementById('footer-dir-icon');
+                    if (iconEl) {
+                        if (dirIco.startsWith('fa-')) {
+                            iconEl.innerHTML = '<i class="fas ' + dirIco + '"></i>';
+                        } else {
+                            iconEl.textContent = dirIco;
+                        }
+                    }
+                    el._dirVal = d.direccion;
+                    el.childNodes[el.childNodes.length - 1].textContent = ' ' + d.direccion;
+                }
+            }
             if (d.horario1)  set('footer-horario1',  d.horario1);
             if (d.horario2)  set('footer-horario2',  d.horario2);
             if (d.horario3)  set('footer-horario3',  d.horario3);
@@ -522,7 +546,7 @@
     })();
 
     function copiarEmail(el) {
-        const email = el._emailVal || el.textContent.replace('📧 ', '').trim();
+        const email = el._emailVal || el.textContent.trim();
         navigator.clipboard.writeText(email).then(() => {
             const toast = document.getElementById('toast-copy');
             if (toast) { toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 2000); }
@@ -536,7 +560,7 @@
             destino = lat + ',' + lng;
         } else {
             const el = document.getElementById('footer-direccion');
-            const dir = el._dirVal || el.textContent.replace('📍 ', '').trim();
+            const dir = el._dirVal || el.textContent.trim();
             destino = encodeURIComponent(dir);
         }
         window.open('https://www.google.com/maps/dir/?api=1&destination=' + destino, '_blank');

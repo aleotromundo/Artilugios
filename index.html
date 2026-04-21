@@ -14,18 +14,18 @@
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-dark-16x16.png" media="(prefers-color-scheme: dark)">
     <link rel="icon" type="image/x-icon" href="favicon-dark.ico" media="(prefers-color-scheme: dark)">
     <link rel="apple-touch-icon" sizes="180x180" href="favicon-32x32.png">
-    <meta name="description" content="Portal místico de sabiduría ancestral. Tienda Esotérica, Vivero y Oráculo. Conectando lo terrenal con lo divino en El Pinar, Uruguay.">
-    <meta name="keywords" content="tienda esotérica, tarot, oráculo, vivero, plantas, rituales, inciensos, velas, El Pinar, Uruguay">
+    <meta name="description" content="Portal místico de sabiduría ancestral. Tienda Esotérica, Vivero y Mancias y Sanación. Conectando lo terrenal con lo divino en El Pinar, Uruguay.">
+    <meta name="keywords" content="tienda esotérica, tarot, mancias y sanación, vivero, plantas, rituales, inciensos, velas, El Pinar, Uruguay">
     <meta name="author" content="Art.ilugioss">
     <meta property="og:title" content="Art.ilugioss - Proyecto Vivo">
-    <meta property="og:description" content="Portal místico de sabiduría ancestral. Tienda Esotérica, Vivero y Oráculo. Conectando lo terrenal con lo divino.">
+    <meta property="og:description" content="Portal místico de sabiduría ancestral. Tienda Esotérica, Vivero y Mancias y Sanación. Conectando lo terrenal con lo divino.">
     <meta property="og:image" content="https://artilugios.vercel.app/logo.jpg">
     <meta property="og:url" content="https://artilugios.vercel.app">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Art.ilugioss">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Artilugios - Proyecto Vivo">
-    <meta name="twitter:description" content="Portal místico de sabiduría ancestral. Tienda Esotérica, Vivero y Oráculo.">
+    <meta name="twitter:description" content="Portal místico de sabiduría ancestral. Tienda Esotérica, Vivero y Mancias y Sanación.">
     <meta name="twitter:image" content="https://artilugios.vercel.app/logo.jpg">
     <meta name="theme-color" content="#d4af37">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -877,9 +877,9 @@
             <ul class="nav-links" id="navLinks">
                 <!-- CAMBIO AQUÍ: ID btn-nav-inicio agregado y href modificado -->
                 <li><a href="#" id="btn-nav-inicio">INICIO</a></li>
-                <li><a href="santeria.html">TIENDA ESOTÉRICA</a></li>
+                <li><a href="tienda.html">TIENDA ESOTÉRICA</a></li>
                 <li><a href="vivero.html">VIVERO</a></li>
-                <li><a href="oraculo.html">ORÁCULO</a></li>
+                <li><a href="sanacion.html">MANCIAS Y SANACIÓN</a></li>
                 <li><a href="#contacto">CONTACTO</a></li>
             </ul>
         </nav>
@@ -908,7 +908,7 @@
         <p>Venta de plantas ornamentales, árboles frutales y de sombra. Encuentra la vegetación perfecta para tu jardín o espacio verde.</p>
     </div>
     <div class="info-popup" id="oraculoPopup">
-        <h3>ORÁCULO</h3>
+        <h3>MANCIAS Y SANACIÓN</h3>
         <p>Lectura de Tarot, Runas y otras artes adivinarias. Descubre los mensajes del universo y encuentra guía en tu camino espiritual.</p>
     </div>
     <button class="music-toggle" id="musicBtn">
@@ -918,9 +918,9 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h3>CONTACTO</h3>
-                <p id="footer-email" onclick="copiarEmail(this)" title="Clic para copiar" style="cursor:pointer;">📧 info@artilugios.com</p>
-                <a id="footer-telefono" href="tel:+59898496320" title="Clic para llamar" style="cursor:pointer;">📱 +598 XX XXX XXX</a>
-                <p id="footer-direccion">📍 El Pinar, Uruguay</p>
+                <p id="footer-email" onclick="copiarEmail(this)" title="Clic para copiar" style="cursor:pointer;"><i class="fas fa-envelope" id="footer-email-icon"></i> info@artilugios.com</p>
+                <a id="footer-telefono" href="tel:+59898496320" title="Clic para llamar" style="cursor:pointer;">☎️ +598 XX XXX XXX</a>
+                <p id="footer-direccion"><span id="footer-dir-icon">📍</span> El Pinar, Uruguay</p>
                 <a id="btn-como-llegar" onclick="comoLlegar()" title="Cómo llegar" style="cursor:pointer;display:inline-flex;align-items:center;gap:8px;margin-top:4px;padding:7px 14px;border:1px solid rgba(212,175,55,0.4);border-radius:20px;font-size:.82rem;letter-spacing:1px;font-family:'Cinzel',serif;color:#d4af37;transition:all .3s;">
                   <i class="fas fa-route"></i> CÓMO LLEGAR
                 </a>
@@ -958,9 +958,33 @@
             const set  = (id, text) => { const el = document.getElementById(id); if(el) el.textContent = text; };
             const hide = (id) => { const el = document.getElementById(id); if(el) el.style.display = 'none'; };
             const show = (id) => { const el = document.getElementById(id); if(el) el.style.display = ''; };
-            if (d.email)     { const el = document.getElementById('footer-email');     if(el) { el.textContent = '📧 ' + d.email; el._emailVal = d.email; } }
-            if (d.telefono)  { const el = document.getElementById('footer-telefono');  if(el) { el.textContent = '📱 ' + d.telefono; el.href = 'tel:' + d.telefono.replace(/\s/g,''); } }
-            if (d.direccion) { const el = document.getElementById('footer-direccion'); if(el) { el.textContent = '📍 ' + d.direccion; el._dirVal = d.direccion; } }
+            if (d.email) {
+                const el = document.getElementById('footer-email');
+                if (el) {
+                    const faClass = d.email_icono || 'fa-envelope';
+                    const iconEl = document.getElementById('footer-email-icon');
+                    if (iconEl) { iconEl.className = 'fas ' + faClass; }
+                    el.childNodes[el.childNodes.length - 1].textContent = ' ' + d.email;
+                    el._emailVal = d.email;
+                }
+            }
+            if (d.telefono)  { const el = document.getElementById('footer-telefono');  if(el) { const ico = d.tel_icono || '☎️'; el.textContent = ico + ' ' + d.telefono; el.href = 'tel:' + d.telefono.replace(/\s/g,''); } }
+            if (d.direccion) {
+                const el = document.getElementById('footer-direccion');
+                if (el) {
+                    const dirIco = d.dir_icono || '📍';
+                    const iconEl = document.getElementById('footer-dir-icon');
+                    if (iconEl) {
+                        if (dirIco.startsWith('fa-')) {
+                            iconEl.innerHTML = '<i class="fas ' + dirIco + '"></i>';
+                        } else {
+                            iconEl.textContent = dirIco;
+                        }
+                    }
+                    el._dirVal = d.direccion;
+                    el.childNodes[el.childNodes.length - 1].textContent = ' ' + d.direccion;
+                }
+            }
             if (d.horario1)  set('footer-horario1',  d.horario1);
             if (d.horario2)  set('footer-horario2',  d.horario2);
             if (d.horario3)  set('footer-horario3',  d.horario3);
@@ -983,7 +1007,7 @@
     })();
 
     function copiarEmail(el) {
-        const email = el._emailVal || el.textContent.replace('📧 ', '').trim();
+        const email = el._emailVal || el.textContent.trim();
         navigator.clipboard.writeText(email).then(() => {
             const toast = document.getElementById('toast-copy');
             if (toast) { toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 2000); }
@@ -997,7 +1021,7 @@
             destino = lat + ',' + lng;
         } else {
             const el = document.getElementById('footer-direccion');
-            const dir = el._dirVal || el.textContent.replace('📍 ', '').trim();
+            const dir = el._dirVal || el.textContent.trim();
             destino = encodeURIComponent(dir);
         }
         // En móvil abre Google Maps app, en desktop el navegador
@@ -1249,7 +1273,7 @@
                 const subtitle = document.getElementById('header-subtitle');
                 const title = document.getElementById('subtitle-title');
                 const description = document.getElementById('subtitle-description');
-                title.innerHTML = '<a href="santeria.html" class="santeria-btn">TIENDA ESOTÉRICA</a>';
+                title.innerHTML = '<a href="tienda.html" class="santeria-btn">TIENDA ESOTÉRICA</a>';
                 description.innerHTML = '<p class="santeria-description">Artículos para rituales y limpiezas energéticas. Velas, Inciensos, resinas, hierbas y elementos sagrados para tus ceremonias.</p>';
                 subtitle.style.opacity = '0';
                 setTimeout(() => {
@@ -1262,7 +1286,7 @@
                     });
                 }, 100);
             } else {
-                window.location.href = 'santeria.html';
+                window.location.href = 'tienda.html';
             }
         });
 
@@ -1318,7 +1342,7 @@
                 const subtitle = document.getElementById('header-subtitle');
                 const title = document.getElementById('subtitle-title');
                 const description = document.getElementById('subtitle-description');
-                title.innerHTML = '<a href="oraculo.html" class="oraculo-btn">ORÁCULO</a>';
+                title.innerHTML = '<a href="sanacion.html" class="oraculo-btn">MANCIAS Y SANACIÓN</a>';
                 description.innerHTML = '<p class="oraculo-description">Lectura de Tarot, Runas y otras artes adivinatorias. Descubre los mensajes del universo y encuentra guía en tu camino espiritual.</p>';
                 subtitle.style.opacity = '0';
                 setTimeout(() => {
@@ -1328,7 +1352,7 @@
                     window.scrollTo({ top: subtitle.offsetTop - offset, behavior: 'smooth' });
                 }, 100);
             } else {
-                window.location.href = 'oraculo.html';
+                window.location.href = 'sanacion.html';
             }
         });
 
