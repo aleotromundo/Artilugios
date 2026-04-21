@@ -318,22 +318,49 @@ body { font-family: 'Crimson Pro', Georgia, serif; background: var(--bg); color:
     <!-- CATÁLOGO: TIENDA ESOTÉRICA -->
     <div id="catalogo-santeria" style="display:none; margin-top:40px;">
       <hr class="catalogo-sep">
-      <div class="catalogo-section-title">✦ CATÁLOGO — TIENDA ESOTÉRICA</div>
-      <div class="cat-grid" id="catGrid-santeria"></div>
+      <div class="catalogo-section-title" style="display:flex;justify-content:space-between;align-items:center;">
+        <span>✦ CATÁLOGO — TIENDA ESOTÉRICA</span>
+        <div class="pdf-dropdown-wrap" id="pdfWrap-santeria">
+          <button class="pdf-panel-btn" id="pdfBtn-santeria" onclick="togglePdfMenu('santeria', event)"><i class="fas fa-file-pdf"></i> DESCARGAR PDF <i class="fas fa-chevron-down" style="font-size:.6rem;margin-left:2px;"></i></button>
+          <div class="pdf-menu" id="pdfMenu-santeria">
+            <button class="pdf-menu-item" onclick="elegirPDF('santeria','rapido', event)"><i class="fas fa-bolt"></i><span><strong>Versión rápida</strong><small>Imágenes optimizadas · PDF liviano</small></span></button>
+            <button class="pdf-menu-item" onclick="elegirPDF('santeria','respaldo', event)"><i class="fas fa-archive"></i><span><strong>Versión respaldo</strong><small>Calidad original · PDF completo</small></span></button>
+          </div>
+        </div>
+      </div>
+      <div class="pdf-prog-wrap" id="pdfProg-santeria" style="display:none;"><div class="pdf-prog-bar"><div class="pdf-prog-fill pdf-fill-santeria" id="pdfFill-santeria"></div></div><span class="pdf-prog-label" id="pdfLabel-santeria"></span></div>
     </div>
 
     <!-- CATÁLOGO: VIVERO -->
     <div id="catalogo-vivero" style="display:none; margin-top:40px;">
       <hr class="catalogo-sep">
-      <div class="catalogo-section-title">🌿 CATÁLOGO — VIVERO</div>
-      <div class="cat-grid" id="catGrid-vivero"></div>
+      <div class="catalogo-section-title" style="display:flex;justify-content:space-between;align-items:center;">
+        <span>🌿 CATÁLOGO — VIVERO</span>
+        <div class="pdf-dropdown-wrap" id="pdfWrap-vivero">
+          <button class="pdf-panel-btn pdf-panel-btn-vivero" id="pdfBtn-vivero" onclick="togglePdfMenu('vivero', event)"><i class="fas fa-file-pdf"></i> DESCARGAR PDF <i class="fas fa-chevron-down" style="font-size:.6rem;margin-left:2px;"></i></button>
+          <div class="pdf-menu pdf-menu-vivero" id="pdfMenu-vivero">
+            <button class="pdf-menu-item" onclick="elegirPDF('vivero','rapido', event)"><i class="fas fa-bolt"></i><span><strong>Versión rápida</strong><small>Imágenes optimizadas · PDF liviano</small></span></button>
+            <button class="pdf-menu-item" onclick="elegirPDF('vivero','respaldo', event)"><i class="fas fa-archive"></i><span><strong>Versión respaldo</strong><small>Calidad original · PDF completo</small></span></button>
+          </div>
+        </div>
+      </div>
+      <div class="pdf-prog-wrap" id="pdfProg-vivero" style="display:none;"><div class="pdf-prog-bar"><div class="pdf-prog-fill pdf-fill-vivero" id="pdfFill-vivero"></div></div><span class="pdf-prog-label" id="pdfLabel-vivero"></span></div>
     </div>
 
     <!-- CATÁLOGO: MANCIAS Y SANACIÓN -->
     <div id="catalogo-oraculo" style="display:none; margin-top:40px;">
       <hr class="catalogo-sep">
-      <div class="catalogo-section-title">☽ CATÁLOGO — MANCIAS Y SANACIÓN</div>
-      <div class="cat-grid" id="catGrid-oraculo"></div>
+      <div class="catalogo-section-title" style="display:flex;justify-content:space-between;align-items:center;">
+        <span>☽ CATÁLOGO — MANCIAS Y SANACIÓN</span>
+        <div class="pdf-dropdown-wrap" id="pdfWrap-oraculo">
+          <button class="pdf-panel-btn pdf-panel-btn-oraculo" id="pdfBtn-oraculo" onclick="togglePdfMenu('oraculo', event)"><i class="fas fa-file-pdf"></i> DESCARGAR PDF <i class="fas fa-chevron-down" style="font-size:.6rem;margin-left:2px;"></i></button>
+          <div class="pdf-menu pdf-menu-oraculo" id="pdfMenu-oraculo">
+            <button class="pdf-menu-item" onclick="elegirPDF('oraculo','rapido', event)"><i class="fas fa-bolt"></i><span><strong>Versión rápida</strong><small>Imágenes optimizadas · PDF liviano</small></span></button>
+            <button class="pdf-menu-item" onclick="elegirPDF('oraculo','respaldo', event)"><i class="fas fa-archive"></i><span><strong>Versión respaldo</strong><small>Calidad original · PDF completo</small></span></button>
+          </div>
+        </div>
+      </div>
+      <div class="pdf-prog-wrap" id="pdfProg-oraculo" style="display:none;"><div class="pdf-prog-bar"><div class="pdf-prog-fill pdf-fill-oraculo" id="pdfFill-oraculo"></div></div><span class="pdf-prog-label" id="pdfLabel-oraculo"></span></div>
     </div>
   </div>
 
@@ -510,6 +537,9 @@ body { font-family: 'Crimson Pro', Georgia, serif; background: var(--bg); color:
   <div class="main" id="tab-analytics" style="display:none;">
     <div class="section-header">
       <div class="section-title">ANALYTICS</div>
+      <button class="btn-reset-analytics" id="btnBorrar24h" onclick="confirmarBorrar24h(this)">
+        <i class="fas fa-clock"></i> BORRAR ÚLTIMAS 24H
+      </button>
     </div>
     <div class="analytics-controls">
       <button class="range-btn active" onclick="setRango(7, this)">7 DÍAS</button>
@@ -574,6 +604,34 @@ body { font-family: 'Crimson Pro', Georgia, serif; background: var(--bg); color:
       <button class="btn-cancel" onclick="closeModal()">CANCELAR</button>
       <button class="btn-save" id="saveBtn" onclick="saveProduct()">GUARDAR</button>
     </div>
+  </div>
+</div>
+
+<!-- MODAL RESET ANALYTICS -->
+<div id="resetAnalyticsOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:400;align-items:center;justify-content:center;">
+  <div style="background:var(--surface);border:1px solid rgba(192,57,43,.4);border-radius:20px;padding:36px 28px;max-width:400px;width:90%;text-align:center;">
+    <div style="font-size:2rem;margin-bottom:16px;">⚠️</div>
+    <div style="font-family:'Cinzel',serif;font-size:.95rem;letter-spacing:2px;color:var(--text);margin-bottom:10px;">RESETEAR ANALYTICS</div>
+    <div style="font-family:'Crimson Pro',serif;font-size:1rem;color:var(--muted);margin-bottom:28px;line-height:1.5;">
+      Elegí qué visitas querés borrar. Esta acción <strong style="color:var(--text)">no se puede deshacer</strong>.
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
+      <button onclick="ejecutarResetAnalytics('24h')" id="btnReset24h" style="width:100%;padding:14px 16px;background:rgba(201,162,77,.08);border:1px solid rgba(201,162,77,.35);border-radius:var(--radius);color:#c9a24d;font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:1px;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:10px;">
+        <i class="fas fa-clock" style="font-size:1rem;width:18px;"></i>
+        <span style="text-align:left;display:flex;flex-direction:column;gap:3px;">
+          <strong>Últimas 24 horas</strong>
+          <small style="font-family:'Crimson Pro',serif;font-size:.82rem;color:var(--muted);font-weight:normal;letter-spacing:0;">Borra solo las visitas de hoy</small>
+        </span>
+      </button>
+      <button onclick="ejecutarResetAnalytics('todo')" id="btnResetTodo" style="width:100%;padding:14px 16px;background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.4);border-radius:var(--radius);color:#e74c3c;font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:1px;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:10px;">
+        <i class="fas fa-trash-alt" style="font-size:1rem;width:18px;"></i>
+        <span style="text-align:left;display:flex;flex-direction:column;gap:3px;">
+          <strong>Todo el historial</strong>
+          <small style="font-family:'Crimson Pro',serif;font-size:.82rem;color:var(--muted);font-weight:normal;letter-spacing:0;">Borra todas las visitas registradas</small>
+        </span>
+      </button>
+    </div>
+    <button onclick="cerrarResetModal()" style="width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:var(--radius);color:var(--muted);font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:1px;cursor:pointer;">CANCELAR</button>
   </div>
 </div>
 
@@ -831,6 +889,76 @@ function setRango(dias, btn) {
     document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     loadAnalytics();
+}
+
+function confirmarBorrar24h(btn) {
+    if (btn.dataset.confirmando === '1') return; // ya está esperando confirmación
+    btn.dataset.confirmando = '1';
+    const original = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ¿CONFIRMAR?';
+    btn.style.borderColor = '#e74c3c';
+    btn.style.color = '#e74c3c';
+    btn.style.background = 'rgba(192,57,43,.18)';
+    const t = setTimeout(() => {
+        btn.innerHTML = original;
+        btn.style.cssText = '';
+        btn.dataset.confirmando = '0';
+    }, 3000);
+    btn.onclick = async function() {
+        clearTimeout(t);
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> BORRANDO...';
+        btn.disabled = true;
+        btn.style.cssText = '';
+        await ejecutarResetAnalytics('24h');
+        btn.innerHTML = original;
+        btn.disabled = false;
+        btn.dataset.confirmando = '0';
+        btn.onclick = function() { confirmarBorrar24h(btn); };
+    };
+}
+
+function confirmarResetAnalytics() {
+    const overlay = document.getElementById('resetAnalyticsOverlay');
+    overlay.style.display = 'flex';
+}
+
+function cerrarResetModal() {
+    document.getElementById('resetAnalyticsOverlay').style.display = 'none';
+}
+
+async function ejecutarResetAnalytics(modo) {
+    const btn = modo === '24h' ? document.getElementById('btnReset24h') : document.getElementById('btnResetTodo');
+    if (btn) {
+        const textoOriginal = btn.querySelector('strong').textContent;
+        btn.querySelector('strong').textContent = 'BORRANDO...';
+        btn.disabled = true;
+    }
+
+    let query;
+    if (modo === '24h') {
+        const desde = new Date();
+        desde.setHours(desde.getHours() - 24);
+        query = sb.from('visitas').delete().gte('created_at', desde.toISOString());
+    } else {
+        query = sb.from('visitas').delete().lte('created_at', new Date().toISOString());
+    }
+
+    const { error } = await query;
+
+    const overlay = document.getElementById('resetAnalyticsOverlay');
+    if (overlay && overlay.style.display !== 'none') cerrarResetModal();
+
+    if (btn) {
+        btn.querySelector('strong').textContent = btn === document.getElementById('btnReset24h') ? 'Últimas 24 horas' : 'Todo el historial';
+        btn.disabled = false;
+    }
+
+    if (error) {
+        showToast('❌ Error al borrar: ' + error.message);
+    } else {
+        showToast(modo === '24h' ? '✓ Últimas 24hs borradas' : '✓ Analytics reseteado completamente');
+        loadAnalytics();
+    }
 }
 
 async function loadAnalytics() {
@@ -1399,38 +1527,13 @@ function seleccionarIconoEmail(icono) {
 let _catGaleria = [], _catIndex = 0;
 
 function renderCatalogo(productos, seccion) {
-    const gridId  = 'catGrid-' + seccion;
     const wrapId  = 'catalogo-' + seccion;
-    const grid    = document.getElementById(gridId);
     const wrap    = document.getElementById(wrapId);
-    if (!grid || !wrap) return;
+    if (!wrap) return;
 
     const lista = productos.filter(p => p.seccion === seccion && p.activo);
     if (lista.length === 0) { wrap.style.display = 'none'; return; }
     wrap.style.display = 'block';
-
-    const cardClass = seccion === 'vivero' ? 'cat-card-vivero' : seccion === 'oraculo' ? 'cat-card-oraculo' : 'cat-card-tienda';
-    const fallbackIcon = seccion === 'vivero' ? 'fa-seedling' : seccion === 'oraculo' ? 'fa-moon' : 'fa-star';
-
-    grid.innerHTML = lista.map(p => {
-        const precio = p.precio ? `$${Number(p.precio).toLocaleString('es-UY')} UYU` : 'Consultar';
-        const imgHTML = p.imagen_url
-            ? `<img src="${p.imagen_url}" loading="lazy" alt="${p.nombre}">`
-            : `<i class="fas ${fallbackIcon} fallback-icon"></i>`;
-        const descShort = p.descripcion
-            ? `<div class="cat-desc-short">${p.descripcion.slice(0, 80)}${p.descripcion.length > 80 ? '…' : ''}</div>`
-            : '';
-        return `
-        <div class="${cardClass}" onclick="abrirCatModal('${p.id}','${seccion}')">
-            <div class="cat-img-wrap">${imgHTML}</div>
-            <div class="cat-body">
-                <div class="cat-name">${p.nombre}</div>
-                <div class="cat-price">${precio}</div>
-                ${descShort}
-                <div class="cat-ver-btn">VER DETALLE</div>
-            </div>
-        </div>`;
-    }).join('');
 }
 
 function renderTodosLosCatalogos() {
@@ -1513,6 +1616,490 @@ if ('serviceWorker' in navigator) {
             .catch(err => console.log('PWA: Error al registrar Service Worker: ', err));
     });
 }
+</script>
+<style>
+.pdf-panel-btn { padding:8px 16px; border-radius:20px; font-family:'Cinzel',serif; font-size:.72rem; letter-spacing:1.5px; cursor:pointer; transition:.3s; border:1px solid rgba(212,175,55,.6); background:rgba(212,175,55,.1); color:#d4af37; display:flex; align-items:center; gap:6px; white-space:nowrap; flex-shrink:0; }
+.pdf-panel-btn:hover { background:#d4af37; color:#000; box-shadow:0 0 14px rgba(212,175,55,.35); }
+.pdf-panel-btn:disabled { opacity:.4; cursor:not-allowed; }
+.pdf-panel-btn-vivero { border-color:rgba(139,195,74,.6); background:rgba(139,195,74,.1); color:#8BC34A; }
+.pdf-panel-btn-vivero:hover { background:#8BC34A; color:#1C352D; box-shadow:0 0 14px rgba(139,195,74,.35); }
+.pdf-panel-btn-oraculo { border-color:rgba(201,162,77,.6); background:rgba(201,162,77,.1); color:#C9A24D; }
+.pdf-panel-btn-oraculo:hover { background:#C9A24D; color:#1a1200; box-shadow:0 0 14px rgba(201,162,77,.35); }
+.pdf-prog-wrap { display:flex; align-items:center; gap:10px; margin:10px 0; }
+.pdf-prog-bar { flex:1; height:4px; background:rgba(255,255,255,.07); border-radius:2px; overflow:hidden; }
+.pdf-prog-fill { height:100%; width:0; transition:width .3s; border-radius:2px; }
+.pdf-fill-santeria { background:#d4af37; }
+.pdf-fill-vivero { background:#8BC34A; }
+.pdf-fill-oraculo { background:#C9A24D; }
+.pdf-prog-label { font-size:.7rem; color:var(--muted,#888); font-family:'Cinzel',serif; letter-spacing:1px; white-space:nowrap; }
+
+/* ── PDF DROPDOWN ── */
+.btn-reset-analytics { padding:10px 18px; background:rgba(201,162,77,.08); border:1px solid rgba(201,162,77,.4); border-radius:30px; color:#c9a24d; cursor:pointer; font-family:'Cinzel',serif; font-size:.72rem; letter-spacing:1.5px; display:flex; align-items:center; gap:7px; transition:.25s ease; }
+.btn-reset-analytics:hover { background:rgba(201,162,77,.2); border-color:rgba(201,162,77,.7); box-shadow:0 0 14px rgba(201,162,77,.25); }
+.pdf-menu { display:none; position:fixed; background:var(--surface,#1e120a); border:1px solid rgba(212,175,55,.35); border-radius:12px; overflow:hidden; min-width:220px; z-index:1000; box-shadow:0 12px 32px rgba(0,0,0,.7); }
+.pdf-menu.open { display:block; animation: fadeDown .18s ease; }
+@keyframes fadeDown { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+.pdf-menu-item { width:100%; background:none; border:none; padding:14px 16px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:background .2s; text-align:left; border-bottom:1px solid rgba(255,255,255,.05); }
+.pdf-menu-item:last-child { border-bottom:none; }
+.pdf-menu-item:hover { background:rgba(212,175,55,.1); }
+.pdf-menu-item i { font-size:1rem; color:#d4af37; flex-shrink:0; width:18px; text-align:center; }
+.pdf-menu-item span { display:flex; flex-direction:column; gap:2px; }
+.pdf-menu-item strong { font-family:'Cinzel',serif; font-size:.75rem; letter-spacing:1px; color:var(--text,#f0e6cc); }
+.pdf-menu-item small { font-family:'Crimson Pro',serif; font-size:.78rem; color:var(--muted,#a89070); }
+.pdf-menu-vivero .pdf-menu-item i { color:#8BC34A; }
+.pdf-menu-vivero .pdf-menu-item:hover { background:rgba(139,195,74,.1); }
+.pdf-menu-oraculo .pdf-menu-item i { color:#C9A24D; }
+.pdf-menu-oraculo .pdf-menu-item:hover { background:rgba(201,162,77,.1); }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+(function(){
+  const SCFG = {
+    santeria:{ label:'TIENDA ESOTÉRICA', filename:'catalogo-tienda-esoterica', icon:'✦',
+      bg:[8,5,1], hbg:[18,12,3], tc:[212,175,55], sc:[196,176,136], bc:[170,155,120],
+      accent:[212,175,55], accentDim:[80,65,20] },
+    vivero:  { label:'VIVERO', filename:'catalogo-vivero', icon:'✿',
+      bg:[3,10,5], hbg:[8,20,12], tc:[139,195,74], sc:[162,207,110], bc:[140,185,100],
+      accent:[139,195,74], accentDim:[35,70,20] },
+    oraculo: { label:'MANCIAS Y SANACIÓN', filename:'catalogo-mancias-sanacion', icon:'☽',
+      bg:[10,6,1], hbg:[18,12,3], tc:[201,162,77], sc:[212,184,122], bc:[180,160,110],
+      accent:[201,162,77], accentDim:[75,58,20] }
+  };
+
+  // Carga imagen respetando proporciones reales
+  async function loadImg(url, modo) {
+    if (!url) return null;
+    try {
+      const proxy = modo === 'respaldo'
+        ? 'https://images.weserv.nl/?url=' + encodeURIComponent(url) + '&output=jpg&q=100'
+        : 'https://images.weserv.nl/?url=' + encodeURIComponent(url) + '&w=800&output=jpg&q=82';
+      const res = await fetch(proxy, { signal: AbortSignal.timeout(modo === 'respaldo' ? 20000 : 10000) });
+      if (!res.ok) return null;
+      const blob = await res.blob();
+      return new Promise(ok => {
+        const fr = new FileReader();
+        fr.onload = () => {
+          const img = new Image();
+          img.onload = () => ok({ data: fr.result, w: img.naturalWidth, h: img.naturalHeight });
+          img.onerror = () => ok({ data: fr.result, w: 1, h: 1 });
+          img.src = fr.result;
+        };
+        fr.onerror = () => ok(null);
+        fr.readAsDataURL(blob);
+      });
+    } catch { return null; }
+  }
+
+  // ── DROPDOWN MENU ──
+  window.togglePdfMenu = function(sec, event) {
+    if (event) event.stopPropagation();
+    const menu = document.getElementById('pdfMenu-' + sec);
+    const btn  = document.getElementById('pdfBtn-' + sec);
+    const isOpen = menu.classList.contains('open');
+    document.querySelectorAll('.pdf-menu').forEach(m => m.classList.remove('open'));
+    if (!isOpen) {
+      // Mostrar temporalmente para medir ancho real
+      menu.style.visibility = 'hidden';
+      menu.style.display = 'block';
+      const menuW = menu.offsetWidth;
+      const menuH = menu.offsetHeight;
+      menu.style.display = '';
+      menu.style.visibility = '';
+
+      const r = btn.getBoundingClientRect();
+      const viewportH = window.innerHeight;
+      const viewportW = window.innerWidth;
+
+      // Posición vertical: abajo del botón, o arriba si no hay espacio
+      let top;
+      if (r.bottom + 8 + menuH > viewportH - 8) {
+        top = r.top - menuH - 8; // abrir hacia arriba
+      } else {
+        top = r.bottom + 8;
+      }
+
+      // Posición horizontal: alinear borde derecho con botón, o izquierdo si se sale
+      let left;
+      if (r.right - menuW < 8) {
+        left = Math.max(8, r.left);
+      } else {
+        left = r.right - menuW;
+      }
+      // No salir por la derecha
+      if (left + menuW > viewportW - 8) {
+        left = viewportW - menuW - 8;
+      }
+
+      menu.style.top  = top + 'px';
+      menu.style.left = left + 'px';
+      menu.style.right = 'auto';
+      menu.classList.add('open');
+    }
+  };
+
+  window.elegirPDF = function(sec, modo, event) {
+    if (event) event.stopPropagation();
+    document.querySelectorAll('.pdf-menu').forEach(m => m.classList.remove('open'));
+    generarPDFPanel(sec, modo);
+  };
+
+  // cerrar menu al hacer clic fuera
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.pdf-dropdown-wrap')) {
+      document.querySelectorAll('.pdf-menu').forEach(m => m.classList.remove('open'));
+    }
+  });
+
+  // Calcula dimensiones contain (sin distorsión) dentro de un área
+  function containDims(imgW, imgH, boxW, boxH) {
+    const ratio = imgW / imgH;
+    let w = boxW, h = boxW / ratio;
+    if (h > boxH) { h = boxH; w = boxH * ratio; }
+    return { w, h, x: (boxW - w) / 2, y: (boxH - h) / 2 };
+  }
+
+  function prog(sec, pct, lbl) {
+    const f = document.getElementById('pdfFill-'+sec);
+    const l = document.getElementById('pdfLabel-'+sec);
+    const w = document.getElementById('pdfProg-'+sec);
+    if(f) f.style.width = pct+'%';
+    if(l) l.textContent = lbl;
+    if(w) w.style.display = (pct>0 && pct<=100) ? 'flex' : 'none';
+  }
+
+  window.generarPDFPanel = async function(sec, modo) {
+    modo = modo || 'rapido';
+    if (typeof allProducts === 'undefined' || !allProducts || allProducts.length === 0) {
+      alert('Esperá a que carguen los productos primero'); return;
+    }
+    const prods = allProducts.filter(p => p.seccion === sec && p.activo);
+    if (!prods.length) { alert('No hay productos activos en esta sección'); return; }
+
+    const cfg = SCFG[sec];
+    const btn = document.getElementById('pdfBtn-'+sec);
+    btn.disabled = true;
+    prog(sec, 1, modo === 'respaldo' ? 'Preparando respaldo...' : 'Iniciando...');
+
+    const { jsPDF } = window.jspdf;
+    const W=210, H=297, M=16;
+    const doc = new jsPDF({orientation:'portrait', unit:'mm', format:'a4'});
+    let page = 1;
+
+    // ── PORTADA ─────────────────────────────────────────────────
+    function portada() {
+      // Fondo sólido oscuro
+      doc.setFillColor(...cfg.bg);
+      doc.rect(0, 0, W, H, 'F');
+
+      // Franja superior decorativa gruesa
+      doc.setFillColor(...cfg.tc);
+      doc.rect(0, 0, W, 6, 'F');
+
+      // Franja inferior
+      doc.setFillColor(...cfg.accentDim);
+      doc.rect(0, H-6, W, 6, 'F');
+      doc.setFillColor(...cfg.tc);
+      doc.rect(0, H-3, W, 3, 'F');
+
+      // Panel central con fondo ligeramente más claro
+      const PY = H*0.22, PH = H*0.56;
+      doc.setFillColor(...cfg.hbg);
+      doc.rect(0, PY, W, PH, 'F');
+
+      // Líneas decorativas dobles horizontales
+      doc.setDrawColor(...cfg.tc);
+      doc.setLineWidth(0.6);
+      doc.line(M, PY, W-M, PY);
+      doc.setLineWidth(0.2);
+      doc.line(M, PY+2.5, W-M, PY+2.5);
+
+      doc.setLineWidth(0.6);
+      doc.line(M, PY+PH, W-M, PY+PH);
+      doc.setLineWidth(0.2);
+      doc.line(M, PY+PH-2.5, W-M, PY+PH-2.5);
+
+      // Marca de agua / ornamento de fondo (grande, transparente)
+      doc.setGState(doc.GState({opacity: 0.04}));
+      doc.setFont('helvetica','bold'); doc.setFontSize(180);
+      doc.setTextColor(...cfg.tc);
+      doc.text(cfg.icon, W/2, PY+PH/2+40, {align:'center'});
+      doc.setGState(doc.GState({opacity: 1}));
+
+      // Nombre de marca
+      doc.setFont('helvetica','bold'); doc.setFontSize(9);
+      doc.setTextColor(...cfg.sc);
+      doc.setCharSpace(6);
+      doc.text('ARTILUGIOS', W/2, PY+18, {align:'center'});
+      doc.setCharSpace(0);
+
+      // Línea sutil bajo la marca
+      doc.setDrawColor(...cfg.accentDim);
+      doc.setLineWidth(0.3);
+      doc.line(W/2-20, PY+22, W/2+20, PY+22);
+
+      // Icono grande centrado
+      doc.setFont('helvetica','normal'); doc.setFontSize(36);
+      doc.setTextColor(...cfg.tc);
+      doc.text(cfg.icon, W/2, PY+PH/2-4, {align:'center'});
+
+      // Título de sección
+      doc.setFont('helvetica','bold'); doc.setFontSize(22);
+      doc.setTextColor(...cfg.tc);
+      doc.setCharSpace(3);
+      doc.text(cfg.label, W/2, PY+PH/2+16, {align:'center'});
+      doc.setCharSpace(0);
+
+      // Subtítulo: cantidad de productos
+      doc.setFont('helvetica','normal'); doc.setFontSize(8.5);
+      doc.setTextColor(...cfg.sc);
+      doc.setCharSpace(2);
+      doc.text('CATÁLOGO DE PRODUCTOS', W/2, PY+PH/2+27, {align:'center'});
+      doc.setCharSpace(0);
+
+      // Cantidad
+      doc.setFont('helvetica','bold'); doc.setFontSize(8);
+      doc.setTextColor(...cfg.tc);
+      doc.text(prods.length + ' ' + (prods.length!==1?'PRODUCTOS':'PRODUCTO'), W/2, PY+PH/2+37, {align:'center'});
+
+      // Fecha en el pie
+      const f = new Date().toLocaleDateString('es-UY',{day:'2-digit',month:'long',year:'numeric'});
+      doc.setFont('helvetica','normal'); doc.setFontSize(7.5);
+      doc.setTextColor(...cfg.sc);
+      doc.setCharSpace(1.5);
+      doc.text(f.toUpperCase(), W/2, H-11, {align:'center'});
+      doc.setCharSpace(0);
+
+      // Pequeños ornamentos en esquinas del panel
+      const corners = [[M, PY+8], [W-M, PY+8], [M, PY+PH-5], [W-M, PY+PH-5]];
+      doc.setFont('helvetica','normal'); doc.setFontSize(7);
+      doc.setTextColor(...cfg.accentDim);
+      corners.forEach(([cx,cy]) => doc.text('◆', cx, cy, {align:'center'}));
+    }
+
+    // ── ENCABEZADO Y PIE DE PÁGINA ───────────────────────────────
+    function newPage() {
+      doc.addPage(); page++;
+      // Fondo
+      doc.setFillColor(...cfg.bg);
+      doc.rect(0, 0, W, H, 'F');
+
+      // Header: franja + doble línea
+      doc.setFillColor(...cfg.hbg);
+      doc.rect(0, 0, W, 14, 'F');
+      doc.setDrawColor(...cfg.tc);
+      doc.setLineWidth(0.5);
+      doc.line(0, 14, W, 14);
+      doc.setLineWidth(0.15);
+      doc.line(0, 16, W, 16);
+
+      // Texto header
+      doc.setFont('helvetica','bold'); doc.setFontSize(7.5);
+      doc.setTextColor(...cfg.tc);
+      doc.setCharSpace(2.5);
+      doc.text('ARTILUGIOS', M, 9.5);
+      doc.setCharSpace(0);
+
+      // Separador vertical ornamental
+      doc.setFont('helvetica','normal'); doc.setFontSize(7);
+      doc.setTextColor(...cfg.accentDim);
+      doc.text('◆', W/2, 9.5, {align:'center'});
+
+      doc.setFont('helvetica','normal'); doc.setFontSize(7);
+      doc.setTextColor(...cfg.sc);
+      doc.text(cfg.label, W-M, 9.5, {align:'right'});
+
+      // Footer: doble línea + franja
+      doc.setDrawColor(...cfg.tc);
+      doc.setLineWidth(0.15);
+      doc.line(0, H-14, W, H-14);
+      doc.setLineWidth(0.5);
+      doc.line(0, H-12, W, H-12);
+      doc.setFillColor(...cfg.hbg);
+      doc.rect(0, H-12, W, 12, 'F');
+
+      // Texto footer
+      doc.setFont('helvetica','normal'); doc.setFontSize(6.5);
+      doc.setTextColor(...cfg.sc);
+      doc.text('artilugios.com', M, H-4.5);
+
+      doc.setFont('helvetica','bold'); doc.setFontSize(6.5);
+      doc.setTextColor(...cfg.tc);
+      doc.text('Pág. ' + page, W-M, H-4.5, {align:'right'});
+    }
+
+    // ── TARJETA DE PRODUCTO (layout horizontal) ───────────────────
+    // Cada producto ocupa todo el ancho: imagen a la izquierda, texto a la derecha
+    const CARD_H = 75;       // altura de cada tarjeta
+    const IMG_W  = 90;       // ancho del bloque imagen (foto grande y protagonista)
+    const GAP    = 6;        // espacio entre imagen y texto
+    const CONTENT_X = M + IMG_W + GAP;
+    const CONTENT_W = W - M - IMG_W - GAP - M;
+    const CARD_W = W - M*2;
+    const TOP_Y  = 20;       // primer y disponible tras el header
+    const BOT_Y  = H - 16;   // último y disponible antes del footer
+
+    function drawCard(p, y, imgInfo) {
+      const x = M;
+      const R = 3;
+
+      // Sombra sutil
+      doc.setFillColor(0,0,0);
+      doc.setGState(doc.GState({opacity:0.25}));
+      doc.roundedRect(x+1.5, y+1.5, CARD_W, CARD_H, R, R, 'F');
+      doc.setGState(doc.GState({opacity:1}));
+
+      // Fondo tarjeta
+      doc.setFillColor(...cfg.hbg);
+      doc.roundedRect(x, y, CARD_W, CARD_H, R, R, 'F');
+
+      // Borde
+      doc.setDrawColor(...cfg.tc);
+      doc.setLineWidth(0.25);
+      doc.roundedRect(x, y, CARD_W, CARD_H, R, R, 'S');
+
+      // ── ZONA IMAGEN ──
+      // Fondo del bloque de imagen (más oscuro)
+      doc.setFillColor(...cfg.bg);
+      // Clip manual: dibujar rect oscuro a la izquierda
+      doc.roundedRect(x, y, IMG_W, CARD_H, R, R, 'F');
+      // Tapar el lado derecho del rect redondeado (para que solo sean redondeadas las esquinas izq)
+      doc.setFillColor(...cfg.bg);
+      doc.rect(x + IMG_W - R, y, R, CARD_H, 'F');
+
+      if (imgInfo) {
+        // contain: calcular dims sin distorsión
+        const pad = 3;
+        const boxW = IMG_W - pad*2, boxH = CARD_H - pad*2;
+        const d = containDims(imgInfo.w, imgInfo.h, boxW, boxH);
+        const ix = x + pad + d.x;
+        const iy = y + pad + d.y;
+        try {
+          doc.addImage(imgInfo.data, 'JPEG', ix, iy, d.w, d.h, '', 'SLOW');
+        } catch(e) {
+          drawPlaceholder(x, y, IMG_W, CARD_H);
+        }
+      } else {
+        drawPlaceholder(x, y, IMG_W, CARD_H);
+      }
+
+      // Línea divisoria vertical entre imagen y texto
+      doc.setDrawColor(...cfg.tc);
+      doc.setLineWidth(0.2);
+      doc.line(x + IMG_W, y+4, x + IMG_W, y + CARD_H - 4);
+
+      // ── ZONA TEXTO ──
+      const TX = CONTENT_X;
+      let TY = y + 10;
+
+      // Numeración / índice del producto (decorativo)
+      // Nombre del producto
+      doc.setFont('helvetica','bold'); doc.setFontSize(10.5);
+      doc.setTextColor(...cfg.tc);
+      const nombre = p.nombre.length > 38 ? p.nombre.slice(0,36)+'…' : p.nombre;
+      doc.text(nombre, TX, TY);
+      TY += 7;
+
+      // Línea separadora bajo el nombre
+      doc.setDrawColor(...cfg.accentDim);
+      doc.setLineWidth(0.2);
+      doc.line(TX, TY-2, TX + CONTENT_W - 2, TY-2);
+
+      // Precio
+      const precio = p.precio ? '$'+Number(p.precio).toLocaleString('es-UY')+' UYU' : 'Consultar precio';
+      doc.setFont('helvetica','bold'); doc.setFontSize(9);
+      doc.setTextColor(...cfg.tc);
+      doc.text(precio, TX, TY+4);
+      TY += 10;
+
+      // Categoría (si existe)
+      if (p.categoria) {
+        doc.setFont('helvetica','normal'); doc.setFontSize(7);
+        doc.setTextColor(...cfg.sc);
+        doc.setCharSpace(1);
+        doc.text(('• ' + p.categoria).toUpperCase(), TX, TY);
+        doc.setCharSpace(0);
+        TY += 7;
+      }
+
+      // Descripción
+      if (p.descripcion) {
+        doc.setFont('helvetica','normal'); doc.setFontSize(7.8);
+        doc.setTextColor(...cfg.bc);
+        const maxChars = 160;
+        const desc = p.descripcion.length > maxChars ? p.descripcion.slice(0, maxChars-1)+'…' : p.descripcion;
+        const lines = doc.splitTextToSize(desc, CONTENT_W - 2);
+        const maxLines = Math.min(lines.length, 4);
+        doc.text(lines.slice(0, maxLines), TX, TY);
+        TY += maxLines * 4.5;
+      }
+
+      // Descripción larga (extracto si hay)
+      if (p.descripcion_larga && TY < y + CARD_H - 14) {
+        doc.setFont('helvetica','normal'); doc.setFontSize(7);
+        doc.setTextColor(...cfg.bc);
+        const dl = p.descripcion_larga.slice(0, 100) + (p.descripcion_larga.length>100?'…':'');
+        const dlLines = doc.splitTextToSize(dl, CONTENT_W - 2);
+        doc.text(dlLines.slice(0,2), TX, TY);
+      }
+
+      // Botón "VER EN TIENDA" en esquina inferior derecha
+      const BW = 36, BH = 7;
+      const BX = x + CARD_W - BW - 4;
+      const BY = y + CARD_H - BH - 5;
+      doc.setFillColor(...cfg.accentDim);
+      doc.roundedRect(BX, BY, BW, BH, 2, 2, 'F');
+      doc.setDrawColor(...cfg.tc);
+      doc.setLineWidth(0.25);
+      doc.roundedRect(BX, BY, BW, BH, 2, 2, 'S');
+      doc.setFont('helvetica','bold'); doc.setFontSize(5.5);
+      doc.setTextColor(...cfg.tc);
+      doc.setCharSpace(0.8);
+      doc.text('VER EN TIENDA', BX + BW/2, BY + 4.6, {align:'center'});
+      doc.setCharSpace(0);
+    }
+
+    function drawPlaceholder(x, y, w, h) {
+      doc.setFont('helvetica','normal'); doc.setFontSize(18);
+      doc.setGState(doc.GState({opacity:0.12}));
+      doc.setTextColor(...cfg.tc);
+      doc.text(cfg.icon, x+w/2, y+h/2+4, {align:'center'});
+      doc.setGState(doc.GState({opacity:1}));
+    }
+
+    // ── GENERACIÓN ───────────────────────────────────────────────
+    portada();
+    newPage();
+    let curY = TOP_Y;
+
+    for (let i=0; i<prods.length; i++) {
+      const p = prods[i];
+      prog(sec, Math.round(5 + ((i+1)/prods.length)*88), 'Procesando '+(i+1)+' de '+prods.length+'...');
+
+      const imgUrl = p.imagen_url || (p.galeria_urls && p.galeria_urls[0]);
+      const imgInfo = await loadImg(imgUrl, modo);
+
+      // ¿Entra en la página actual?
+      if (curY + CARD_H > BOT_Y) {
+        newPage();
+        curY = TOP_Y;
+      }
+
+      drawCard(p, curY, imgInfo);
+      curY += CARD_H + 6;
+    }
+
+    prog(sec, 96, 'Guardando...');
+    await new Promise(r=>setTimeout(r,200));
+    const fecha = new Date().toISOString().split('T')[0];
+    const sufijo = modo === 'respaldo' ? '-RESPALDO' : '-rapido';
+    doc.save(cfg.filename + sufijo + '-' + fecha + '.pdf');
+    prog(sec, 100, '✓ PDF descargado');
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-check"></i> LISTO';
+    setTimeout(()=>{ btn.innerHTML='<i class="fas fa-file-pdf"></i> DESCARGAR PDF'; }, 3000);
+  };
+})();
 </script>
 </body>
 </html>
