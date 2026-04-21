@@ -318,21 +318,48 @@ body { font-family: 'Crimson Pro', Georgia, serif; background: var(--bg); color:
     <!-- CATÁLOGO: TIENDA ESOTÉRICA -->
     <div id="catalogo-santeria" style="display:none; margin-top:40px;">
       <hr class="catalogo-sep">
-      <div class="catalogo-section-title">✦ CATÁLOGO — TIENDA ESOTÉRICA</div>
+      <div class="catalogo-section-title" style="display:flex;justify-content:space-between;align-items:center;">
+        <span>✦ CATÁLOGO — TIENDA ESOTÉRICA</span>
+        <button class="pdf-panel-btn" id="pdfBtn-santeria" onclick="generarPDFPanel('santeria')">
+          <i class="fas fa-file-pdf"></i> DESCARGAR PDF
+        </button>
+      </div>
+      <div class="pdf-prog-wrap" id="pdfProg-santeria" style="display:none;">
+        <div class="pdf-prog-bar"><div class="pdf-prog-fill pdf-fill-santeria" id="pdfFill-santeria"></div></div>
+        <span class="pdf-prog-label" id="pdfLabel-santeria"></span>
+      </div>
       <div class="cat-grid" id="catGrid-santeria"></div>
     </div>
 
     <!-- CATÁLOGO: VIVERO -->
     <div id="catalogo-vivero" style="display:none; margin-top:40px;">
       <hr class="catalogo-sep">
-      <div class="catalogo-section-title">🌿 CATÁLOGO — VIVERO</div>
+      <div class="catalogo-section-title" style="display:flex;justify-content:space-between;align-items:center;">
+        <span>🌿 CATÁLOGO — VIVERO</span>
+        <button class="pdf-panel-btn pdf-panel-btn-vivero" id="pdfBtn-vivero" onclick="generarPDFPanel('vivero')">
+          <i class="fas fa-file-pdf"></i> DESCARGAR PDF
+        </button>
+      </div>
+      <div class="pdf-prog-wrap" id="pdfProg-vivero" style="display:none;">
+        <div class="pdf-prog-bar"><div class="pdf-prog-fill pdf-fill-vivero" id="pdfFill-vivero"></div></div>
+        <span class="pdf-prog-label" id="pdfLabel-vivero"></span>
+      </div>
       <div class="cat-grid" id="catGrid-vivero"></div>
     </div>
 
     <!-- CATÁLOGO: MANCIAS Y SANACIÓN -->
     <div id="catalogo-oraculo" style="display:none; margin-top:40px;">
       <hr class="catalogo-sep">
-      <div class="catalogo-section-title">☽ CATÁLOGO — MANCIAS Y SANACIÓN</div>
+      <div class="catalogo-section-title" style="display:flex;justify-content:space-between;align-items:center;">
+        <span>☽ CATÁLOGO — MANCIAS Y SANACIÓN</span>
+        <button class="pdf-panel-btn pdf-panel-btn-oraculo" id="pdfBtn-oraculo" onclick="generarPDFPanel('oraculo')">
+          <i class="fas fa-file-pdf"></i> DESCARGAR PDF
+        </button>
+      </div>
+      <div class="pdf-prog-wrap" id="pdfProg-oraculo" style="display:none;">
+        <div class="pdf-prog-bar"><div class="pdf-prog-fill pdf-fill-oraculo" id="pdfFill-oraculo"></div></div>
+        <span class="pdf-prog-label" id="pdfLabel-oraculo"></span>
+      </div>
       <div class="cat-grid" id="catGrid-oraculo"></div>
     </div>
   </div>
@@ -1513,6 +1540,191 @@ if ('serviceWorker' in navigator) {
             .catch(err => console.log('PWA: Error al registrar Service Worker: ', err));
     });
 }
+</script>
+<!-- ═══ ESTILOS BOTONES PDF ═══ -->
+<style>
+.pdf-panel-btn {
+  padding: 8px 16px; border-radius: 20px; font-family: 'Cinzel', serif;
+  font-size: .72rem; letter-spacing: 1.5px; cursor: pointer; transition: .3s;
+  border: 1px solid rgba(212,175,55,.6); background: rgba(212,175,55,.1);
+  color: #d4af37; display: flex; align-items: center; gap: 6px; white-space: nowrap;
+  flex-shrink: 0;
+}
+.pdf-panel-btn:hover { background: #d4af37; color: #000; box-shadow: 0 0 14px rgba(212,175,55,.35); }
+.pdf-panel-btn:disabled { opacity: .4; cursor: not-allowed; }
+.pdf-panel-btn-vivero { border-color: rgba(139,195,74,.6); background: rgba(139,195,74,.1); color: #8BC34A; }
+.pdf-panel-btn-vivero:hover { background: #8BC34A; color: #1C352D; box-shadow: 0 0 14px rgba(139,195,74,.35); }
+.pdf-panel-btn-oraculo { border-color: rgba(201,162,77,.6); background: rgba(201,162,77,.1); color: #C9A24D; }
+.pdf-panel-btn-oraculo:hover { background: #C9A24D; color: #1a1200; box-shadow: 0 0 14px rgba(201,162,77,.35); }
+.pdf-prog-wrap { display: flex; align-items: center; gap: 10px; margin: 10px 0; }
+.pdf-prog-bar { flex: 1; height: 4px; background: rgba(255,255,255,.07); border-radius: 2px; overflow: hidden; }
+.pdf-prog-fill { height: 100%; width: 0; transition: width .3s; border-radius: 2px; }
+.pdf-fill-santeria { background: #d4af37; }
+.pdf-fill-vivero { background: #8BC34A; }
+.pdf-fill-oraculo { background: #C9A24D; }
+.pdf-prog-label { font-size: .7rem; color: var(--muted, #888); font-family: 'Cinzel', serif; letter-spacing: 1px; white-space: nowrap; }
+</style>
+
+<!-- ═══ jsPDF ═══ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+// ── GENERADOR PDF PANEL ──────────────────────────────────────────────────────
+(function() {
+  const { jsPDF } = window.jspdf;
+
+  const SECTION_CFG = {
+    santeria: {
+      label: 'TIENDA ESOTÉRICA', filename: 'catalogo-tienda-esoterica', icon: '✦',
+      bg:[10,8,2], headerBg:[20,15,5],
+      textColor:[212,175,55], subColor:[196,176,136], bodyColor:[200,190,170]
+    },
+    vivero: {
+      label: 'VIVERO', filename: 'catalogo-vivero', icon: '✿',
+      bg:[5,12,7], headerBg:[10,22,14],
+      textColor:[139,195,74], subColor:[162,207,110], bodyColor:[180,210,150]
+    },
+    oraculo: {
+      label: 'MANCIAS Y SANACIÓN', filename: 'catalogo-mancias-sanacion', icon: '☽',
+      bg:[12,8,2], headerBg:[20,14,5],
+      textColor:[201,162,77], subColor:[212,184,122], bodyColor:[200,180,140]
+    }
+  };
+
+  async function cargarImgB64(url) {
+    if (!url) return null;
+    try {
+      const proxy = `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=400&h=400&fit=cover&output=jpg&q=75`;
+      const res = await fetch(proxy, { signal: AbortSignal.timeout(8000) });
+      if (!res.ok) return null;
+      const blob = await res.blob();
+      return new Promise(ok => {
+        const fr = new FileReader();
+        fr.onload = () => ok(fr.result);
+        fr.onerror = () => ok(null);
+        fr.readAsDataURL(blob);
+      });
+    } catch { return null; }
+  }
+
+  function setProg(sec, pct, label) {
+    const fill = document.getElementById('pdfFill-' + sec);
+    const lbl  = document.getElementById('pdfLabel-' + sec);
+    const wrap = document.getElementById('pdfProg-' + sec);
+    if (fill) fill.style.width = pct + '%';
+    if (lbl)  lbl.textContent = label;
+    if (wrap) wrap.style.display = pct > 0 && pct < 100 ? 'flex' : (pct === 100 ? 'flex' : 'none');
+  }
+
+  window.generarPDFPanel = async function(sec) {
+    if (!window.allProducts) return alert('Cargá los productos primero');
+    const prods = window.allProducts.filter(p => p.seccion === sec && p.activo);
+    if (!prods.length) return alert('No hay productos activos en esta sección');
+
+    const cfg = SECTION_CFG[sec];
+    const btn = document.getElementById('pdfBtn-' + sec);
+    btn.disabled = true;
+    setProg(sec, 1, 'Iniciando...');
+
+    const bizName = 'Art.ilugioss';
+    const W = 210, H = 297, MARGIN = 14;
+    const CARD_W = (W - MARGIN * 2 - 8) / 2;
+    const CARD_H = 90;
+    let page = 1;
+
+    const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+
+    function portada() {
+      doc.setFillColor(...cfg.bg); doc.rect(0,0,W,H,'F');
+      doc.setFillColor(...cfg.textColor); doc.rect(0,0,W,3,'F'); doc.rect(0,H-3,W,3,'F');
+      doc.setDrawColor(...cfg.textColor); doc.setLineWidth(.3);
+      doc.line(MARGIN,H/2-30,W-MARGIN,H/2-30); doc.line(MARGIN,H/2+30,W-MARGIN,H/2+30);
+      doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(...cfg.subColor);
+      doc.setCharSpace(4); doc.text(bizName.toUpperCase(),W/2,H/2-38,{align:'center'}); doc.setCharSpace(0);
+      doc.setFontSize(24); doc.setTextColor(...cfg.textColor); doc.text(cfg.icon,W/2,H/2-6,{align:'center'});
+      doc.setFontSize(20); doc.setCharSpace(3); doc.text(cfg.label,W/2,H/2+10,{align:'center'}); doc.setCharSpace(0);
+      doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...cfg.subColor);
+      doc.text(`${prods.length} PRODUCTO${prods.length!==1?'S':''}`,W/2,H/2+22,{align:'center'});
+      const fecha = new Date().toLocaleDateString('es-UY',{day:'2-digit',month:'long',year:'numeric'});
+      doc.setFontSize(8); doc.text(fecha.toUpperCase(),W/2,H-14,{align:'center'});
+    }
+
+    function nuevaPag() {
+      doc.addPage(); page++;
+      doc.setFillColor(...cfg.bg); doc.rect(0,0,W,H,'F');
+      doc.setFillColor(...cfg.headerBg); doc.rect(0,0,W,12,'F'); doc.rect(0,H-10,W,10,'F');
+      doc.setDrawColor(...cfg.textColor); doc.setLineWidth(.3);
+      doc.line(0,12,W,12); doc.line(0,H-10,W,H-10);
+      doc.setFont('helvetica','bold'); doc.setFontSize(7); doc.setTextColor(...cfg.textColor);
+      doc.setCharSpace(2); doc.text(bizName.toUpperCase(),MARGIN,8); doc.setCharSpace(0);
+      doc.setFont('helvetica','normal'); doc.setTextColor(...cfg.subColor);
+      doc.text(cfg.label,W-MARGIN,8,{align:'right'});
+      doc.setFontSize(7); doc.text('Pág. '+page,W-MARGIN,H-4,{align:'right'});
+    }
+
+    function tarjeta(prod, x, y, imgData) {
+      const R=3;
+      doc.setFillColor(0,0,0); doc.roundedRect(x+1,y+1,CARD_W,CARD_H,R,R,'F');
+      doc.setFillColor(...cfg.headerBg); doc.roundedRect(x,y,CARD_W,CARD_H,R,R,'F');
+      doc.setDrawColor(...cfg.textColor); doc.setLineWidth(.3); doc.roundedRect(x,y,CARD_W,CARD_H,R,R,'S');
+      const IH=44;
+      if (imgData) {
+        try {
+          doc.addImage(imgData,'JPEG',x,y,CARD_W,IH,'','FAST');
+          doc.setFillColor(0,0,0); doc.setGState(doc.GState({opacity:.2})); doc.rect(x,y,CARD_W,IH,'F'); doc.setGState(doc.GState({opacity:1}));
+        } catch {
+          doc.setFillColor(10,8,4); doc.rect(x,y,CARD_W,IH,'F');
+          doc.setFontSize(14); doc.setTextColor(...cfg.textColor); doc.setGState(doc.GState({opacity:.18}));
+          doc.text(cfg.icon,x+CARD_W/2,y+IH/2+3,{align:'center'}); doc.setGState(doc.GState({opacity:1}));
+        }
+      } else {
+        doc.setFillColor(10,8,4); doc.rect(x,y,CARD_W,IH,'F');
+        doc.setFontSize(14); doc.setTextColor(...cfg.textColor); doc.setGState(doc.GState({opacity:.18}));
+        doc.text(cfg.icon,x+CARD_W/2,y+IH/2+3,{align:'center'}); doc.setGState(doc.GState({opacity:1}));
+      }
+      doc.setFillColor(...cfg.headerBg); doc.rect(x,y+IH-1,CARD_W,2,'F');
+      const TY=y+IH+5;
+      doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor(...cfg.textColor);
+      doc.text(prod.nombre.length>30?prod.nombre.slice(0,28)+'…':prod.nombre,x+5,TY);
+      const precio = prod.precio?`$${Number(prod.precio).toLocaleString('es-UY')} UYU`:'Consultar';
+      doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...cfg.subColor);
+      doc.text(precio,x+5,TY+7);
+      if (prod.descripcion) {
+        const d=prod.descripcion.length>70?prod.descripcion.slice(0,68)+'…':prod.descripcion;
+        doc.setFontSize(6.5); doc.setTextColor(...cfg.bodyColor);
+        doc.text(doc.splitTextToSize(d,CARD_W-10).slice(0,2),x+5,TY+14);
+      }
+      const BY=y+CARD_H-11; const BW=CARD_W-10;
+      doc.setDrawColor(...cfg.textColor); doc.setLineWidth(.3); doc.roundedRect(x+5,BY,BW,7,2,2,'S');
+      doc.setFont('helvetica','bold'); doc.setFontSize(6); doc.setTextColor(...cfg.textColor);
+      doc.setCharSpace(1); doc.text('VER DETALLE',x+5+BW/2,BY+4.5,{align:'center'}); doc.setCharSpace(0);
+    }
+
+    portada();
+    nuevaPag();
+    let posX=MARGIN, posY=18, col=0;
+
+    for (let i=0; i<prods.length; i++) {
+      const prod=prods[i];
+      setProg(sec, Math.round(((i+1)/prods.length)*90), `Procesando ${i+1} de ${prods.length}...`);
+      const imgUrl = prod.imagen_url || (prod.galeria_urls&&prod.galeria_urls[0]);
+      const imgData = await cargarImgB64(imgUrl);
+      if (col===2) { col=0; posX=MARGIN; posY+=CARD_H+8; }
+      if (posY+CARD_H+8>H-14) { nuevaPag(); posY=18; col=0; posX=MARGIN; }
+      tarjeta(prod,posX,posY,imgData);
+      col++; posX+=CARD_W+8;
+    }
+
+    setProg(sec,95,'Guardando...');
+    await new Promise(r=>setTimeout(r,200));
+    const fecha=new Date().toISOString().split('T')[0];
+    doc.save(`${cfg.filename}-${fecha}.pdf`);
+    setProg(sec,100,'✓ PDF descargado');
+    btn.disabled=false;
+    btn.innerHTML='<i class="fas fa-check"></i> LISTO';
+    setTimeout(()=>{ btn.innerHTML='<i class="fas fa-file-pdf"></i> DESCARGAR PDF'; },3000);
+  };
+})();
 </script>
 </body>
 </html>
