@@ -1,6 +1,7 @@
 // sw.js
 // ⚠️ Para forzar una actualización: cambiá el número de versión (v2 → v3, etc.)
 const CACHE_NAME = 'artilugios-panel-v2';
+const SW_VERSION = 2; // debe coincidir con SW_VERSION en panel.html
 
 const ASSETS = [
   './manifest.json',
@@ -70,4 +71,11 @@ self.addEventListener('fetch', (e) => {
       });
     })
   );
+});
+
+// ── MENSAJES: responder versión al panel.html ──
+self.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 'GET_VERSION') {
+        e.ports[0].postMessage({ version: SW_VERSION });
+    }
 });
