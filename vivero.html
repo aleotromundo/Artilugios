@@ -294,7 +294,11 @@
 
     <script>
         const { createClient } = supabase;
-        const sb = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+        const sb = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY, {
+            global: {
+                fetch: (url, options = {}) => fetch(url, { ...options, cache: 'no-store' })
+            }
+        });
         
         let allPlants = [];
         
@@ -494,7 +498,9 @@
     (async function cargarContacto() {
         try {
             const { createClient } = supabase;
-            const sb2 = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+            const sb2 = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY, {
+                global: { fetch: (url, options = {}) => fetch(url, { ...options, cache: 'no-store' }) }
+            });
             const { data: d, error } = await sb2.from('contacto_info').select('*').eq('id', 1).maybeSingle();
             if (error) { console.error('contacto_info error:', JSON.stringify(error)); return; }
             if (!d) return;
