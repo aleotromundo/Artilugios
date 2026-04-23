@@ -274,89 +274,6 @@ body { font-family: 'Crimson Pro', Georgia, serif; background: var(--bg); color:
   .cat-modal-info { padding: 22px 18px; }
 }
 
-/* ── UPLOAD PROGRESS OVERLAY ── */
-#uploadOverlay {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,.82);
-  backdrop-filter: blur(6px);
-  z-index: 999;
-  display: none;
-  align-items: center;
-  justify-content: center;
-}
-#uploadOverlay.open { display: flex; }
-.upload-box {
-  width: min(92vw, 400px);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 36px 32px;
-  text-align: center;
-}
-.upload-icon-wrap {
-  width: 64px; height: 64px;
-  margin: 0 auto 20px;
-  background: rgba(201,162,77,.08);
-  border: 1px solid var(--gold-dim);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.6rem; color: var(--gold);
-  animation: uploadPulse 1.6s ease-in-out infinite;
-}
-@keyframes uploadPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(201,162,77,.3); }
-  50%       { box-shadow: 0 0 0 12px rgba(201,162,77,0); }
-}
-.upload-title {
-  font-family: 'Cinzel', serif;
-  font-size: .85rem; letter-spacing: 3px;
-  color: var(--gold); margin-bottom: 6px;
-}
-.upload-status {
-  font-family: 'Crimson Pro', serif;
-  font-size: .95rem; color: var(--muted);
-  min-height: 22px; margin-bottom: 22px;
-  transition: color .3s;
-}
-.upload-status.ok   { color: var(--success); }
-.upload-status.err  { color: var(--danger); }
-.upload-track {
-  width: 100%; height: 6px;
-  background: var(--surface2);
-  border-radius: 6px; overflow: hidden;
-  margin-bottom: 14px;
-}
-.upload-fill {
-  height: 100%;
-  background: linear-gradient(90deg, rgba(201,162,77,.5), var(--gold));
-  border-radius: 6px;
-  width: 0%;
-  transition: width .4s ease;
-}
-.upload-counter {
-  font-family: 'Cinzel', serif;
-  font-size: .7rem; letter-spacing: 2px;
-  color: var(--muted);
-}
-.upload-thumbs {
-  display: flex; gap: 8px; justify-content: center;
-  flex-wrap: wrap; margin-top: 18px;
-}
-.upload-thumb {
-  width: 48px; height: 48px;
-  border-radius: 8px;
-  border: 2px solid var(--border);
-  object-fit: cover;
-  opacity: .35;
-  transition: opacity .3s, border-color .3s;
-}
-.upload-thumb.done  { opacity: 1; border-color: var(--success); }
-.upload-thumb.error { opacity: .6; border-color: var(--danger); }
-.upload-thumb.active {
-  opacity: 1; border-color: var(--gold);
-  animation: uploadPulse 1s ease-in-out infinite;
-}
-
 </style>
 </head>
 <body>
@@ -719,18 +636,6 @@ body { font-family: 'Crimson Pro', Georgia, serif; background: var(--bg); color:
       </button>
     </div>
     <button onclick="cerrarResetModal()" style="width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:var(--radius);color:var(--muted);font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:1px;cursor:pointer;">CANCELAR</button>
-  </div>
-</div>
-
-<!-- UPLOAD PROGRESS OVERLAY -->
-<div id="uploadOverlay">
-  <div class="upload-box">
-    <div class="upload-icon-wrap"><i class="fas fa-camera"></i></div>
-    <div class="upload-title">SUBIENDO FOTOS</div>
-    <div class="upload-status" id="uploadStatus">Preparando...</div>
-    <div class="upload-track"><div class="upload-fill" id="uploadFill"></div></div>
-    <div class="upload-counter" id="uploadCounter">0 / 0</div>
-    <div class="upload-thumbs" id="uploadThumbs"></div>
   </div>
 </div>
 
@@ -1434,86 +1339,29 @@ async function saveProduct() {
     btn.textContent = "GUARDANDO..."; btn.disabled = true;
     const id = document.getElementById('productId').value;
     let urlsFinales = [...fotosGuardadas];
-    let errores = 0;
-
-    if (fotosNuevas.length > 0) {
-        // — Armar thumbnails en el overlay —
-        const thumbsEl    = document.getElementById('uploadThumbs');
-        const fillEl      = document.getElementById('uploadFill');
-        const statusEl    = document.getElementById('uploadStatus');
-        const counterEl   = document.getElementById('uploadCounter');
-        const overlay     = document.getElementById('uploadOverlay');
-        const total       = fotosNuevas.length;
-
-        thumbsEl.innerHTML = fotosNuevas.map((f, i) =>
-            `<img class="upload-thumb" id="uth-${i}" src="${f.previewUrl}" />`
-        ).join('');
-        fillEl.style.width = '0%';
-        statusEl.textContent = 'Preparando...';
-        statusEl.className = 'upload-status';
-        counterEl.textContent = `0 / ${total}`;
-        overlay.classList.add('open');
-
-        for (let i = 0; i < total; i++) {
-            const thumb = document.getElementById(`uth-${i}`);
-            if (thumb) thumb.classList.add('active');
-            statusEl.textContent = `Subiendo foto ${i + 1} de ${total}…`;
-            statusEl.className = 'upload-status';
-            counterEl.textContent = `${i} / ${total}`;
-
-            try {
-                const webpBlob = await compressImageToWebP(fotosNuevas[i].file);
-                const path = `productos/${Date.now()}_${i}.webp`;
-                const { error: uploadError } = await sb.storage
-                    .from('imagenes')
-                    .upload(path, webpBlob, { contentType: 'image/webp' });
-
-                if (uploadError) throw uploadError;
-
-                const { data } = sb.storage.from('imagenes').getPublicUrl(path);
-                urlsFinales.push(data.publicUrl);
-                if (thumb) { thumb.classList.remove('active'); thumb.classList.add('done'); }
-            } catch (err) {
-                errores++;
-                console.error('Error al subir imagen:', err);
-                if (thumb) { thumb.classList.remove('active'); thumb.classList.add('error'); }
-                statusEl.textContent = `⚠️ Foto ${i + 1} no se pudo subir`;
-                statusEl.className = 'upload-status err';
-                await new Promise(r => setTimeout(r, 900));
-            }
-
-            fillEl.style.width = `${Math.round(((i + 1) / total) * 100)}%`;
+    if(fotosNuevas.length > 0) {
+        for(let i=0; i<fotosNuevas.length; i++) {
+            const webpBlob = await compressImageToWebP(fotosNuevas[i].file);
+            const path = `productos/${Date.now()}_${i}.webp`;
+            await sb.storage.from('imagenes').upload(path, webpBlob, { contentType: 'image/webp' });
+            const { data } = sb.storage.from('imagenes').getPublicUrl(path);
+            urlsFinales.push(data.publicUrl);
         }
-
-        counterEl.textContent = `${total - errores} / ${total}`;
-        if (errores === 0) {
-            statusEl.textContent = '✓ Todas las fotos subidas';
-            statusEl.className = 'upload-status ok';
-        } else {
-            statusEl.textContent = `${errores} foto${errores > 1 ? 's' : ''} no se pudo subir`;
-            statusEl.className = 'upload-status err';
-        }
-        await new Promise(r => setTimeout(r, 900));
-        overlay.classList.remove('open');
     }
-
     const payload = {
-        seccion:           document.getElementById('productSection').value,
-        nombre:            document.getElementById('productName').value,
-        descripcion:       document.getElementById('productDesc').value,
+        seccion: document.getElementById('productSection').value,
+        nombre: document.getElementById('productName').value,
+        descripcion: document.getElementById('productDesc').value,
         descripcion_larga: document.getElementById('productDescLarga').value,
-        precio:            parseFloat(document.getElementById('productPrice').value) || 0,
-        categoria:         document.getElementById('productCategory').value,
-        galeria_urls:      urlsFinales,
-        imagen_url:        urlsFinales.length > 0 ? urlsFinales[0] : null
+        precio: parseFloat(document.getElementById('productPrice').value) || 0,
+        categoria: document.getElementById('productCategory').value,
+        galeria_urls: urlsFinales,
+        imagen_url: urlsFinales.length > 0 ? urlsFinales[0] : null
     };
-
-    if (id) await sb.from('productos').update(payload).eq('id', id);
-    else     await sb.from('productos').insert([payload]);
-
+    if(id) await sb.from('productos').update(payload).eq('id', id);
+    else await sb.from('productos').insert([payload]);
     btn.textContent = "GUARDAR"; btn.disabled = false;
-    closeModal(); await loadProducts();
-    showToast(errores === 0 ? "¡Producto guardado!" : `Guardado con ${errores} foto${errores > 1 ? 's' : ''} faltante${errores > 1 ? 's' : ''}`);
+    closeModal(); await loadProducts(); showToast("¡Producto guardado!");
 }
 
 async function deleteProd(id) {
