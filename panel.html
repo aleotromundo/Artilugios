@@ -3,10 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<!-- NO CACHE: siempre cargar versión fresca desde el servidor -->
-<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
+<!-- El caché del HTML lo controla Vercel via vercel.json (no los meta tags) -->
 <title>Panel — Artilugios</title>
 
 <!-- PWA Config -->
@@ -1790,26 +1787,47 @@ function cerrarCatModal(e, force) {
     document.getElementById('catModalOverlay').classList.remove('open');
 }
 
-// SERVICE WORKER — con kill-switch y auto-update
-const SW_VERSION = 3; // ← subir este número en cada deploy importante
+// ── SERVICE WORKER — registro, kill-switch y auto-update ────────
+// ⚠️ IMPORTANTE: este número DEBE coincidir con SW_VERSION en sw.js
+// Cada vez que subas cambios importantes, incrementá este número en
+// AMBOS archivos (panel.html y sw.js) para forzar actualización en
+// todos los dispositivos (compu, celu, PWA instalada, etc.)
+const SW_VERSION = 3;
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', async () => {
         try {
-            // 1. Registrar (o actualizar) el SW
-            const reg = await navigator.serviceWorker.register('sw.js');
+            // 1. Registrar el SW (el navegador lo compara byte a byte con el anterior)
+            const reg = await navigator.serviceWorker.register('./sw.js', {
+                updateViaCache: 'none' // nunca usar caché HTTP para sw.js
+            });
 
-            // 2. Kill-switch: si hay un SW viejo activo con versión menor, matarlo
+            // 2. Escuchar cuando el SW cambia de controller (nuevo SW activado)
+            //    Esto dispara el reload automático en TODOS los casos
+            let recargando = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (!recargando) {
+                    recargando = true;
+                    console.log('[Panel] Nuevo SW activo → recargando página...');
+                    window.location.reload();
+                }
+            });
+
+            // 3. Kill-switch: si el SW activo tiene versión MENOR, forzar update ahora
             if (navigator.serviceWorker.controller) {
                 const channel = new MessageChannel();
                 channel.port1.onmessage = (evt) => {
-                    if (evt.data && evt.data.version < SW_VERSION) {
-                        // SW viejo detectado → forzar update y recargar
-                        reg.update().then(() => {
-                            navigator.serviceWorker.addEventListener('controllerchange', () => {
-                                window.location.reload();
-                            });
-                        });
+                    const swVer = evt.data && evt.data.version;
+                    console.log('[Panel] SW activo versión:', swVer, '| Panel versión:', SW_VERSION);
+                    if (swVer < SW_VERSION) {
+                        console.log('[Panel] SW desactualizado → forzando update...');
+                        // Decirle al SW que haga skipWaiting directamente
+                        if (reg.waiting) {
+                            reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+                        } else {
+                            // No hay waiting aún, forzar descarga
+                            reg.update();
+                        }
                     }
                 };
                 navigator.serviceWorker.controller.postMessage(
@@ -1818,23 +1836,37 @@ if ('serviceWorker' in navigator) {
                 );
             }
 
-            // 3. Si hay una actualización esperando, activarla de inmediato
+            // 4. Si ya hay un SW esperando (pestaña que estaba abierta), activarlo ya
+            if (reg.waiting) {
+                console.log('[Panel] SW esperando encontrado → activando...');
+                reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+            }
+
+            // 5. Cuando se encuentre una nueva versión del SW, activarla de inmediato
             reg.addEventListener('updatefound', () => {
-                const newWorker = reg.installing;
-                newWorker.addEventListener('statechange', () => {
-                    if (newWorker.state === 'activated') {
-                        window.location.reload();
+                const nuevoSW = reg.installing;
+                console.log('[Panel] Nuevo SW descargándose...');
+                nuevoSW.addEventListener('statechange', () => {
+                    console.log('[Panel] Estado nuevo SW:', nuevoSW.state);
+                    if (nuevoSW.state === 'installed') {
+                        // Instalado pero esperando → decirle que se active YA
+                        nuevoSW.postMessage({ type: 'SKIP_WAITING' });
                     }
                 });
             });
 
-            // 4. Checkear actualizaciones cada vez que la página recupera el foco
+            // 6. Checkear actualizaciones cada vez que la pestaña vuelve a estar visible
+            //    Esto cubre el caso de "abrí en el celu y no lo cerré en días"
             document.addEventListener('visibilitychange', () => {
-                if (document.visibilityState === 'visible') reg.update();
+                if (document.visibilityState === 'visible') {
+                    reg.update().catch(() => {}); // silenciar error si no hay red
+                }
             });
 
+            console.log('[Panel] Service Worker registrado correctamente ✓');
+
         } catch (err) {
-            console.log('PWA: Error al registrar Service Worker:', err);
+            console.warn('[Panel] Error al registrar Service Worker:', err);
         }
     });
 }
