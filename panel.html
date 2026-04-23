@@ -1532,9 +1532,16 @@ async function saveProduct() {
     };
     if (id) await sb.from('productos').update(payload).eq('id', id);
     else     await sb.from('productos').insert([payload]);
-    btn.textContent = "GUARDAR"; btn.disabled = false;
-    closeModal(); await loadProducts();
-    showToast(errores === 0 ? "¡Producto guardado!" : `Guardado con ${errores} foto${errores > 1 ? 's' : ''} faltante${errores > 1 ? 's' : ''}`);
+    btn.textContent = "GUARDAR"; 
+    btn.disabled = false;
+    
+    closeModal(); 
+    
+    // Forzamos a que el panel pida los datos de nuevo inmediatamente
+    allProducts = []; // Limpiamos caché local
+    await loadProducts(); 
+    
+    showToast(errores === 0 ? "¡Producto guardado!" : "Guardado con errores");
 }
 
 async function deleteProd(id) {

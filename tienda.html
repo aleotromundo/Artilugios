@@ -363,10 +363,12 @@
             }
         }
 
-        window.addEventListener('DOMContentLoaded', async () => {
-            await cargarTags();
-            await cargarSanteria();
-        });
+        // BUSCA ESTA PARTE Y DÉJALA ASÍ (AGREGA LA ÚLTIMA LÍNEA)
+window.addEventListener('DOMContentLoaded', async () => {
+    await cargarTags();
+    await cargarSanteria();
+    activarRealtimeTienda(); // <--- AGREGA ESTA LÍNEA AQUÍ
+});
 
         // UI: Partículas
         const pCont = document.getElementById('particles');
@@ -502,6 +504,22 @@
         await Promise.all(keys.map(k => caches.delete(k)));
       } catch(e) {}
     })();
+// AGREGAR AL FINAL DE LOS SCRIPTS EN tienda.html
+function activarRealtimeTienda() {
+    sb.channel('cambios-tienda')
+        .on(
+            'postgres_changes',
+            { event: '*', schema: 'public', table: 'productos' },
+            async (payload) => {
+                console.log("¡Cambio detectado! Actualizando tienda...");
+                // Volvemos a cargar los productos automáticamente
+                await cargarSanteria();
+                // Si había algún filtro puesto, lo aplicamos
+                if (typeof aplicarFiltros === 'function') aplicarFiltros();
+            }
+        )
+        .subscribe();
+}
     </script>
 
 <!-- MÚSICA PERSISTENTE -->
