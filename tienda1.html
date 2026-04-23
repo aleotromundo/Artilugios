@@ -363,24 +363,9 @@
             }
         }
 
-        function activarRealtimeTienda() {
-            sb.channel('cambios-tienda')
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'productos' }, async () => {
-                    const { data } = await sb
-                        .from('productos')
-                        .select('*')
-                        .eq('seccion', 'santeria')
-                        .eq('activo', true)
-                        .order('created_at', { ascending: false });
-                    if (data) { allProducts = data; aplicarFiltros(); }
-                })
-                .subscribe();
-        }
-
         window.addEventListener('DOMContentLoaded', async () => {
             await cargarTags();
             await cargarSanteria();
-            activarRealtimeTienda();
         });
 
         // UI: Partículas
