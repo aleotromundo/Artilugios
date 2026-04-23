@@ -363,19 +363,51 @@
             }
         }
 
-        function activarRealtimeTienda() {
-            sb.channel('cambios-tienda')
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'productos' }, async () => {
-                    const { data } = await sb
-                        .from('productos')
-                        .select('*')
-                        .eq('seccion', 'santeria')
-                        .eq('activo', true)
-                        .order('created_at', { ascending: false });
-                    if (data) { allProducts = data; aplicarFiltros(); }
-                })
-                .subscribe();
+        // ── REALTIME TIENDA ──────────────────────────────────────────
+        let realtimeChannel = null;
+        let realtimeTimer = null;
+
+        async function recargarProductos() {
+            const { data } = await sb
+                .from('productos')
+                .select('*')
+                .eq('seccion', 'santeria')
+                .eq('activo', true)
+                .order('created_at', { ascending: false });
+            if (data) { allProducts = data; aplicarFiltros(); }
         }
+
+        function activarRealtimeTienda() {
+            if (realtimeChannel) {
+                sb.removeChannel(realtimeChannel);
+                realtimeChannel = null;
+            }
+            clearTimeout(realtimeTimer);
+
+            realtimeChannel = sb.channel('tienda-rt-' + Date.now())
+                .on('postgres_changes', {
+                    event: '*', schema: 'public', table: 'productos',
+                    filter: 'seccion=eq.santeria'
+                }, () => { recargarProductos(); })
+                .subscribe((status) => {
+                    if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
+                        realtimeTimer = setTimeout(() => activarRealtimeTienda(), 4000);
+                    }
+                });
+        }
+
+        // Heartbeat cada 30s
+        setInterval(() => {
+            if (realtimeChannel && realtimeChannel.state !== 'joined') activarRealtimeTienda();
+        }, 30000);
+
+        // Reconectar al volver a la pestaña
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                recargarProductos();
+                if (!realtimeChannel || realtimeChannel.state !== 'joined') activarRealtimeTienda();
+            }
+        });
 
         window.addEventListener('DOMContentLoaded', async () => {
             await cargarTags();
