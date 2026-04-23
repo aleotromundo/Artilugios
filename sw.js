@@ -2,8 +2,8 @@
 // Permite instalar el panel como app pero NUNCA cachea HTML ni JS.
 // Así la app siempre muestra la versión más nueva del servidor.
 
-const CACHE_NAME = 'artilugios-panel-v4';
-const SW_VERSION = 4;
+const CACHE_NAME = 'artilugios-panel-v5';
+const SW_VERSION = 5;
 
 // Solo los íconos van a caché (necesarios para que la PWA se instale)
 const ICONOS = [
@@ -46,9 +46,10 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  // TODO lo demás (HTML, JS, JSON, APIs) → NETWORK ONLY
-  // El SW deja pasar el request sin tocarlo. El navegador va directo al servidor.
-  // Sin caché = siempre la versión más nueva.
+  // TODO lo demás (HTML, JS, JSON, APIs) → NETWORK ONLY forzado
+  // Sin respondWith() el browser puede usar su caché interna aunque el servidor
+  // diga no-store. Con cache:'no-store' le ordenamos explícitamente que no cachee.
+  e.respondWith(fetch(e.request, { cache: 'no-store' }));
 });
 
 // ── MENSAJES ─────────────────────────────────────────────────────
