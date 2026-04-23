@@ -1456,9 +1456,10 @@ function borrarFotoNueva(idTemporal) { fotosNuevas = fotosNuevas.filter(f => f.i
 
 async function saveProduct() {
     const btn = document.getElementById('saveBtn');
-    btn.textContent = "GUARDAR"; btn.disabled = true;
+    btn.textContent = "GUARDANDO..."; btn.disabled = true;
     const id = document.getElementById('productId').value;
     let urlsFinales = [...fotosGuardadas];
+    let errores = 0;
 
     if (fotosNuevas.length > 0) {
         const overlay    = document.getElementById('uploadOverlay');
@@ -1529,22 +1530,11 @@ async function saveProduct() {
         galeria_urls:      urlsFinales,
         imagen_url:        urlsFinales.length > 0 ? urlsFinales[0] : null
     };
-
-    // Solo hacemos la operación en la base de datos
-    if (id) {
-        await sb.from('productos').update(payload).eq('id', id);
-    } else {
-        await sb.from('productos').insert([payload]);
-    }
-
-    // LIMPIEZA FINAL: 
-    btn.textContent = "GUARDAR"; 
-    btn.disabled = false;
-    closeModal(); 
-    
-    // IMPORTANTE: Quitamos loadProducts() de aquí. 
-    // El "iniciarRealtime()" que tienes arriba se encargará de pintar el cambio sin duplicarlo.
-    showToast("Operación exitosa");
+    if (id) await sb.from('productos').update(payload).eq('id', id);
+    else     await sb.from('productos').insert([payload]);
+    btn.textContent = "GUARDAR"; btn.disabled = false;
+    closeModal(); await loadProducts();
+    showToast(errores === 0 ? "¡Producto guardado!" : `Guardado con ${errores} foto${errores > 1 ? 's' : ''} faltante${errores > 1 ? 's' : ''}`);
 }
 
 async function deleteProd(id) {
