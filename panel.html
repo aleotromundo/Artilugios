@@ -382,7 +382,7 @@ body { font-family: 'Crimson Pro', Georgia, serif; background: var(--bg); color:
       <a href="https://artilugios.vercel.app" target="_blank" class="btn-sitio">
         <i class="fas fa-external-link-alt"></i> VER SITIO
       </a>
-      <button class="icon-btn" onclick="location.reload()"><i class="fas fa-sync-alt"></i></button>
+      <button class="icon-btn" onclick="hardReload(this)" title="Actualizar (forzado)"><i class="fas fa-sync-alt"></i></button>
     </div>
   </div>
 
@@ -1790,7 +1790,26 @@ function cerrarCatModal(e, force) {
     document.getElementById('catModalOverlay').classList.remove('open');
 }
 
-// ── SERVICE WORKER ───────────────────────────────────────────────
+// ── HARD RELOAD (equivalente a Ctrl+F5) ──────────────────────────
+// Desregistra el SW, borra todos los caches y recarga desde el servidor.
+// Es lo mismo que borrar datos del navegador pero solo para este sitio.
+async function hardReload(btn) {
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; }
+  try {
+    // 1. Desregistrar todos los SW de este origen
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r => r.unregister()));
+    }
+    // 2. Borrar todos los caches del SW
+    const keys = await caches.keys();
+    await Promise.all(keys.map(k => caches.delete(k)));
+  } catch(e) { /* si falla, igual recargamos */ }
+  // 3. Recargar saltando la caché HTTP
+  location.reload(true);
+}
+
+
 // El SW existe solo para que la PWA se pueda instalar como app.
 // NO cachea nada del panel — siempre va directo al servidor.
 if ('serviceWorker' in navigator) {
