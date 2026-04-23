@@ -1,6 +1,27 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <script>
+    // MATACACHÉ RADICAL: Ejecutar antes de que cargue el resto de la página
+    (async () => {
+        try {
+            if ("serviceWorker" in navigator) {
+                const regs = await navigator.serviceWorker.getRegistrations();
+                for (let r of regs) { await r.unregister(); }
+            }
+            // Borrar memorias temporales
+            const keys = await caches.keys();
+            await Promise.all(keys.map(k => caches.delete(k)));
+            
+            // Si detectamos que es una versión vieja, forzamos recarga del servidor
+            if (!window.location.search.includes('v=')) {
+                // Esto engaña al navegador para que pida la página de nuevo al servidor
+                // window.location.href = window.location.pathname + '?v=' + Date.now();
+            }
+        } catch(e) { console.error("Error limpiando:", e); }
+    })();
+    </script>
+    <!-- El resto de tus metas y links... -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- NO CACHE: siempre cargar versión fresca desde el servidor -->
