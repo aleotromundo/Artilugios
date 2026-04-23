@@ -783,6 +783,29 @@ async function showApp() {
     initContactoToggles();
     await cargarCategoriasDB();
     await loadProducts();
+    iniciarRealtime();
+}
+
+function iniciarRealtime() {
+    sb.channel('productos-realtime')
+        .on(
+            'postgres_changes',
+            { event: '*', schema: 'public', table: 'productos' },
+            async (payload) => {
+                // Actualizar allProducts en memoria según el evento
+                if (payload.eventType === 'INSERT') {
+                    allProducts.unshift(payload.new);
+                } else if (payload.eventType === 'UPDATE') {
+                    const idx = allProducts.findIndex(p => p.id === payload.new.id);
+                    if (idx !== -1) allProducts[idx] = payload.new;
+                    else allProducts.unshift(payload.new);
+                } else if (payload.eventType === 'DELETE') {
+                    allProducts = allProducts.filter(p => p.id !== payload.old.id);
+                }
+                renderProducts();
+            }
+        )
+        .subscribe();
 }
 
 async function loadProducts() {
@@ -1768,7 +1791,7 @@ function cerrarCatModal(e, force) {
 }
 
 // SERVICE WORKER — con kill-switch y auto-update
-const SW_VERSION = 2; // ← subir este número en cada deploy importante
+const SW_VERSION = 3; // ← subir este número en cada deploy importante
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', async () => {
