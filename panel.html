@@ -1810,22 +1810,27 @@ async function hardReload(btn) {
 }
 
 
-// El SW existe solo para que la PWA se pueda instalar como app.
-// NO cachea nada del panel — siempre va directo al servidor.
+// ── SERVICE WORKER ───────────────────────────────────────────────
+// El SW nuevo se autodestruye: borra todos los caches y se desregistra.
+// Sin SW activo, el browser va directo al servidor en cada carga.
+// Los headers no-store de Vercel se encargan del resto.
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
-        .then(reg => {
-            // Si hay un SW nuevo esperando, activarlo ya sin esperar
-            if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-            reg.addEventListener('updatefound', () => {
-                const sw = reg.installing;
-                sw.addEventListener('statechange', () => {
-                    if (sw.state === 'installed') sw.postMessage({ type: 'SKIP_WAITING' });
-                });
-            });
+  // Escuchar mensaje del SW cuando termina la limpieza → recargar
+  navigator.serviceWorker.addEventListener('message', (e) => {
+    if (e.data?.type === 'SW_CLEANUP_DONE') location.reload(true);
+  });
+
+  navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
+    .then(reg => {
+      if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+      reg.addEventListener('updatefound', () => {
+        const sw = reg.installing;
+        sw.addEventListener('statechange', () => {
+          if (sw.state === 'installed') sw.postMessage({ type: 'SKIP_WAITING' });
         });
-    // Cuando el SW cambia, recargar para tomar la versión nueva
-    navigator.serviceWorker.addEventListener('controllerchange', () => location.reload());
+      });
+    })
+    .catch(() => {});
 }
 </script>
 <style>
