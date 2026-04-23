@@ -794,7 +794,8 @@ function iniciarRealtime() {
             async (payload) => {
                 // Actualizar allProducts en memoria según el evento
                 if (payload.eventType === 'INSERT') {
-                    allProducts.unshift(payload.new);
+                    const yaExiste = allProducts.some(p => p.id === payload.new.id);
+                    if (!yaExiste) allProducts.unshift(payload.new);
                 } else if (payload.eventType === 'UPDATE') {
                     const idx = allProducts.findIndex(p => p.id === payload.new.id);
                     if (idx !== -1) allProducts[idx] = payload.new;
