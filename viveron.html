@@ -283,6 +283,8 @@
         <div class="footer-bottom">
             <p>&copy; 2025 Art.ilugioss - Proyecto vivo. Todos los derechos reservados.</p>
         </div>
+    
+
     </footer>
 
     <!-- SUPABASE -->
@@ -291,8 +293,12 @@
     <script src="tracking.js"></script>
 
     <script>
-        // ✅ FIX 1: Reutilizar window._sbTrack en lugar de crear nuevo cliente (evita Multiple GoTrueClient)
-        const sb = window._sbTrack;
+        const { createClient } = supabase;
+        const sb = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY, {
+            global: {
+                fetch: (url, options = {}) => fetch(url, { ...options, cache: 'no-store' })
+            }
+        });
         
         let allPlants = [];
         
@@ -437,20 +443,6 @@
         window.addEventListener('DOMContentLoaded', async () => {
             await cargarTags();
             await cargarVivero();
-            
-            // ✅ FIX 3: REALTIME - Actualización automática cuando el panel guarda cambios
-            const channel = sb
-                .channel('vivero:realtime')
-                .on('postgres_changes', {
-                    event: '*', schema: 'public', table: 'productos',
-                    filter: `seccion=eq.vivero`
-                }, () => {
-                    console.log('🔄 Vivero actualizado desde panel');
-                    cargarVivero();
-                })
-                .subscribe();
-            
-            window.addEventListener('beforeunload', () => sb.removeChannel(channel));
         });
 
         // UI: Partículas
@@ -505,8 +497,10 @@
     <script>
     (async function cargarContacto() {
         try {
-            // ✅ Reutilizar window._sbTrack en lugar de crear nuevo cliente
-            const sb2 = window._sbTrack;
+            const { createClient } = supabase;
+            const sb2 = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY, {
+                global: { fetch: (url, options = {}) => fetch(url, { ...options, cache: 'no-store' }) }
+            });
             const { data: d, error } = await sb2.from('contacto_info').select('*').eq('id', 1).maybeSingle();
             if (error) { console.error('contacto_info error:', JSON.stringify(error)); return; }
             if (!d) return;

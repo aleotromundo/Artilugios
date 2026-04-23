@@ -498,6 +498,25 @@
             document.getElementById('search-input').addEventListener('input', aplicarFiltros);
         });
 
+window.addEventListener('DOMContentLoaded', async () => {
+    await cargarTags();
+    await cargarOraculo();
+    document.getElementById('search-input').addEventListener('input', aplicarFiltros);
+
+    // REALTIME - igual que tienda y vivero
+    const channel = sb
+        .channel('oraculo:realtime')
+        .on('postgres_changes', {
+            event: '*', schema: 'public', table: 'productos',
+            filter: `seccion=eq.oraculo`
+        }, () => {
+            cargarOraculo();
+        })
+        .subscribe();
+
+    window.addEventListener('beforeunload', () => sb.removeChannel(channel));
+});
+
         // UI: Partículas
         const PARTICLE_COUNT = 60;
         const particlesContainer = document.getElementById('particles');
