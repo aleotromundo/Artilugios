@@ -6,10 +6,23 @@
 (async function () {
   if (typeof supabase === 'undefined' || !window.SUPABASE_URL) return;
 
-  // Reutilizar instancia global si ya existe (evita doble createClient)
   if (!window._sbTrack) {
     const { createClient } = supabase;
-    window._sbTrack = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+    // persistSession: false → el SDK NO guarda nada en localStorage/IndexedDB.
+    // Sin esto, el SDK cachea estado y los catálogos ven datos viejos
+    // hasta que el usuario borra todos los datos del navegador.
+    window._sbTrack = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY, {
+      auth: {
+        persistSession:     false,
+        autoRefreshToken:   false,
+        detectSessionInUrl: false,
+        storage: {
+          getItem:    () => null,
+          setItem:    () => {},
+          removeItem: () => {}
+        }
+      }
+    });
   }
   const sbTrack = window._sbTrack;
 
@@ -34,10 +47,7 @@
     } catch (e) { return 'directo'; }
   }
 
-  // Registra la visita inmediatamente sin esperar la geo,
-  // luego actualiza el registro con país y ciudad en background.
   async function registrarVisita(seccion = null, productoNombre = null, productoId = null) {
-    // Insert rápido sin geo
     const { data, error } = await sbTrack.from('visitas').insert([{
       seccion,
       producto_nombre: productoNombre,
@@ -47,7 +57,6 @@
       user_agent:      navigator.userAgent.substring(0, 200)
     }]).select('id').single();
 
-    // Geo en background: no bloquea ni la página ni el insert
     if (data && data.id) {
       fetch('https://ipapi.co/json/')
         .then(r => r.json())
@@ -57,14 +66,12 @@
             ciudad: geo.city || null
           }).eq('id', data.id);
         })
-        .catch(() => {}); // falla silenciosamente
+        .catch(() => {});
     }
   }
 
-  // Exponer función globalmente para que cada página la llame
   window._registrarVisita = registrarVisita;
 
-  // Escuchar evento de producto visto (disparado por cada catálogo)
   document.addEventListener('productoVisto', (e) => {
     if (e.detail) registrarVisita(e.detail.seccion || null, e.detail.nombre || null, e.detail.id || null);
   });
