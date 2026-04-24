@@ -160,6 +160,18 @@
 
         .car-dots { position:absolute; bottom:15px; width:100%; display:flex; justify-content:center; gap:8px;}
         .dot { width:10px; height:10px; background:rgba(255,255,255,0.4); border-radius:50%; transition:0.3s;}
+
+        /* EFECTO AGUA AL CARGAR IMAGEN */
+        .img-water-loader { position:absolute; inset:0; z-index:3; pointer-events:none; overflow:hidden; opacity:0; transition:opacity 0.2s; }
+        .img-water-loader.visible { opacity:1; }
+        .img-water-loader svg { position:absolute; bottom:0; left:0; width:100%; animation:waterRise 1.4s cubic-bezier(0.4,0,0.2,1) forwards; }
+        @keyframes waterRise { 0% { transform:translateY(100%); } 100% { transform:translateY(-5%); } }
+        .water-wave { animation:waveMove 1.2s ease-in-out infinite alternate; }
+        @keyframes waveMove {
+            0%   { d: path("M0,20 C80,0 160,40 240,20 C320,0 400,40 480,20 C560,0 640,40 720,20 L720,120 L0,120 Z"); }
+            100% { d: path("M0,20 C80,40 160,0 240,20 C320,40 400,0 480,20 C560,40 640,0 720,20 L720,120 L0,120 Z"); }
+        }
+        #modalImg { transition: opacity 0.35s ease; }
         .dot.active { background:#c9a24d; box-shadow: 0 0 10px #c9a24d;}
 
         /* FOOTER Y BOTÓN DE MÚSICA */
@@ -249,7 +261,17 @@
             <div class="modal-cat-img-box" id="modalImgContainer">
                 <img id="modalImg" src="" alt="Producto" style="display:none;">
                 <i id="modalIconFallback" class="fas fa-moon main-icon" style="display:none;"></i>
-                
+                <div class="img-water-loader" id="waterLoader">
+                    <svg viewBox="0 0 720 500" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" height="100%">
+                        <defs>
+                            <linearGradient id="waterGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="rgba(201,162,77,0.35)"/>
+                                <stop offset="100%" stop-color="rgba(201,162,77,0.08)"/>
+                            </linearGradient>
+                        </defs>
+                        <path class="water-wave" d="M0,20 C80,0 160,40 240,20 C320,0 400,40 480,20 C560,0 640,40 720,20 L720,500 L0,500 Z" fill="url(#waterGrad)"/>
+                    </svg>
+                </div>
                 <button class="car-btn" id="carPrev" onclick="moverCarrusel(-1)"><i class="fas fa-chevron-left"></i></button>
                 <button class="car-btn" id="carNext" onclick="moverCarrusel(1)"><i class="fas fa-chevron-right"></i></button>
                 <div class="car-dots" id="carDots"></div>
@@ -355,7 +377,7 @@
         }
 
         function abrirModal(id) {
-            const prod = allOracles.find(x => x.id == id);
+            const prod = allOracles.find(x => x.id === id);
             if(!prod) return;
             document.getElementById('modalTitle').textContent = prod.nombre;
             document.getElementById('modalPrice').textContent = prod.precio ? `$${Number(prod.precio).toLocaleString('es-UY')} UYU` : 'Consultar';
@@ -378,8 +400,32 @@
         function actualizarImagen() {
             const imgEl = document.getElementById('modalImg');
             const iconEl = document.getElementById('modalIconFallback');
-            if (galeriaActual.length > 0) { imgEl.src = galeriaActual[indexActual]; imgEl.style.display = 'block'; iconEl.style.display = 'none'; }
-            else { imgEl.style.display = 'none'; iconEl.style.display = 'block'; }
+            const loader = document.getElementById('waterLoader');
+            if (galeriaActual.length > 0) {
+                imgEl.style.opacity = '0';
+                loader.classList.add('visible');
+                const svg = loader.querySelector('svg');
+                loader.replaceChild(svg.cloneNode(true), svg);
+                const nueva = new Image();
+                nueva.onload = () => {
+                    imgEl.src = galeriaActual[indexActual];
+                    imgEl.style.display = 'block';
+                    imgEl.style.opacity = '1';
+                    iconEl.style.display = 'none';
+                    setTimeout(() => loader.classList.remove('visible'), 200);
+                };
+                nueva.onerror = () => {
+                    imgEl.src = galeriaActual[indexActual];
+                    imgEl.style.display = 'block';
+                    imgEl.style.opacity = '1';
+                    iconEl.style.display = 'none';
+                    loader.classList.remove('visible');
+                };
+                nueva.src = galeriaActual[indexActual];
+            } else {
+                imgEl.style.display = 'none';
+                iconEl.style.display = 'block';
+            }
             document.querySelectorAll('.dot').forEach((d, i) => { d.className = i === indexActual ? 'dot active' : 'dot'; });
         }
 
