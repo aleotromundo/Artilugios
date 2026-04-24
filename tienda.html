@@ -1,3 +1,4 @@
+PASO1: OK
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -227,12 +228,20 @@
 
     <script>
     (async function() {
+        // Esperar que supabase-config.js cargue las credenciales
         await new Promise(resolve => {
-            if (window._sbTrack) return resolve();
-            const check = setInterval(() => { if (window._sbTrack) { clearInterval(check); resolve(); } }, 50);
+            if (window.SUPABASE_URL) return resolve();
+            const check = setInterval(() => { if (window.SUPABASE_URL) { clearInterval(check); resolve(); } }, 50);
             setTimeout(() => { clearInterval(check); resolve(); }, 3000);
         });
-        const sb = window._sbTrack;
+        // Cliente FRESCO sin persistencia: siempre trae datos frescos de Supabase
+        const { createClient } = supabase;
+        const sb = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY, {
+            auth: {
+                persistSession: false, autoRefreshToken: false, detectSessionInUrl: false,
+                storage: { getItem: () => null, setItem: () => {}, removeItem: () => {} }
+            }
+        });
         if (!sb) { console.error('Supabase no disponible'); return; }
         let allProducts = [];
         
@@ -387,7 +396,7 @@
 
             realtimeChannel = sb.channel('cambios-tienda-' + Date.now())
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'productos', filter: 'seccion=eq.santeria' }, () => {
-                    recargarProductos();
+                    setTimeout(() => recargarProductos(), 300);
                 })
                 .subscribe((status) => {
                     console.log('Realtime tienda:', status);
@@ -419,11 +428,10 @@
             }
         });
 
-        window.addEventListener('DOMContentLoaded', async () => {
-            await cargarTags();
-            await cargarSanteria();
-            activarRealtimeTienda();
-        });
+        // Llamada directa (el script ya corre con el DOM listo)
+        await cargarTags();
+        await cargarSanteria();
+        activarRealtimeTienda();
     })();
 
         // UI: Partículas
@@ -469,7 +477,7 @@
     <script>
     (async function cargarContacto() {
         try {
-            const sb2 = window._sbTrack;
+            const sb2 = window._sbTrack || (() => { const {createClient} = supabase; return createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY, {auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false,storage:{getItem:()=>null,setItem:()=>{},removeItem:()=>{}}}}); })();
             const { data: d, error } = await sb2.from('contacto_info').select('*').eq('id', 1).maybeSingle();
             if (error) { console.error('contacto_info error:', JSON.stringify(error)); return; }
             if (!d) return;

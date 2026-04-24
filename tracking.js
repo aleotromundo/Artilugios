@@ -9,7 +9,7 @@
   if (!window._sbTrack) {
     const { createClient } = supabase;
     // persistSession: false → el SDK NO guarda nada en localStorage/IndexedDB.
-    // Sin esto, el SDK cachea estado y los catálogos ven datos viejos
+    // Sin esto, el SDK cachea estado interno y los catálogos ven datos viejos
     // hasta que el usuario borra todos los datos del navegador.
     window._sbTrack = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY, {
       auth: {
