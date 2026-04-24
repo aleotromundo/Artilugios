@@ -1,21 +1,23 @@
 // ============================================================
 // TRACKING — Artilugios
 // Incluir DESPUÉS de supabase-config.js en cada página.
+// Crea UN SOLO cliente global (window._sb) que reutilizan
+// todos los scripts de la página. Sin esto el SDK se queja
+// de múltiples instancias y el realtime falla.
 // ============================================================
 
-(async function () {
+(function () {
   if (typeof supabase === 'undefined' || !window.SUPABASE_URL) return;
 
-  if (!window._sbTrack) {
+  // Cliente único para toda la página: tracking + datos + contacto
+  if (!window._sb) {
     const { createClient } = supabase;
-    // persistSession: false → el SDK NO guarda nada en localStorage/IndexedDB.
-    // Sin esto, el SDK cachea estado interno y los catálogos ven datos viejos
-    // hasta que el usuario borra todos los datos del navegador.
-    window._sbTrack = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY, {
+    window._sb = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY, {
       auth: {
         persistSession:     false,
         autoRefreshToken:   false,
         detectSessionInUrl: false,
+        storageKey:         'artilugios-anon', // clave única, evita el warning
         storage: {
           getItem:    () => null,
           setItem:    () => {},
@@ -24,7 +26,11 @@
       }
     });
   }
-  const sbTrack = window._sbTrack;
+
+  // Alias para compatibilidad con código existente
+  window._sbTrack = window._sb;
+
+  const sb = window._sb;
 
   function getDispositivo() {
     const ua = navigator.userAgent;
@@ -48,7 +54,7 @@
   }
 
   async function registrarVisita(seccion = null, productoNombre = null, productoId = null) {
-    const { data, error } = await sbTrack.from('visitas').insert([{
+    const { data } = await sb.from('visitas').insert([{
       seccion,
       producto_nombre: productoNombre,
       producto_id:     productoId,
@@ -61,7 +67,7 @@
       fetch('https://ipapi.co/json/')
         .then(r => r.json())
         .then(geo => {
-          sbTrack.from('visitas').update({
+          sb.from('visitas').update({
             pais:   geo.country_name || null,
             ciudad: geo.city || null
           }).eq('id', data.id);
