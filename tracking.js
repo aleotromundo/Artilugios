@@ -72,14 +72,13 @@
     }]).select('id').single();
 
     if (data && data.id) {
-      // ip-api.com no tiene restricciones CORS en HTTP pero sí en HTTPS
-      // Usamos ipwho.is que sí permite CORS desde cualquier origen
-      fetch('https://ipwho.is/')
+      // ipapi.co permite CORS desde cualquier origen, gratuito sin API key
+      fetch('https://ipapi.co/json/')
         .then(r => r.json())
         .then(geo => {
           sb.from('visitas').update({
-            pais:   geo.country || null,
-            ciudad: geo.city    || null
+            pais:   geo.country_name || null,
+            ciudad: geo.city         || null
           }).eq('id', data.id);
         })
         .catch(() => {});
