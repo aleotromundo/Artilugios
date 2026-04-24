@@ -226,12 +226,14 @@
     <script src="tracking.js"></script>
 
     <script>
-        const { createClient } = supabase;
-        const sb = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY, {
-            global: {
-                fetch: (url, options = {}) => fetch(url, { ...options, cache: 'no-store' })
-            }
+    (async function() {
+        await new Promise(resolve => {
+            if (window._sbTrack) return resolve();
+            const check = setInterval(() => { if (window._sbTrack) { clearInterval(check); resolve(); } }, 50);
+            setTimeout(() => { clearInterval(check); resolve(); }, 3000);
         });
+        const sb = window._sbTrack;
+        if (!sb) { console.error('Supabase no disponible'); return; }
         let allProducts = [];
         
         // Variables del carrusel
@@ -363,7 +365,6 @@
             }
         }
 
-        // ── REALTIME TIENDA ──────────────────────────────────────────
         let realtimeChannel = null;
         let realtimeTimer = null;
 
@@ -378,34 +379,43 @@
         }
 
         function activarRealtimeTienda() {
+            // Limpiar canal anterior si existe
             if (realtimeChannel) {
                 sb.removeChannel(realtimeChannel);
                 realtimeChannel = null;
             }
-            clearTimeout(realtimeTimer);
 
-            realtimeChannel = sb.channel('tienda-rt-' + Date.now())
-                .on('postgres_changes', {
-                    event: '*', schema: 'public', table: 'productos',
-                    filter: 'seccion=eq.santeria'
-                }, () => { recargarProductos(); })
+            realtimeChannel = sb.channel('cambios-tienda-' + Date.now())
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'productos', filter: 'seccion=eq.santeria' }, () => {
+                    recargarProductos();
+                })
                 .subscribe((status) => {
+                    console.log('Realtime tienda:', status);
                     if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
-                        realtimeTimer = setTimeout(() => activarRealtimeTienda(), 4000);
+                        // Canal caído: reconectar en 3 segundos
+                        clearTimeout(realtimeTimer);
+                        realtimeTimer = setTimeout(() => activarRealtimeTienda(), 3000);
                     }
                 });
         }
 
-        // Heartbeat cada 30s
+        // Heartbeat: cada 25 segundos verifica que el canal siga vivo
         setInterval(() => {
-            if (realtimeChannel && realtimeChannel.state !== 'joined') activarRealtimeTienda();
-        }, 30000);
+            if (!realtimeChannel) return;
+            const state = realtimeChannel.state;
+            if (state !== 'joined') {
+                console.log('Heartbeat detectó canal caído, reconectando...');
+                activarRealtimeTienda();
+            }
+        }, 25000);
 
-        // Reconectar al volver a la pestaña
+        // Reconectar cuando la pestaña vuelve a estar visible
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible') {
                 recargarProductos();
-                if (!realtimeChannel || realtimeChannel.state !== 'joined') activarRealtimeTienda();
+                if (!realtimeChannel || realtimeChannel.state !== 'joined') {
+                    activarRealtimeTienda();
+                }
             }
         });
 
@@ -414,6 +424,7 @@
             await cargarSanteria();
             activarRealtimeTienda();
         });
+    })();
 
         // UI: Partículas
         const pCont = document.getElementById('particles');
@@ -458,10 +469,7 @@
     <script>
     (async function cargarContacto() {
         try {
-            const { createClient } = supabase;
-            const sb2 = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY, {
-                global: { fetch: (url, options = {}) => fetch(url, { ...options, cache: 'no-store' }) }
-            });
+            const sb2 = window._sbTrack;
             const { data: d, error } = await sb2.from('contacto_info').select('*').eq('id', 1).maybeSingle();
             if (error) { console.error('contacto_info error:', JSON.stringify(error)); return; }
             if (!d) return;

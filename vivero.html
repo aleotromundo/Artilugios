@@ -197,7 +197,8 @@
 
     <script>
     (async function() {
-        const debug = () => {}; // debug desactivado
+        const debug = () => {};
+        debug('🌱 Iniciando Vivero...');
 
         // Esperar a que tracking.js exponga window._sbTrack
         await new Promise(resolve => {
@@ -208,6 +209,7 @@
 
         const sb = window._sbTrack;
         if (!sb) { debug('❌ ERROR: No hay cliente Supabase'); return; }
+        debug('🔗 Cliente Supabase listo');
 
         const SECCION = 'vivero';
         const container = document.getElementById('grid-vivero');
@@ -215,6 +217,7 @@
         let galeriaActual = [], indexActual = 0;
 
         async function cargarVivero() {
+            debug(`📡 Query: productos WHERE seccion='${SECCION}' AND activo=true`);
             container.innerHTML = '<p style="color:#8BC34A; text-align:center; width:100%; grid-column:1/-1;">Cultivando catálogo...</p>';
 
             const { data, error } = await sb.from('productos').select('*').eq('seccion', SECCION).eq('activo', true).order('created_at', { ascending: false });
@@ -222,6 +225,7 @@
             if (error) { debug(`❌ Error Supabase: ${JSON.stringify(error)}`); container.innerHTML = `<p style="color:#c00; text-align:center; grid-column:1/-1;">Error: ${error.message}</p>`; return; }
             if (!data || data.length === 0) { debug('⚠️ Sin productos (data vacío o null)'); container.innerHTML = '<p style="color:#A2CF6E; text-align:center; width:100%; grid-column:1/-1;">No hay plantas aún 🌱</p>'; return; }
             
+            debug(`✅ ${data.length} productos cargados`);
             allPlants = data;
             renderVivero(data);
         }
@@ -258,6 +262,7 @@
             document.getElementById('modalCatalogo').classList.add('active');
             document.body.style.overflow = 'hidden';
             document.dispatchEvent(new CustomEvent('productoVisto', { detail: { id: prod.id, nombre: prod.nombre, seccion: 'vivero' } }));
+            debug(`👁️ Modal abierto: ${prod.nombre}`);
         }
 
         function moverCarrusel(dir) { indexActual += dir; if(indexActual >= galeriaActual.length) indexActual = 0; if(indexActual < 0) indexActual = galeriaActual.length - 1; actualizarImagen(); }
@@ -272,6 +277,7 @@
                 return texto.includes(search) && (tagActivo === 'todos' || p.categoria?.toLowerCase() === tagActivo);
             });
             renderVivero(filtrados);
+            debug(`🔍 Filtro: "${search}" + tag "${tagActivo}" → ${filtrados.length} resultados`);
         }
 
         function bindTags() {
@@ -292,6 +298,7 @@
                 const extras = (data || []).map(c => `<span class="tag" data-tag="${c.nombre}">${c.nombre.charAt(0).toUpperCase() + c.nombre.slice(1)}</span>`).join('');
                 container.innerHTML = '<span class="tag active" data-tag="todos">Todos</span>' + extras;
                 bindTags();
+                debug(`🏷️ ${data?.length || 0} categorías cargadas`);
             } catch(e) { debug(`⚠️ Tags: ${e.message}`); }
         }
 
@@ -318,6 +325,7 @@
         setInterval(() => { if (rtChannel && rtChannel.state !== 'joined') activarRealtimeVivero(); }, 30000);
         document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { cargarVivero(); if (!rtChannel || rtChannel.state !== 'joined') activarRealtimeVivero(); } });
         window.addEventListener('beforeunload', () => { if (rtChannel) sb.removeChannel(rtChannel); });
+        debug('⚡ Realtime activo');
 
         // Partículas
         const particlesContainer = document.getElementById('particles');

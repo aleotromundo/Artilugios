@@ -310,17 +310,19 @@
 
     <!-- SUPABASE -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-config.js"></script>
     <script src="tracking.js"></script>
 
     <script>
-        const { createClient } = supabase;
-        const sb = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY, {
-            global: {
-                fetch: (url, options = {}) => fetch(url, { ...options, cache: 'no-store' })
-            }
+    (async function() {
+        // Esperar cliente único
+        await new Promise(resolve => {
+            if (window._sbTrack) return resolve();
+            const check = setInterval(() => { if (window._sbTrack) { clearInterval(check); resolve(); } }, 50);
+            setTimeout(() => { clearInterval(check); resolve(); }, 3000);
         });
-        
+        const sb = window._sbTrack;
+        if (!sb) { console.error('Supabase no disponible'); return; }
+
         let allOracles = [];
         let galeriaActual = [];
         let indexActual = 0;
@@ -328,19 +330,8 @@
         async function cargarOraculo() {
             const grid = document.getElementById('grid-oraculo');
             grid.innerHTML = '<p style="color:#c9a24d; text-align:center; width:100%; grid-column:1/-1;">Conectando con el oráculo...</p>';
-
-            const { data, error } = await sb
-                .from('productos')
-                .select('*')
-                .eq('seccion', 'oraculo')
-                .eq('activo', true)
-                .order('created_at', { ascending: false });
-
-            if (error) {
-                grid.innerHTML = '<p style="color:red; text-align:center; grid-column:1/-1;">Error al cargar las sesiones.</p>';
-                return;
-            }
-
+            const { data, error } = await sb.from('productos').select('*').eq('seccion', 'oraculo').eq('activo', true).order('created_at', { ascending: false });
+            if (error) { grid.innerHTML = '<p style="color:red; text-align:center; grid-column:1/-1;">Error al cargar las sesiones.</p>'; return; }
             allOracles = data;
             renderOraculo(data);
         }
@@ -351,120 +342,61 @@
                 grid.innerHTML = '<p style="color:#cbbfa3; text-align:center; width:100%; grid-column:1/-1;">Los astros están en silencio. No hay sesiones disponibles aún.</p>';
                 return;
             }
-
             grid.innerHTML = data.map(p => {
                 const precio = p.precio ? `$${Number(p.precio).toLocaleString('es-UY')} UYU` : 'Consultar';
-                
-                // Si no hay imagen, mostramos una luna en su lugar
-                const imgHTML = p.imagen_url 
+                const imgHTML = p.imagen_url
                     ? `<img src="${p.imagen_url}" alt="${p.nombre}" class="product-image" loading="lazy">`
                     : `<div class="product-image-fallback"><i class="fas fa-moon"></i></div>`;
-
-                return `
-                <div class="product-card" onclick="abrirModal('${p.id}')">
-                    ${imgHTML}
-                    <div class="product-info">
-                        <h4>${p.nombre}</h4>
-                        <p>${p.descripcion || ''}</p>
-                        <span class="product-price">${precio}</span><br>
-                        <div class="consultar-btn">VER DETALLE</div>
-                    </div>
-                </div>`;
+                return `<div class="product-card" onclick="abrirModal('${p.id}')">${imgHTML}<div class="product-info"><h4>${p.nombre}</h4><p>${p.descripcion || ''}</p><span class="product-price">${precio}</span><br><div class="consultar-btn">VER DETALLE</div></div></div>`;
             }).join('');
         }
 
-        // LÓGICA DEL MODAL
         function abrirModal(id) {
             const prod = allOracles.find(x => x.id === id);
             if(!prod) return;
-
             document.getElementById('modalTitle').textContent = prod.nombre;
             document.getElementById('modalPrice').textContent = prod.precio ? `$${Number(prod.precio).toLocaleString('es-UY')} UYU` : 'Consultar';
             document.getElementById('modalDesc').innerHTML = (prod.descripcion_larga || prod.descripcion || '').replace(/\n/g, '<br>');
-
             const msg = encodeURIComponent(`Hola, me interesa agendar una lectura/sesión de: ${prod.nombre}`);
             document.getElementById('modalWppBtn').href = `https://wa.me/${window._wppNum || '59898496320'}?text=${msg}`;
-
             galeriaActual = prod.galeria_urls && prod.galeria_urls.length > 0 ? prod.galeria_urls : (prod.imagen_url ? [prod.imagen_url] : []);
             indexActual = 0;
             actualizarImagen();
-
             document.getElementById('carPrev').style.display = galeriaActual.length > 1 ? 'flex' : 'none';
             document.getElementById('carNext').style.display = galeriaActual.length > 1 ? 'flex' : 'none';
-
-            const dotsCont = document.getElementById('carDots');
-            dotsCont.innerHTML = galeriaActual.length > 1 ? galeriaActual.map((_, i) => `<div class="dot ${i===0?'active':''}"></div>`).join('') : '';
-
+            document.getElementById('carDots').innerHTML = galeriaActual.length > 1 ? galeriaActual.map((_, i) => `<div class="dot ${i===0?'active':''}"></div>`).join('') : '';
             document.getElementById('modalCatalogo').classList.add('active');
             document.body.style.overflow = 'hidden';
-
-            // TRACKING: producto visto
             document.dispatchEvent(new CustomEvent('productoVisto', { detail: { id: prod.id, nombre: prod.nombre, seccion: 'oraculo' } }));
         }
 
-        function moverCarrusel(dir) {
-            indexActual += dir;
-            if(indexActual >= galeriaActual.length) indexActual = 0;
-            if(indexActual < 0) indexActual = galeriaActual.length - 1;
-            actualizarImagen();
-        }
+        function moverCarrusel(dir) { indexActual += dir; if(indexActual >= galeriaActual.length) indexActual = 0; if(indexActual < 0) indexActual = galeriaActual.length - 1; actualizarImagen(); }
 
         function actualizarImagen() {
             const imgEl = document.getElementById('modalImg');
             const iconEl = document.getElementById('modalIconFallback');
-
-            if (galeriaActual.length > 0) {
-                imgEl.src = galeriaActual[indexActual];
-                imgEl.style.display = 'block';
-                iconEl.style.display = 'none';
-            } else {
-                imgEl.style.display = 'none';
-                iconEl.style.display = 'block';
-            }
-
-            const dots = document.querySelectorAll('.dot');
-            dots.forEach((d, i) => { d.className = i === indexActual ? 'dot active' : 'dot'; });
+            if (galeriaActual.length > 0) { imgEl.src = galeriaActual[indexActual]; imgEl.style.display = 'block'; iconEl.style.display = 'none'; }
+            else { imgEl.style.display = 'none'; iconEl.style.display = 'block'; }
+            document.querySelectorAll('.dot').forEach((d, i) => { d.className = i === indexActual ? 'dot active' : 'dot'; });
         }
 
         function cerrarModal(e, force = false) {
-            if (force || e.target.id === 'modalCatalogo') {
-                document.getElementById('modalCatalogo').classList.remove('active');
-                document.body.style.overflow = ''; 
-            }
+            if (force || e.target.id === 'modalCatalogo') { document.getElementById('modalCatalogo').classList.remove('active'); document.body.style.overflow = ''; }
         }
 
-        // MENSAJE DEL DÍA
-        const mensajes = [
-            "Lo esencial se revela en silencio.",
-            "La respuesta llega cuando sueltas la pregunta.",
-            "Nada está detenido, todo se mueve.",
-            "La intuición no grita, susurra.",
-            "El ritual comienza en vos.",
-            "Mira hacia adentro, ahí está la magia.",
-            "Confía en el proceso del universo."
-        ];
-        function revelarMensaje(){
+        const mensajes = ["Lo esencial se revela en silencio.","La respuesta llega cuando sueltas la pregunta.","Nada está detenido, todo se mueve.","La intuición no grita, susurra.","El ritual comienza en vos.","Mira hacia adentro, ahí está la magia.","Confía en el proceso del universo."];
+        function revelarMensaje() {
             const msgBox = document.getElementById('oracleMessage');
             msgBox.style.opacity = 0;
-            setTimeout(() => {
-                msgBox.textContent = mensajes[Math.floor(Math.random() * mensajes.length)];
-                msgBox.style.transition = "opacity 0.5s ease";
-                msgBox.style.opacity = 1;
-            }, 300);
+            setTimeout(() => { msgBox.textContent = mensajes[Math.floor(Math.random() * mensajes.length)]; msgBox.style.transition = "opacity 0.5s ease"; msgBox.style.opacity = 1; }, 300);
         }
 
-        // BUSCADOR Y FILTROS
         let tagActivo = 'todos';
-
         function aplicarFiltros() {
             const search = document.getElementById('search-input').value.toLowerCase();
             const filtrados = allOracles.filter(p => {
-                const coincideTexto =
-                    p.nombre.toLowerCase().includes(search) ||
-                    (p.descripcion && p.descripcion.toLowerCase().includes(search)) ||
-                    (p.categoria && p.categoria.toLowerCase().includes(search));
-                const coincideTag = tagActivo === 'todos' ||
-                    (p.categoria && p.categoria.toLowerCase() === tagActivo);
+                const coincideTexto = p.nombre.toLowerCase().includes(search) || (p.descripcion && p.descripcion.toLowerCase().includes(search)) || (p.categoria && p.categoria.toLowerCase().includes(search));
+                const coincideTag = tagActivo === 'todos' || (p.categoria && p.categoria.toLowerCase() === tagActivo);
                 return coincideTexto && coincideTag;
             });
             renderOraculo(filtrados);
@@ -474,9 +406,7 @@
             document.querySelectorAll('.tag').forEach(tag => {
                 tag.addEventListener('click', () => {
                     document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
-                    tag.classList.add('active');
-                    tagActivo = tag.dataset.tag;
-                    aplicarFiltros();
+                    tag.classList.add('active'); tagActivo = tag.dataset.tag; aplicarFiltros();
                 });
             });
         }
@@ -484,112 +414,75 @@
         async function cargarTags() {
             const { data } = await sb.from('categorias').select('nombre').eq('seccion', 'oraculo').order('nombre');
             const container = document.getElementById('tags-container');
-            const extras = (data || []).map(c =>
-                `<span class="tag" data-tag="${c.nombre}">${c.nombre.charAt(0).toUpperCase() + c.nombre.slice(1)}</span>`
-            ).join('');
+            const extras = (data || []).map(c => `<span class="tag" data-tag="${c.nombre}">${c.nombre.charAt(0).toUpperCase() + c.nombre.slice(1)}</span>`).join('');
             container.innerHTML = '<span class="tag active" data-tag="todos">Todos</span>' + extras;
             bindTags();
         }
 
-        // ── REALTIME SANACION ────────────────────────────────────────
-        let realtimeChannel = null;
-        let realtimeTimer = null;
-
-        function activarRealtimeSanacion() {
-            if (realtimeChannel) { sb.removeChannel(realtimeChannel); realtimeChannel = null; }
-            clearTimeout(realtimeTimer);
-            realtimeChannel = sb.channel('sanacion-rt-' + Date.now())
+        // REALTIME con reconexión automática
+        let rtChannel = null, rtTimer = null;
+        function activarRealtime() {
+            if (rtChannel) { sb.removeChannel(rtChannel); rtChannel = null; }
+            clearTimeout(rtTimer);
+            rtChannel = sb.channel('sanacion-rt-' + Date.now())
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'productos', filter: 'seccion=eq.oraculo' }, () => { cargarOraculo(); })
                 .subscribe((status) => {
-                    if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
-                        realtimeTimer = setTimeout(() => activarRealtimeSanacion(), 4000);
-                    }
+                    if (status === 'CLOSED' || status === 'CHANNEL_ERROR') { rtTimer = setTimeout(() => activarRealtime(), 4000); }
                 });
         }
-
-        setInterval(() => {
-            if (realtimeChannel && realtimeChannel.state !== 'joined') activarRealtimeSanacion();
-        }, 30000);
-
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible') {
-                cargarOraculo();
-                if (!realtimeChannel || realtimeChannel.state !== 'joined') activarRealtimeSanacion();
-            }
-        });
-
-        window.addEventListener('beforeunload', () => { if (realtimeChannel) sb.removeChannel(realtimeChannel); });
-
-        // INICIALIZACIÓN ÚNICA
-        window.addEventListener('DOMContentLoaded', async () => {
-            await cargarTags();
-            await cargarOraculo();
-            document.getElementById('search-input').addEventListener('input', aplicarFiltros);
-            activarRealtimeSanacion();
-        });
+        setInterval(() => { if (rtChannel && rtChannel.state !== 'joined') activarRealtime(); }, 30000);
+        document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { cargarOraculo(); if (!rtChannel || rtChannel.state !== 'joined') activarRealtime(); } });
+        window.addEventListener('beforeunload', () => { if (rtChannel) sb.removeChannel(rtChannel); });
 
         // UI: Partículas
-        const PARTICLE_COUNT = 60;
         const particlesContainer = document.getElementById('particles');
-        for (let i = 0; i < PARTICLE_COUNT; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
+        for (let i = 0; i < 60; i++) {
+            const p = document.createElement('div'); p.className = 'particle';
             const size = Math.random() * 4 + 2;
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            particle.style.animationDuration = `${Math.random() * 12 + 8}s`;
-            particle.style.animationDelay = `${Math.random() * 5}s`;
-            particle.style.setProperty('--drift', `${(Math.random() * 100 - 50)}px`);
-            particlesContainer.appendChild(particle);
+            p.style.width = `${size}px`; p.style.height = `${size}px`;
+            p.style.animationDuration = `${Math.random() * 12 + 8}s`;
+            p.style.animationDelay = `${Math.random() * 5}s`;
+            p.style.setProperty('--drift', `${(Math.random() * 100 - 50)}px`);
+            particlesContainer.appendChild(p);
         }
-        
+
         // UI: Música
         const music = document.getElementById('bgMusic');
         const musicBtn = document.getElementById('musicBtn');
         let isPlaying = false;
-
         window.addEventListener('load', () => {
-            music.play().then(() => {
-                isPlaying = true; musicBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
-            }).catch(() => {
-                isPlaying = false; musicBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
-            });
+            music.play().then(() => { isPlaying = true; musicBtn.innerHTML = '<i class="fas fa-volume-up"></i>'; }).catch(() => { isPlaying = false; musicBtn.innerHTML = '<i class="fas fa-volume-mute"></i>'; });
         });
-
         musicBtn.addEventListener('click', () => {
-            if (isPlaying) { music.pause(); musicBtn.innerHTML = '<i class="fas fa-volume-mute"></i>'; } 
+            if (isPlaying) { music.pause(); musicBtn.innerHTML = '<i class="fas fa-volume-mute"></i>'; }
             else { music.play(); musicBtn.innerHTML = '<i class="fas fa-volume-up"></i>'; }
             isPlaying = !isPlaying;
         });
 
-        // UI: Navegación / Logo Header
-        document.getElementById('logoHeader').addEventListener('click', (e) => {
-            e.preventDefault(); e.stopPropagation(); window.location.href = 'index.html'; 
-        });
-        
-        // UI: Menú Móvil
+        // UI: Navegación
+        document.getElementById('logoHeader').addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); window.location.href = 'index.html'; });
         const hamburgerBtn = document.getElementById('hamburgerBtn');
         const navLinks = document.getElementById('navLinks');
         if (hamburgerBtn && navLinks) {
             hamburgerBtn.addEventListener('click', () => {
                 navLinks.classList.toggle('active');
                 const icon = hamburgerBtn.querySelector('i');
-                if (navLinks.classList.contains('active')) {
-                    icon.classList.remove('fa-bars'); icon.classList.add('fa-times');
-                } else {
-                    icon.classList.remove('fa-times'); icon.classList.add('fa-bars');
-                }
+                if (navLinks.classList.contains('active')) { icon.classList.remove('fa-bars'); icon.classList.add('fa-times'); }
+                else { icon.classList.remove('fa-times'); icon.classList.add('fa-bars'); }
             });
             navLinks.querySelectorAll('a').forEach(link => {
                 link.addEventListener('click', () => {
-                    if (window.innerWidth <= 768) {
-                        navLinks.classList.remove('active');
-                        hamburgerBtn.querySelector('i').classList.remove('fa-times');
-                        hamburgerBtn.querySelector('i').classList.add('fa-bars');
-                    }
+                    if (window.innerWidth <= 768) { navLinks.classList.remove('active'); hamburgerBtn.querySelector('i').classList.remove('fa-times'); hamburgerBtn.querySelector('i').classList.add('fa-bars'); }
                 });
             });
         }
+
+        // INICIALIZACIÓN
+        await cargarTags();
+        await cargarOraculo();
+        document.getElementById('search-input').addEventListener('input', aplicarFiltros);
+        activarRealtime();
+    })();
     </script>
 
     <!-- TRACKING: visita a sección -->
@@ -597,99 +490,41 @@
     <script>
     (async function cargarContacto() {
         try {
-            const { createClient } = supabase;
-            const sb2 = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY, {
-                global: { fetch: (url, options = {}) => fetch(url, { ...options, cache: 'no-store' }) }
-            });
+            const sb2 = window._sbTrack;
             const { data: d, error } = await sb2.from('contacto_info').select('*').eq('id', 1).maybeSingle();
             if (error) { console.error('contacto_info error:', JSON.stringify(error)); return; }
             if (!d) return;
             const set  = (id, text) => { const el = document.getElementById(id); if(el) el.textContent = text; };
             const hide = (id) => { const el = document.getElementById(id); if(el) el.style.display = 'none'; };
             const show = (id) => { const el = document.getElementById(id); if(el) el.style.display = ''; };
-            if (d.email) {
-                const el = document.getElementById('footer-email');
-                if (el) {
-                    const faClass = d.email_icono || 'fa-envelope';
-                    const iconEl = document.getElementById('footer-email-icon');
-                    if (iconEl) { iconEl.className = 'fas ' + faClass; }
-                    el.childNodes[el.childNodes.length - 1].textContent = ' ' + d.email;
-                    el._emailVal = d.email;
-                }
-            }
-            if (d.telefono)  { const el = document.getElementById('footer-telefono');  if(el) { const ico = d.tel_icono || '☎️'; el.textContent = ico + ' ' + d.telefono; el.href = 'tel:' + d.telefono.replace(/\s/g,''); } }
-            if (d.direccion) {
-                const el = document.getElementById('footer-direccion');
-                if (el) {
-                    const dirIco = d.dir_icono || '📍';
-                    const iconEl = document.getElementById('footer-dir-icon');
-                    if (iconEl) {
-                        if (dirIco.startsWith('fa-')) {
-                            iconEl.innerHTML = '<i class="fas ' + dirIco + '"></i>';
-                        } else {
-                            iconEl.textContent = dirIco;
-                        }
-                    }
-                    el._dirVal = d.direccion;
-                    el.childNodes[el.childNodes.length - 1].textContent = ' ' + d.direccion;
-                }
-            }
-            if (d.horario1)  set('footer-horario1',  d.horario1);
-            if (d.horario2)  set('footer-horario2',  d.horario2);
-            if (d.horario3)  set('footer-horario3',  d.horario3);
-            if (d.vis_email     === false) hide('footer-email');     else show('footer-email');
-            if (d.vis_telefono  === false) hide('footer-telefono');  else show('footer-telefono');
+            if (d.email) { const el = document.getElementById('footer-email'); if(el) { const iconEl = document.getElementById('footer-email-icon'); if(iconEl) iconEl.className = 'fas ' + (d.email_icono||'fa-envelope'); el.childNodes[el.childNodes.length-1].textContent = ' ' + d.email; el._emailVal = d.email; } }
+            if (d.telefono) { const el = document.getElementById('footer-telefono'); if(el) { el.textContent = (d.tel_icono||'☎️') + ' ' + d.telefono; el.href = 'tel:' + d.telefono.replace(/\s/g,''); } }
+            if (d.direccion) { const el = document.getElementById('footer-direccion'); if(el) { const iconEl = document.getElementById('footer-dir-icon'); if(iconEl) { if(d.dir_icono?.startsWith('fa-')) iconEl.innerHTML = '<i class="fas '+d.dir_icono+'"></i>'; else iconEl.textContent = d.dir_icono||'📍'; } el._dirVal = d.direccion; el.childNodes[el.childNodes.length-1].textContent = ' ' + d.direccion; } }
+            if (d.horario1) set('footer-horario1', d.horario1); if (d.horario2) set('footer-horario2', d.horario2); if (d.horario3) set('footer-horario3', d.horario3);
+            if (d.vis_email === false) hide('footer-email'); else show('footer-email');
+            if (d.vis_telefono === false) hide('footer-telefono'); else show('footer-telefono');
             if (d.vis_direccion === false) hide('footer-direccion'); else show('footer-direccion');
-            if (d.vis_horario1  === false) hide('footer-horario1');  else show('footer-horario1');
-            if (d.vis_horario2  === false) hide('footer-horario2');  else show('footer-horario2');
-            if (d.vis_horario3  === false) hide('footer-horario3');  else show('footer-horario3');
-            ['facebook','instagram','whatsapp','youtube'].forEach(r => {
-                const el = document.getElementById('footer-' + r);
-                if (!el) return;
-                if (d[r] && d[r] !== '#') { el.href = d[r]; show('footer-' + r); }
-                else { hide('footer-' + r); }
-            });
+            if (d.vis_horario1 === false) hide('footer-horario1'); else show('footer-horario1');
+            if (d.vis_horario2 === false) hide('footer-horario2'); else show('footer-horario2');
+            if (d.vis_horario3 === false) hide('footer-horario3'); else show('footer-horario3');
+            ['facebook','instagram','whatsapp','youtube'].forEach(r => { const el = document.getElementById('footer-'+r); if(!el) return; if(d[r] && d[r] !== '#') { el.href = d[r]; show('footer-'+r); } else hide('footer-'+r); });
             window._wppNum = d.whatsapp && d.whatsapp !== '#' ? (d.whatsapp.match(/(\d{6,15})/)||[])[1] : null;
-            window._ubicLat = d.lat || null;
-            window._ubicLng = d.lng || null;
+            window._ubicLat = d.lat || null; window._ubicLng = d.lng || null;
         } catch(e) { console.error('cargarContacto:', e); }
     })();
 
-    function copiarEmail(el) {
-        const email = el._emailVal || el.textContent.trim();
-        navigator.clipboard.writeText(email).then(() => {
-            const toast = document.getElementById('toast-copy');
-            if (toast) { toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 2000); }
-        });
-    }
-
-    function comoLlegar() {
-        const lat = window._ubicLat, lng = window._ubicLng;
-        let destino;
-        if (lat && lng) {
-            destino = lat + ',' + lng;
-        } else {
-            const el = document.getElementById('footer-direccion');
-            const dir = el._dirVal || el.textContent.trim();
-            destino = encodeURIComponent(dir);
-        }
-        window.open('https://www.google.com/maps/dir/?api=1&destination=' + destino, '_blank');
-    }
+    function copiarEmail(el) { const email = el._emailVal || el.textContent.trim(); navigator.clipboard.writeText(email).then(() => { const toast = document.getElementById('toast-copy'); if(toast) { toast.style.display='block'; setTimeout(()=>toast.style.display='none',2000); } }); }
+    function comoLlegar() { const lat = window._ubicLat, lng = window._ubicLng; let destino = (lat && lng) ? lat+','+lng : encodeURIComponent((document.getElementById('footer-direccion')?._dirVal||'El Pinar, Uruguay')); window.open('https://www.google.com/maps/dir/?api=1&destination='+destino,'_blank'); }
     </script>
-    <!-- LIMPIEZA DE CACHÉ: borra SW y caches viejos al cargar -->
+    <!-- LIMPIEZA DE CACHÉ -->
     <script>
     (async () => {
       try {
-        if ("serviceWorker" in navigator) {
-          const regs = await navigator.serviceWorker.getRegistrations();
-          await Promise.all(regs.map(r => r.unregister()));
-        }
-        const keys = await caches.keys();
-        await Promise.all(keys.map(k => caches.delete(k)));
+        if ("serviceWorker" in navigator) { const regs = await navigator.serviceWorker.getRegistrations(); await Promise.all(regs.map(r => r.unregister())); }
+        const keys = await caches.keys(); await Promise.all(keys.map(k => caches.delete(k)));
       } catch(e) {}
     })();
     </script>
-
 
 <script src="whatsapp-btn.js"></script>
 </body>
