@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generador de Catálogo PDF — Art.ilugioss</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#e0e0e0;min-height:100vh;padding:40px 20px}
+  h1{font-family:'Cinzel',serif;color:#d4af37;font-size:2rem;letter-spacing:3px;text-align:center;margin-bottom:6px}
+  .subtitle{text-align:center;color:#888;font-size:.9rem;margin-bottom:40px;letter-spacing:1px}
+
+  .config-box{background:#141414;border:1px solid rgba(212,175,55,.2);border-radius:12px;padding:28px 32px;max-width:700px;margin:0 auto 40px}
+  .config-box h2{font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:2px;color:#d4af37;margin-bottom:18px}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+  .field-row.single{grid-template-columns:1fr}
+  label{display:block;font-size:.72rem;color:#888;letter-spacing:1px;margin-bottom:5px;font-family:'Cinzel',serif}
+  input{width:100%;background:#0d0d0d;border:1px solid rgba(212,175,55,.25);border-radius:8px;padding:10px 14px;color:#e0e0e0;font-size:.88rem;font-family:'Inter',sans-serif;transition:.2s}
+  input:focus{outline:none;border-color:#d4af37;box-shadow:0 0 0 2px rgba(212,175,55,.1)}
+  .connect-btn{width:100%;margin-top:16px;padding:13px;background:linear-gradient(135deg,rgba(212,175,55,.15),rgba(212,175,55,.25));border:1px solid #d4af37;border-radius:30px;color:#d4af37;font-family:'Cinzel',serif;font-size:.9rem;letter-spacing:2px;cursor:pointer;transition:.3s}
+  .connect-btn:hover{background:rgba(212,175,55,.3);box-shadow:0 0 20px rgba(212,175,55,.2)}
+  .connect-btn:disabled{opacity:.4;cursor:not-allowed}
+
+  .status{text-align:center;font-size:.82rem;margin-top:10px;min-height:20px;letter-spacing:1px;font-family:'Cinzel',serif}
+  .status.ok{color:#2ecc71}.status.err{color:#e74c3c}.status.loading{color:#d4af37}
+
+  .sections-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;max-width:1000px;margin:0 auto}
+  
+  .sec-card{border-radius:14px;overflow:hidden;opacity:.4;transition:.4s;pointer-events:none}
+  .sec-card.ready{opacity:1;pointer-events:auto}
+
+  /* TIENDA — ORO */
+  .sec-tienda{background:rgba(20,15,5,.85);border:1px solid rgba(212,175,55,.3)}
+  .sec-tienda .sec-header{background:linear-gradient(135deg,rgba(212,175,55,.12),rgba(212,175,55,.05));border-bottom:1px solid rgba(212,175,55,.2);padding:22px 24px}
+  .sec-tienda .sec-icon{font-size:2rem;margin-bottom:8px}
+  .sec-tienda .sec-name{font-family:'Cinzel',serif;color:#d4af37;font-size:1.05rem;letter-spacing:2px}
+  .sec-tienda .sec-count{font-size:.78rem;color:#c4b088;margin-top:4px}
+  .sec-tienda .pdf-btn{background:#d4af37;color:#000}
+  .sec-tienda .pdf-btn:hover{background:#f0cc6a;box-shadow:0 0 20px rgba(212,175,55,.4)}
+
+  /* VIVERO — VERDE */
+  .sec-vivero{background:rgba(5,15,8,.85);border:1px solid rgba(139,195,74,.3)}
+  .sec-vivero .sec-header{background:linear-gradient(135deg,rgba(139,195,74,.1),rgba(139,195,74,.04));border-bottom:1px solid rgba(139,195,74,.2);padding:22px 24px}
+  .sec-vivero .sec-name{font-family:'Cinzel',serif;color:#8BC34A;font-size:1.05rem;letter-spacing:2px}
+  .sec-vivero .sec-count{font-size:.78rem;color:#A2CF6E;margin-top:4px}
+  .sec-vivero .pdf-btn{background:#8BC34A;color:#1C352D}
+  .sec-vivero .pdf-btn:hover{background:#A2CF6E;box-shadow:0 0 20px rgba(139,195,74,.4)}
+
+  /* MANCIAS — DORADO CÁLIDO */
+  .sec-oraculo{background:rgba(15,10,5,.85);border:1px solid rgba(201,162,77,.3)}
+  .sec-oraculo .sec-header{background:linear-gradient(135deg,rgba(201,162,77,.1),rgba(201,162,77,.04));border-bottom:1px solid rgba(201,162,77,.2);padding:22px 24px}
+  .sec-oraculo .sec-name{font-family:'Cinzel',serif;color:#C9A24D;font-size:1.05rem;letter-spacing:2px}
+  .sec-oraculo .sec-count{font-size:.78rem;color:#D4B87A;margin-top:4px}
+  .sec-oraculo .pdf-btn{background:#C9A24D;color:#1a1200}
+  .sec-oraculo .pdf-btn:hover{background:#e0bb6a;box-shadow:0 0 20px rgba(201,162,77,.4)}
+
+  .sec-body{padding:20px 24px}
+  .sec-preview{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:16px;min-height:70px}
+  .prev-img{border-radius:6px;overflow:hidden;background:#1a1a1a;aspect-ratio:1}
+  .prev-img img{width:100%;height:100%;object-fit:cover;opacity:.8}
+  .prev-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;opacity:.3}
+
+  .pdf-btn{width:100%;padding:11px;border:none;border-radius:30px;font-family:'Cinzel',serif;font-size:.82rem;letter-spacing:2px;cursor:pointer;transition:.3s;font-weight:bold}
+  .pdf-btn:disabled{opacity:.4;cursor:not-allowed}
+
+  .prog-bar{height:3px;background:rgba(255,255,255,.05);border-radius:2px;margin-top:10px;overflow:hidden}
+  .prog-fill{height:100%;width:0;transition:width .3s;border-radius:2px}
+  .sec-tienda .prog-fill{background:#d4af37}
+  .sec-vivero .prog-fill{background:#8BC34A}
+  .sec-oraculo .prog-fill{background:#C9A24D}
+
+  .prog-label{font-size:.7rem;text-align:center;margin-top:4px;color:#666;font-family:'Cinzel',serif;letter-spacing:1px;min-height:16px}
+
+  /* CANVAS OCULTO para generación */
+  #genCanvas{position:fixed;left:-9999px;top:0;pointer-events:none}
+</style>
+</head>
+<body>
+
+<h1>✦ CATÁLOGO PDF</h1>
+<p class="subtitle">ART.ILUGIOSS — GENERADOR DE CATÁLOGOS</p>
+
+<div class="config-box">
+  <h2>CONEXIÓN SUPABASE</h2>
+  <div class="field-row">
+    <div>
+      <label>URL DEL PROYECTO</label>
+      <input id="sbUrl" type="text" placeholder="https://xxxx.supabase.co" autocomplete="off">
+    </div>
+    <div>
+      <label>ANON KEY</label>
+      <input id="sbKey" type="password" placeholder="eyJhbGciOi..." autocomplete="off">
+    </div>
+  </div>
+  <div class="field-row single">
+    <div>
+      <label>NOMBRE DEL NEGOCIO (opcional)</label>
+      <input id="bizName" type="text" placeholder="Art.ilugioss" value="Art.ilugioss">
+    </div>
+  </div>
+  <button class="connect-btn" id="connectBtn" onclick="conectar()">CONECTAR Y CARGAR PRODUCTOS</button>
+  <div class="status" id="statusMsg"></div>
+</div>
+
+<div class="sections-grid" id="sectionsGrid">
+  <!-- TIENDA -->
+  <div class="sec-card sec-tienda" id="card-santeria">
+    <div class="sec-header">
+      <div class="sec-icon">✦</div>
+      <div class="sec-name">TIENDA ESOTÉRICA</div>
+      <div class="sec-count" id="count-santeria">—</div>
+    </div>
+    <div class="sec-body">
+      <div class="sec-preview" id="prev-santeria"></div>
+      <button class="pdf-btn" id="btn-santeria" disabled onclick="generarPDF('santeria')">DESCARGAR PDF</button>
+      <div class="prog-bar"><div class="prog-fill" id="prog-santeria"></div></div>
+      <div class="prog-label" id="plabel-santeria"></div>
+    </div>
+  </div>
+
+  <!-- VIVERO -->
+  <div class="sec-card sec-vivero" id="card-vivero">
+    <div class="sec-header">
+      <div class="sec-icon">🌿</div>
+      <div class="sec-name">VIVERO</div>
+      <div class="sec-count" id="count-vivero">—</div>
+    </div>
+    <div class="sec-body">
+      <div class="sec-preview" id="prev-vivero"></div>
+      <button class="pdf-btn" id="btn-vivero" disabled onclick="generarPDF('vivero')">DESCARGAR PDF</button>
+      <div class="prog-bar"><div class="prog-fill" id="prog-vivero"></div></div>
+      <div class="prog-label" id="plabel-vivero"></div>
+    </div>
+  </div>
+
+  <!-- MANCIAS -->
+  <div class="sec-card sec-oraculo" id="card-oraculo">
+    <div class="sec-header">
+      <div class="sec-icon">☽</div>
+      <div class="sec-name">MANCIAS Y SANACIÓN</div>
+      <div class="sec-count" id="count-oraculo">—</div>
+    </div>
+    <div class="sec-body">
+      <div class="sec-preview" id="prev-oraculo"></div>
+      <button class="pdf-btn" id="btn-oraculo" disabled onclick="generarPDF('oraculo')">DESCARGAR PDF</button>
+      <div class="prog-bar"><div class="prog-fill" id="prog-oraculo"></div></div>
+      <div class="prog-label" id="plabel-oraculo"></div>
+    </div>
+  </div>
+</div>
+
+<canvas id="genCanvas" width="800" height="800"></canvas>
+
+<script>
+const { createClient } = supabase;
+const { jsPDF } = window.jspdf;
+let sb = null;
+let allData = { santeria: [], vivero: [], oraculo: [] };
+
+const SECTION_CFG = {
+  santeria: {
+    label: 'TIENDA ESOTÉRICA',
+    accent: '#d4af37',
+    accentLight: '#c4b088',
+    bg: [10,8,2],
+    headerBg: [20,15,5],
+    textColor: [212,175,55],
+    subColor: [196,176,136],
+    bodyColor: [200,190,170],
+    filename: 'catalogo-tienda-esoterica',
+    icon: '✦'
+  },
+  vivero: {
+    label: 'VIVERO',
+    accent: '#8BC34A',
+    accentLight: '#A2CF6E',
+    bg: [5,12,7],
+    headerBg: [10,22,14],
+    textColor: [139,195,74],
+    subColor: [162,207,110],
+    bodyColor: [180,210,150],
+    filename: 'catalogo-vivero',
+    icon: '✿'
+  },
+  oraculo: {
+    label: 'MANCIAS Y SANACIÓN',
+    accent: '#C9A24D',
+    accentLight: '#D4B87A',
+    bg: [12,8,2],
+    headerBg: [20,14,5],
+    textColor: [201,162,77],
+    subColor: [212,184,122],
+    bodyColor: [200,180,140],
+    filename: 'catalogo-mancias-sanacion',
+    icon: '☽'
+  }
+};
+
+async function conectar() {
+  const url = document.getElementById('sbUrl').value.trim();
+  const key = document.getElementById('sbKey').value.trim();
+  if (!url || !key) { setStatus('Ingresá URL y Key', 'err'); return; }
+
+  const btn = document.getElementById('connectBtn');
+  btn.disabled = true;
+  setStatus('Conectando...', 'loading');
+
+  try {
+    sb = createClient(url, key);
+    const { data, error } = await sb
+      .from('productos')
+      .select('id,nombre,descripcion,descripcion_larga,precio,imagen_url,galeria_urls,seccion,activo')
+      .eq('activo', true)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    allData.santeria = data.filter(p => p.seccion === 'santeria');
+    allData.vivero   = data.filter(p => p.seccion === 'vivero');
+    allData.oraculo  = data.filter(p => p.seccion === 'oraculo');
+
+    const total = data.length;
+    setStatus(`✓ ${total} productos cargados`, 'ok');
+
+    ['santeria','vivero','oraculo'].forEach(s => activarSeccion(s));
+    btn.textContent = '↺ RECARGAR';
+    btn.disabled = false;
+  } catch(e) {
+    setStatus('Error: ' + (e.message || 'verificá las credenciales'), 'err');
+    btn.disabled = false;
+  }
+}
+
+function activarSeccion(sec) {
+  const prods = allData[sec];
+  document.getElementById('card-' + sec).classList.add('ready');
+  document.getElementById('count-' + sec).textContent = `${prods.length} producto${prods.length !== 1 ? 's' : ''}`;
+
+  // Preview de imágenes (primeras 3)
+  const prevEl = document.getElementById('prev-' + sec);
+  prevEl.innerHTML = [0,1,2].map(i => {
+    const p = prods[i];
+    if (!p) return `<div class="prev-img"><div class="prev-placeholder">·</div></div>`;
+    const img = p.imagen_url ? `<img src="${p.imagen_url}" onerror="this.style.display='none'">` : `<div class="prev-placeholder">·</div>`;
+    return `<div class="prev-img">${img}</div>`;
+  }).join('');
+
+  const btn = document.getElementById('btn-' + sec);
+  if (prods.length > 0) { btn.disabled = false; }
+  else { btn.textContent = 'SIN PRODUCTOS'; }
+}
+
+function setStatus(msg, type) {
+  const el = document.getElementById('statusMsg');
+  el.textContent = msg;
+  el.className = 'status ' + type;
+}
+
+function setProgreso(sec, pct, label) {
+  document.getElementById('prog-' + sec).style.width = pct + '%';
+  document.getElementById('plabel-' + sec).textContent = label;
+}
+
+// ─── GENERACIÓN PDF ─────────────────────────────────────────────────────────
+
+async function cargarImagenBase64(url) {
+  if (!url) return null;
+  try {
+    // Usar un proxy de imagen para evitar CORS
+    const proxyUrl = `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=400&h=400&fit=cover&output=jpg&q=75`;
+    const res = await fetch(proxyUrl, { signal: AbortSignal.timeout(8000) });
+    if (!res.ok) return null;
+    const blob = await res.blob();
+    return new Promise(resolve => {
+      const fr = new FileReader();
+      fr.onload = () => resolve(fr.result);
+      fr.onerror = () => resolve(null);
+      fr.readAsDataURL(blob);
+    });
+  } catch { return null; }
+}
+
+async function generarPDF(sec) {
+  const cfg = SECTION_CFG[sec];
+  const prods = allData[sec];
+  if (!prods.length) return;
+
+  const btn = document.getElementById('btn-' + sec);
+  btn.disabled = true;
+  btn.textContent = 'GENERANDO...';
+  setProgreso(sec, 0, 'Iniciando...');
+
+  const bizName = document.getElementById('bizName').value.trim() || 'Art.ilugioss';
+
+  // PDF A4 vertical
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const W = 210, H = 297;
+  const MARGIN = 14;
+  const CARD_W = (W - MARGIN * 2 - 8) / 2;
+  const CARD_H = 90;
+  const COLS = 2;
+  let page = 1;
+
+  function hexToRgb(hex) {
+    const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+    return [r,g,b];
+  }
+
+  function dibujarPortada() {
+    // Fondo oscuro
+    doc.setFillColor(...cfg.bg);
+    doc.rect(0, 0, W, H, 'F');
+
+    // Franja decorativa superior
+    doc.setFillColor(...cfg.textColor);
+    doc.rect(0, 0, W, 3, 'F');
+
+    // Línea dorada central
+    doc.setDrawColor(...cfg.textColor);
+    doc.setLineWidth(0.3);
+    doc.line(MARGIN, H/2 - 30, W - MARGIN, H/2 - 30);
+    doc.line(MARGIN, H/2 + 30, W - MARGIN, H/2 + 30);
+
+    // Nombre negocio
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(...cfg.subColor);
+    doc.setCharSpace(4);
+    doc.text(bizName.toUpperCase(), W/2, H/2 - 38, { align: 'center' });
+    doc.setCharSpace(0);
+
+    // Icono decorativo grande
+    doc.setFontSize(28);
+    doc.setTextColor(...cfg.textColor);
+    doc.text(cfg.icon, W/2, H/2 - 8, { align: 'center' });
+
+    // Título sección
+    doc.setFontSize(22);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...cfg.textColor);
+    doc.setCharSpace(3);
+    doc.text(cfg.label, W/2, H/2 + 10, { align: 'center' });
+    doc.setCharSpace(0);
+
+    // Subtítulo
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...cfg.subColor);
+    doc.text(`${prods.length} PRODUCTO${prods.length !== 1 ? 'S' : ''}`, W/2, H/2 + 22, { align: 'center' });
+
+    // Fecha
+    const fecha = new Date().toLocaleDateString('es-UY', { day:'2-digit', month:'long', year:'numeric' });
+    doc.setFontSize(8);
+    doc.text(fecha.toUpperCase(), W/2, H - 20, { align: 'center' });
+
+    // Franja inferior
+    doc.setFillColor(...cfg.textColor);
+    doc.rect(0, H - 3, W, 3, 'F');
+  }
+
+  function nuevaPagina() {
+    doc.addPage();
+    page++;
+    // Fondo
+    doc.setFillColor(...cfg.bg);
+    doc.rect(0, 0, W, H, 'F');
+    // Header
+    doc.setFillColor(...cfg.headerBg);
+    doc.rect(0, 0, W, 12, 'F');
+    doc.setDrawColor(...cfg.textColor);
+    doc.setLineWidth(0.4);
+    doc.line(0, 12, W, 12);
+    // Logo texto en header
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...cfg.textColor);
+    doc.setCharSpace(2);
+    doc.text(bizName.toUpperCase(), MARGIN, 8);
+    doc.setCharSpace(0);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...cfg.subColor);
+    doc.text(cfg.label, W - MARGIN, 8, { align: 'right' });
+    // Footer
+    doc.setFillColor(...cfg.headerBg);
+    doc.rect(0, H - 10, W, 10, 'F');
+    doc.setLineWidth(0.2);
+    doc.line(0, H - 10, W, H - 10);
+    doc.setFontSize(7);
+    doc.setTextColor(...cfg.subColor);
+    doc.text(`Pág. ${page}`, W - MARGIN, H - 4, { align: 'right' });
+    doc.text('www.artilugios.com', MARGIN, H - 4);
+  }
+
+  function dibujarTarjeta(prod, x, y, imgData) {
+    const R = 3;
+    // Sombra suave
+    doc.setFillColor(0, 0, 0);
+    doc.roundedRect(x + 1, y + 1, CARD_W, CARD_H, R, R, 'F');
+
+    // Fondo tarjeta
+    doc.setFillColor(...cfg.headerBg);
+    doc.roundedRect(x, y, CARD_W, CARD_H, R, R, 'F');
+
+    // Borde
+    doc.setDrawColor(...cfg.textColor);
+    doc.setLineWidth(0.3);
+    doc.roundedRect(x, y, CARD_W, CARD_H, R, R, 'S');
+
+    const IMG_H = 44;
+    const IMG_W = CARD_W;
+
+    // Imagen
+    if (imgData) {
+      try {
+        doc.addImage(imgData, 'JPEG', x, y, IMG_W, IMG_H, '', 'FAST');
+        // Overlay gradiente sobre imagen
+        doc.setFillColor(0, 0, 0);
+        doc.setGState(doc.GState({ opacity: 0.25 }));
+        doc.rect(x, y, IMG_W, IMG_H, 'F');
+        doc.setGState(doc.GState({ opacity: 1 }));
+      } catch(e) {
+        dibujarPlaceholderImg(x, y, IMG_W, IMG_H);
+      }
+    } else {
+      dibujarPlaceholderImg(x, y, IMG_W, IMG_H);
+    }
+
+    // Clip redondo superior de la imagen
+    doc.setFillColor(...cfg.headerBg);
+    doc.rect(x, y + IMG_H - 2, IMG_W, 3, 'F');
+
+    // Contenido texto
+    const TY = y + IMG_H + 5;
+
+    // Nombre
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8.5);
+    doc.setTextColor(...cfg.textColor);
+    const nombre = prod.nombre.length > 30 ? prod.nombre.slice(0, 28) + '…' : prod.nombre;
+    doc.text(nombre, x + 5, TY);
+
+    // Precio
+    const precio = prod.precio
+      ? `$${Number(prod.precio).toLocaleString('es-UY')} UYU`
+      : 'Consultar';
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(...cfg.subColor);
+    doc.text(precio, x + 5, TY + 7);
+
+    // Descripción
+    if (prod.descripcion) {
+      const desc = prod.descripcion.length > 70 ? prod.descripcion.slice(0, 68) + '…' : prod.descripcion;
+      doc.setFontSize(6.5);
+      doc.setTextColor(...cfg.bodyColor);
+      doc.setFont('helvetica', 'normal');
+      const lines = doc.splitTextToSize(desc, CARD_W - 10);
+      doc.text(lines.slice(0, 2), x + 5, TY + 14);
+    }
+
+    // Botón "Ver detalle"
+    const BTN_Y = y + CARD_H - 11;
+    const BTN_W = CARD_W - 10;
+    doc.setDrawColor(...cfg.textColor);
+    doc.setLineWidth(0.3);
+    doc.roundedRect(x + 5, BTN_Y, BTN_W, 7, 2, 2, 'S');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(6);
+    doc.setTextColor(...cfg.textColor);
+    doc.setCharSpace(1);
+    doc.text('VER DETALLE', x + 5 + BTN_W / 2, BTN_Y + 4.5, { align: 'center' });
+    doc.setCharSpace(0);
+  }
+
+  function dibujarPlaceholderImg(x, y, w, h) {
+    doc.setFillColor(15, 12, 5);
+    doc.rect(x, y, w, h, 'F');
+    doc.setFontSize(18);
+    doc.setTextColor(...cfg.textColor);
+    doc.setGState(doc.GState({ opacity: 0.2 }));
+    doc.text(cfg.icon, x + w/2, y + h/2 + 3, { align: 'center' });
+    doc.setGState(doc.GState({ opacity: 1 }));
+  }
+
+  // ── INICIO GENERACIÓN ──
+  dibujarPortada();
+
+  // Cargar imágenes y dibujar tarjetas
+  let posX = MARGIN, posY = 20, col = 0;
+  nuevaPagina();
+  posY = 18;
+
+  for (let i = 0; i < prods.length; i++) {
+    const prod = prods[i];
+    const pct = Math.round(((i + 1) / prods.length) * 90);
+    setProgreso(sec, pct, `Procesando ${i+1} de ${prods.length}...`);
+
+    // Cargar imagen
+    const imgUrl = prod.imagen_url || (prod.galeria_urls && prod.galeria_urls[0]);
+    let imgData = null;
+    if (imgUrl) {
+      imgData = await cargarImagenBase64(imgUrl);
+    }
+
+    // Nueva fila si necesario
+    if (col === COLS) {
+      col = 0;
+      posX = MARGIN;
+      posY += CARD_H + 8;
+    }
+    // Nueva página si necesario
+    if (posY + CARD_H + 8 > H - 14) {
+      nuevaPagina();
+      posY = 18;
+      col = 0;
+      posX = MARGIN;
+    }
+
+    dibujarTarjeta(prod, posX, posY, imgData);
+
+    col++;
+    posX += CARD_W + 8;
+  }
+
+  setProgreso(sec, 95, 'Guardando...');
+  await new Promise(r => setTimeout(r, 300));
+
+  const fecha = new Date().toISOString().split('T')[0];
+  doc.save(`${cfg.filename}-${fecha}.pdf`);
+
+  setProgreso(sec, 100, `✓ PDF generado (${prods.length} productos)`);
+  btn.disabled = false;
+  btn.textContent = '✓ DESCARGAR OTRA VEZ';
+}
+</script>
+</body>
+</html>
