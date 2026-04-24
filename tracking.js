@@ -9,6 +9,14 @@
 (function () {
   if (typeof supabase === 'undefined' || !window.SUPABASE_URL) return;
 
+  // Limpiar cualquier sesión vieja de Supabase del localStorage
+  // Esto evita el warning "Multiple GoTrueClient instances"
+  try {
+    Object.keys(localStorage).forEach(k => {
+      if (k.startsWith('sb-') && k.includes('-auth-token')) localStorage.removeItem(k);
+    });
+  } catch(e) {}
+
   // Cliente único para toda la página: tracking + datos + contacto
   if (!window._sb) {
     const { createClient } = supabase;
@@ -17,7 +25,7 @@
         persistSession:     false,
         autoRefreshToken:   false,
         detectSessionInUrl: false,
-        storageKey:         'artilugios-anon', // clave única, evita el warning
+        storageKey:         'artilugios-anon-' + Math.random().toString(36).slice(2),
         storage: {
           getItem:    () => null,
           setItem:    () => {},
@@ -64,12 +72,14 @@
     }]).select('id').single();
 
     if (data && data.id) {
-      fetch('https://ipapi.co/json/')
+      // ip-api.com no tiene restricciones CORS en HTTP pero sí en HTTPS
+      // Usamos ipwho.is que sí permite CORS desde cualquier origen
+      fetch('https://ipwho.is/')
         .then(r => r.json())
         .then(geo => {
           sb.from('visitas').update({
-            pais:   geo.country_name || null,
-            ciudad: geo.city || null
+            pais:   geo.country || null,
+            ciudad: geo.city    || null
           }).eq('id', data.id);
         })
         .catch(() => {});
