@@ -426,6 +426,11 @@ PASO1: OK
             }
         }
 
+        // Exponer funciones al scope global para que los onclick del HTML las encuentren
+        window.abrirModal = abrirModal;
+        window.cerrarModal = cerrarModal;
+        window.moverCarrusel = moverCarrusel;
+
         let realtimeChannel = null;
         let realtimeTimer = null;
 
