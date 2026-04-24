@@ -269,6 +269,11 @@
         function actualizarImagen() { document.getElementById('modalImg').src = galeriaActual[indexActual]; document.querySelectorAll('.dot').forEach((d, i) => d.className = i === indexActual ? 'dot active' : 'dot'); }
         function cerrarModal(e, force = false) { if (force || e.target.id === 'modalCatalogo') { document.getElementById('modalCatalogo').classList.remove('active'); document.body.style.overflow = ''; } }
 
+        // Exponer funciones al scope global para que los onclick del HTML las encuentren
+        window.abrirModal = abrirModal;
+        window.cerrarModal = cerrarModal;
+        window.moverCarrusel = moverCarrusel;
+
         let tagActivo = 'todos';
         function aplicarFiltros() {
             const search = document.getElementById('search-input').value.toLowerCase();

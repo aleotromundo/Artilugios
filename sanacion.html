@@ -355,7 +355,7 @@
         }
 
         function abrirModal(id) {
-            const prod = allOracles.find(x => x.id === id);
+            const prod = allOracles.find(x => x.id == id);
             if(!prod) return;
             document.getElementById('modalTitle').textContent = prod.nombre;
             document.getElementById('modalPrice').textContent = prod.precio ? `$${Number(prod.precio).toLocaleString('es-UY')} UYU` : 'Consultar';
@@ -386,6 +386,11 @@
         function cerrarModal(e, force = false) {
             if (force || e.target.id === 'modalCatalogo') { document.getElementById('modalCatalogo').classList.remove('active'); document.body.style.overflow = ''; }
         }
+
+        // Exponer funciones al scope global para que los onclick del HTML las encuentren
+        window.abrirModal = abrirModal;
+        window.cerrarModal = cerrarModal;
+        window.moverCarrusel = moverCarrusel;
 
         const mensajes = ["Lo esencial se revela en silencio.","La respuesta llega cuando sueltas la pregunta.","Nada está detenido, todo se mueve.","La intuición no grita, susurra.","El ritual comienza en vos.","Mira hacia adentro, ahí está la magia.","Confía en el proceso del universo."];
         function revelarMensaje() {

@@ -321,7 +321,7 @@ PASO1: OK
 
         // FUNCIÓN PARA ABRIR EL CATÁLOGO DETALLADO
         function abrirModal(id) {
-            const prod = allProducts.find(x => x.id === id);
+            const prod = allProducts.find(x => x.id == id);
             if(!prod) return;
 
             document.getElementById('modalTitle').textContent = prod.nombre;
@@ -367,6 +367,11 @@ PASO1: OK
                 document.body.style.overflow = ''; 
             }
         }
+
+        // Exponer funciones al scope global para que los onclick del HTML las encuentren
+        window.abrirModal = abrirModal;
+        window.cerrarModal = cerrarModal;
+        window.moverCarrusel = moverCarrusel;
 
         let realtimeChannel = null;
         let realtimeTimer = null;
