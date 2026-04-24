@@ -1540,6 +1540,12 @@ async function saveProduct() {
 
 async function deleteProd(id) {
     if (confirm("¿Eliminar este producto permanentemente?")) {
+        // Primero ocultarlo (activo=false) para que el sitio público
+        // reciba el evento UPDATE y lo quite de la grilla sin recargar
+        await sb.from('productos').update({ activo: false }).eq('id', id);
+        // Pequeña pausa para que el realtime llegue al público
+        await new Promise(r => setTimeout(r, 400));
+        // Ahora sí borrarlo definitivamente
         const { error } = await sb.from('productos').delete().eq('id', id);
         if (error) {
             showToast('❌ Error al eliminar: ' + error.message);
