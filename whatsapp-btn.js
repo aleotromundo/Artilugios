@@ -84,14 +84,13 @@
 
   // ── Obtener número desde Supabase ────────────────────────────
   async function getWppLink() {
-    // Si el index ya cargó el número, lo usamos directo
+    // Si ya hay número cargado por otro script, lo usamos directo
     if (window._wppNum) return 'https://wa.me/' + window._wppNum;
 
-    // Si no, consultamos Supabase nosotros mismos
+    // Reusar el cliente global — nunca crear uno nuevo
     try {
-      if (typeof supabase === 'undefined' || !window.SUPABASE_URL) return null;
-      const { createClient } = supabase;
-      const sb = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+      const sb = window._sb || window._sbTrack;
+      if (!sb) return null;
       const { data } = await sb.from('contacto_info').select('whatsapp').eq('id', 1).maybeSingle();
       if (data && data.whatsapp && data.whatsapp !== '#') return data.whatsapp.replace('wa.me/c/', 'wa.me/');
     } catch (e) { /* silencioso */ }
