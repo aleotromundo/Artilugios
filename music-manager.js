@@ -36,13 +36,16 @@
             music.play().then(() => {
                 isPlaying = true;
                 musicBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                musicBtn.classList.add('playing');
             }).catch(() => {
                 isPlaying = false;
                 musicBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                musicBtn.classList.remove('playing');
             });
         } else {
             isPlaying = false;
             musicBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+            musicBtn.classList.remove('playing');
         }
     }
 
@@ -57,9 +60,11 @@
         if (isPlaying) {
             music.pause();
             musicBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+            musicBtn.classList.remove('playing');
         } else {
             music.play();
             musicBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+            musicBtn.classList.add('playing');
         }
         isPlaying = !isPlaying;
         sessionStorage.setItem(KEY_P, isPlaying);

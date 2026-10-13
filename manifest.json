@@ -1,12 +1,12 @@
 {
-  "name": "Artilugios Panel",
-  "short_name": "Panel",
-  "description": "Panel de gestión de productos — Artilugios",
-  "start_url": "./panel.html",
+  "name": "Artilugios - Proyecto Vivo",
+  "short_name": "Artilugios",
+  "description": "Portal místico de sabiduría ancestral. Tienda Esotérica, Vivero y Mancias en El Pinar, Uruguay.",
+  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#110a05",
-  "theme_color": "#1a0f07",
-  "orientation": "portrait",
+  "background_color": "#0d0a06",
+  "theme_color": "#d4af37",
+  "orientation": "any",
   "icons": [
     {
       "src": "./logo-192.png",

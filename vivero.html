@@ -6,430 +6,454 @@
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Vivero - Art.ilugioss</title>
+    <title>Vivero Holístico — Art.ilugioss</title>
+    
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <meta name="description" content="Vivero Art.ilugioss. Encuentra el espíritu del bosque en plantas ornamentales y medicinales. El Pinar, Uruguay.">
-    <meta name="theme-color" content="#4CAF50">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#8bc34a">
+    <meta name="description" content="Venta de plantas ornamentales, medicinales, árboles frutales y vegetación consciente en El Pinar, Canelones, Uruguay.">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400&display=swap" rel="stylesheet">
-    <audio id="bgMusic" loop><source src="musica.mp3" type="audio/mpeg"></audio>
+    <link rel="stylesheet" href="css/main.css">
+
+    <!-- Supabase SDK + Config -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+
+    <audio id="bgMusic" loop>
+        <source src="musica.mp3" type="audio/mpeg">
+    </audio>
 
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Cinzel', serif; overflow-x: hidden; background-image: url('img/jardin-fondo.webp'); background-size: cover; background-attachment: fixed; background-position: center; color: #8BC34A; position: relative; }
-        body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(28, 53, 45, 0.65); z-index: 0; pointer-events: none; }
-        .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-        .particle { position: absolute; width: 3px; height: 3px; background: radial-gradient(circle, #8BC34A 0%, transparent 70%); border-radius: 50%; animation: float-up linear infinite; opacity: 0; }
-        @keyframes float-up { 0% { transform: translateY(100vh) translateX(0); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateY(-100px) translateX(var(--drift)); opacity: 0; } }
-        header { position: fixed; top: 0; left: 0; right: 0; background: rgba(28, 53, 45, 0.9); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(139, 195, 74, 0.4); z-index: 1000; padding: 20px 0; }
-        nav { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 40px; }
-        .logo { display: flex; align-items: center; gap: 12px; letter-spacing: 2px; text-decoration: none; cursor: pointer; }
-        .header-logo { height: 32px; width: auto; animation: heartbeatGlowHeader 4s ease-in-out 4.5s infinite; }
-        .logo-text { font-size: 1.5rem; font-weight: bold; color: #8BC34A; text-shadow: 0 0 10px rgba(139, 195, 74, 0.5); letter-spacing: 3px; animation: heartbeatGlowHeader 4s ease-in-out 4.5s infinite; }
-        @keyframes heartbeatGlowHeader { 0%, 100% { filter: drop-shadow(0 0 8px rgba(139, 195, 74, 0.4)); } 50% { filter: drop-shadow(0 0 20px rgba(139, 195, 74, 0.7)); } }
-        .nav-links { display: flex; gap: 40px; list-style: none; }
-        .nav-links a { color: #8BC34A; text-decoration: none; font-size: 1rem; letter-spacing: 2px; transition: all 0.3s ease; position: relative; }
-        .nav-links a::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 2px; background: #8BC34A; transition: width 0.3s ease; }
-        .nav-links a:hover::after { width: 100%; }
-        .nav-links a:hover { text-shadow: 0 0 15px rgba(139, 195, 74, 0.8); }
-        .hamburger-menu { display: none; background: transparent; border: none; color: #8BC34A; font-size: 1.8rem; cursor: pointer; z-index: 1001; padding: 10px; transition: color 0.3s ease; }
-        .hamburger-menu:hover { color: #A2CF6E; }
-        #vivero-content { padding: 120px 20px 60px; max-width: 1200px; margin: 0 auto; position: relative; z-index: 3; min-height: 100vh; }
-        .glass-container { background: rgba(28, 53, 45, 0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 15px; padding: 40px 30px; margin: 0 auto; max-width: 1000px; border: 1px solid rgba(139, 195, 74, 0.3); }
-        #page-title { font-size: 4rem; text-align: center; margin-bottom: 5px; color: #8BC34A; text-shadow: 0 0 20px rgba(139, 195, 74, 0.5); letter-spacing: 4px; }
-        #page-subtitle { font-size: 1.4rem; text-align: center; margin-bottom: 40px; color: #A2CF6E; letter-spacing: 2px; }
-        .search-bar-container { max-width: 600px; margin: 0 auto 30px; position: relative; }
-        #search-input { width: 100%; padding: 15px 20px 15px 50px; font-size: 1.1rem; border: 2px solid #8BC34A; border-radius: 30px; background: rgba(28, 53, 45, 0.8); color: #A2CF6E; font-family: 'Cinzel', serif; transition: border-color 0.3s ease, box-shadow 0.3s ease; }
-        #search-input:focus { outline: none; border-color: #A2CF6E; box-shadow: 0 0 15px rgba(139, 195, 74, 0.6); }
-        .search-icon { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #8BC34A; font-size: 1.2rem; }
-        .tags-container { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-bottom: 50px; }
-        .tag { padding: 8px 18px; border-radius: 20px; border: 1px solid #6C8255; background: rgba(139, 195, 74, 0.1); color: #A2CF6E; font-size: 0.9rem; cursor: pointer; transition: all 0.3s ease; }
-        .tag:hover, .tag.active { background: rgba(139, 195, 74, 0.3); border-color: #8BC34A; color: #FFF; box-shadow: 0 0 10px rgba(139, 195, 74, 0.3); }
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; padding: 20px 0; }
-        .product-card { background: rgba(28, 53, 45, 0.8); border: 1px solid rgba(139, 195, 74, 0.3); border-radius: 10px; overflow: hidden; text-align: center; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; }
-        .product-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(139, 195, 74, 0.3); }
-        .product-image { width: 100%; height: 250px; object-fit: cover; border-bottom: 1px solid rgba(139, 195, 74, 0.3); filter: brightness(0.95); transition: transform 0.3s ease, filter 0.3s ease; }
-        .product-card:hover .product-image { transform: scale(1.05); filter: brightness(1.05); }
-        .product-info { padding: 20px; }
-        .product-info h4 { font-size: 1.5rem; color: #8BC34A; margin-bottom: 8px; letter-spacing: 1px; }
-        .product-info p { color: #A2CF6E; font-size: 0.9rem; margin-bottom: 15px; }
-        .product-price { font-size: 1.2rem; color: #E6EE9C; font-weight: bold; }
-        .consultar-btn { display: inline-block; padding: 8px 25px; margin-top: 15px; border-radius: 20px; background: rgba(139,195,74,0.1); border: 1px solid #8BC34A; color: #8BC34A; transition: all 0.3s ease; font-family: 'Cinzel', serif; font-weight: bold; letter-spacing: 1px; }
-        .product-card:hover .consultar-btn { background: #8BC34A; color: #1C352D; box-shadow: 0 0 15px rgba(139,195,74,0.5); }
-        .modal-cat-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 2000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.4s; }
-        .modal-cat-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-cat-content { background: rgba(28, 53, 45, 0.98); border: 1px solid #8BC34A; width: 90%; max-width: 900px; border-radius: 15px; display: flex; overflow: hidden; position: relative; max-height: 90vh; box-shadow: 0 0 40px rgba(0,0,0,0.8); }
-        .close-cat-btn { position: absolute; top: 15px; right: 20px; background: transparent; border: none; color: #8BC34A; font-size: 2rem; cursor: pointer; z-index: 10; transition:0.3s; }
-        .close-cat-btn:hover { color: #FFF; transform: scale(1.1); }
-        .modal-cat-img-box { width: 50%; background: #000; position: relative; display:flex; align-items:center; }
-        .modal-cat-img-box img { width: 100%; height: 100%; object-fit: cover; }
-        .car-btn { position:absolute; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.5); color:#8BC34A; border:1px solid #8BC34A; width:40px; height:40px; border-radius:50%; cursor:pointer; font-size:1.2rem; display:none; align-items:center; justify-content:center; transition: 0.3s; }
-        .car-btn:hover { background: #8BC34A; color: #1C352D; }
-        #carPrev { left: 10px; } #carNext { right: 10px; }
-        .modal-cat-info { width: 50%; padding: 40px; overflow-y: auto; text-align:left; font-family: 'Inter', sans-serif; }
-        .modal-cat-info h2 { font-family: 'Cinzel', serif; font-size: 2.2rem; color: #8BC34A; margin-bottom: 10px; }
-        .modal-cat-info .cat-price { font-size: 1.5rem; color: #E6EE9C; font-weight: bold; margin-bottom: 20px; }
-        .modal-cat-info .cat-desc { font-size: 1rem; color: #A2CF6E; line-height: 1.6; margin-bottom: 30px; }
-        .cat-buy-btn { display: block; text-align:center; padding: 15px; background: #8BC34A; color: #1C352D; text-decoration: none; border-radius: 30px; font-weight: bold; font-family: 'Cinzel', serif; letter-spacing: 2px; font-size: 1.1rem; transition: 0.3s; }
-        .cat-buy-btn:hover { background: #FFF; box-shadow: 0 0 20px rgba(139, 195, 74, 0.6); color: #000; }
-        .car-dots { position:absolute; bottom:15px; width:100%; display:flex; justify-content:center; gap:8px; }
-        .dot { width:10px; height:10px; background:rgba(255,255,255,0.4); border-radius:50%; transition:0.3s; }
-
-        /* EFECTO AGUA AL CARGAR IMAGEN */
-        .img-water-loader { position:absolute; inset:0; z-index:3; pointer-events:none; overflow:hidden; opacity:0; transition:opacity 0.2s; }
-        .img-water-loader.visible { opacity:1; }
-        .img-water-loader svg { position:absolute; bottom:0; left:0; width:100%; animation:waterRise 1.4s cubic-bezier(0.4,0,0.2,1) forwards; }
-        @keyframes waterRise { 0% { transform:translateY(100%); } 100% { transform:translateY(-5%); } }
-        .water-wave { animation:waveMove 1.2s ease-in-out infinite alternate; }
-        @keyframes waveMove {
-            0%   { d: path("M0,20 C80,0 160,40 240,20 C320,0 400,40 480,20 C560,0 640,40 720,20 L720,120 L0,120 Z"); }
-            100% { d: path("M0,20 C80,40 160,0 240,20 C320,40 400,0 480,20 C560,40 640,0 720,20 L720,120 L0,120 Z"); }
+        body {
+            background-image: url('img/jardin-fondo.webp');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
         }
-        #modalImg { transition: opacity 0.35s ease; }
-        .dot.active { background:#8BC34A; box-shadow: 0 0 10px #8BC34A; }
-        footer { background: rgba(28, 53, 45, 0.95); border-top: 1px solid rgba(139, 195, 74, 0.4); padding: 60px 40px 30px; margin-top: 60px; position: relative; z-index: 5; backdrop-filter: blur(4px); }
-        .footer-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin-bottom: 40px; }
-        .footer-section h3 { color: #8BC34A; font-size: 1.3rem; margin-bottom: 20px; letter-spacing: 2px; }
-        .footer-section p, .footer-section a { color: #A2CF6E; line-height: 1.8; text-decoration: none; display: block; margin-bottom: 10px; transition: all 0.3s ease; }
-        .footer-section a:hover { color: #8BC34A; text-shadow: 0 0 10px rgba(139, 195, 74, 0.5); transform: translateX(5px); }
-        .social-links { display: flex; gap: 15px; margin-top: 15px; }
-        .social-links a { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(139, 195, 74, 0.1); border: 1px solid #8BC34A; border-radius: 50%; color: #8BC34A; font-size: 1.2rem; transition: all 0.3s ease; }
-        .social-links a:hover { background: rgba(139, 195, 74, 0.3); transform: translateY(-3px); color: #FFF; }
-        .footer-bottom { text-align: center; padding-top: 30px; border-top: 1px solid rgba(139, 195, 74, 0.3); color: #A2CF6E; }
-        .music-toggle { position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; background: rgba(139, 195, 74, 0.15); border: 2px solid #8BC34A; border-radius: 50%; color: #8BC34A; font-size: 1.3rem; cursor: pointer; z-index: 1001; transition: all 0.3s ease; backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; animation: float 3s ease-in-out infinite; }
-        .music-toggle:hover { background: rgba(139, 195, 74, 0.3); box-shadow: 0 0 20px rgba(139, 195, 74, 0.5); }
-        @media (max-width: 768px) {
-            #page-title { font-size: 2.8rem; } #page-subtitle { font-size: 1.1rem; }
-            .glass-container { backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); padding: 20px 15px; margin: 0 10px; }
-            .search-bar-container { max-width: 100%; }
-            #search-input { padding: 12px 15px 12px 45px; font-size: 1rem; }
-            .search-icon { left: 15px; font-size: 1.1rem; }
-            .product-grid { grid-template-columns: 1fr; gap: 30px; }
-            nav { padding: 0 20px; }
-            .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; width: 100%; background: rgba(28, 53, 45, 0.98); border-top: 1px solid rgba(139, 195, 74, 0.3); padding: 20px 0; text-align: center; gap: 20px; }
-            .nav-links.active { display: flex; }
-            .hamburger-menu { display: block; }
-            .modal-cat-content { flex-direction: column; overflow-y: auto; }
-            .modal-cat-img-box { width: 100%; height: 300px; }
-            .modal-cat-info { width: 100%; padding: 25px 20px; }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 24, 18, 0.82);
+            z-index: 0;
+            pointer-events: none;
         }
-        .debug-panel { display: none !important; }
+        .page-header {
+            padding-top: calc(var(--header-height) + 40px);
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 2;
+        }
+        .page-title {
+            font-family: var(--font-title);
+            font-size: clamp(2rem, 4.5vw, 3.4rem);
+            color: #8bc34a;
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px rgba(139, 195, 74, 0.5);
+            margin-bottom: 8px;
+        }
+        .page-subtitle {
+            color: #c5e1a5;
+            font-size: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .sort-bar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+        .sort-select {
+            background: rgba(14, 30, 22, 0.88);
+            border: 1px solid rgba(139, 195, 74, 0.4);
+            color: #c5e1a5;
+            padding: 8px 16px;
+            border-radius: var(--radius-full);
+            font-family: var(--font-title);
+            font-size: 0.8rem;
+            outline: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <div class="particles" id="particles"></div>
-    <div class="debug-panel" id="debugPanel"></div>
 
-    <header>
-        <nav>
-            <a href="index.html" class="logo" id="logoHeader">
-                <img src="logo.png" alt="Logo Artilugios" class="header-logo" />
-                <span class="logo-text">Art.ilugioss</span>
+    <!-- ENCABEZADO -->
+    <header class="site-header">
+        <div class="nav-container">
+            <a href="index.html" class="brand-link">
+                <img src="logo.png" alt="Artilugios" class="brand-logo" />
+                <span class="brand-name">Art.ilugioss</span>
             </a>
-            <button class="hamburger-menu" id="hamburgerBtn" aria-label="Menú de Navegación"><i class="fas fa-bars"></i></button>
-            <ul class="nav-links" id="navLinks">
-                <li><a href="index.html">INICIO</a></li>
-                <li><a href="tienda.html">TIENDA ESOTÉRICA</a></li>
-                <li><a href="vivero.html">VIVERO</a></li>
-                <li><a href="sanacion.html">MANCIAS Y SANACIÓN</a></li>
-                <li><a href="#contacto">CONTACTO</a></li>
+
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">INICIO</a></li>
+                <li><a href="tienda.html" class="nav-link">TIENDA ESOTÉRICA</a></li>
+                <li><a href="vivero.html" class="nav-link active">VIVERO</a></li>
+                <li><a href="sanacion.html" class="nav-link">MANCIAS Y SANACIÓN</a></li>
+                <li><a href="#contacto" class="nav-link">CONTACTO</a></li>
             </ul>
-        </nav>
+
+            <div class="nav-actions">
+                <button class="icon-btn-header" id="musicBtn" title="Música ambiental" aria-label="Reproducir música">
+                    <i class="fas fa-volume-mute"></i>
+                </button>
+                <button class="icon-btn-header btn-open-cart" title="Ver pedido" aria-label="Abrir carrito de compras">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="cart-badge">0</span>
+                </button>
+                <button class="hamburger-menu" id="hamburgerBtn" aria-label="Menú de Navegación">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
     </header>
 
-    <main id="vivero-content">
-        <div class="glass-container"> 
-            <h1 id="page-title">VIVERO</h1>
-            <p id="page-subtitle">Árboles, plantas y medicina</p>
-            <div class="search-bar-container">
-                <i class="fas fa-search search-icon"></i>
-                <input type="search" id="search-input" placeholder="Buscar por nombre o tipo de planta..." />
+    <!-- MENÚ MÓVIL (DRAWER) -->
+    <div class="mobile-nav-overlay" id="mobileNavOverlay">
+        <div class="mobile-nav-drawer">
+            <div class="mobile-nav-header">
+                <div class="brand-link">
+                    <img src="logo.png" alt="Logo" class="brand-logo" style="height:30px;" />
+                    <span class="brand-name" style="font-size:1.15rem;">Artilugios</span>
+                </div>
+                <button class="cart-close-btn" id="mobileNavClose">&times;</button>
             </div>
-            <div class="tags-container" id="tags-container">
-                <span class="tag active" data-tag="todos">Todos</span>
+            <ul class="mobile-nav-links">
+                <li><a href="index.html" class="mobile-nav-link"><i class="fas fa-home"></i> INICIO</a></li>
+                <li><a href="tienda.html" class="mobile-nav-link"><i class="fas fa-fire"></i> TIENDA ESOTÉRICA</a></li>
+                <li><a href="vivero.html" class="mobile-nav-link active"><i class="fas fa-seedling"></i> VIVERO</a></li>
+                <li><a href="sanacion.html" class="mobile-nav-link"><i class="fas fa-star"></i> MANCIAS Y SANACIÓN</a></li>
+                <li><a href="#contacto" class="mobile-nav-link"><i class="fas fa-envelope"></i> CONTACTO</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- TÍTULO DE LA PÁGINA -->
+    <section class="page-header">
+        <h1 class="page-title">VIVERO HOLÍSTICO</h1>
+        <p class="page-subtitle">Plantas medicinales, aromáticas, ornamentales y nativas cuidadas con amor para armonizar tu hogar y jardín.</p>
+    </section>
+
+    <!-- CONTENEDOR DE PRODUCTOS Y FILTROS -->
+    <main class="products-section-container">
+        <div class="filters-bar">
+            <div class="search-input-wrap">
+                <i class="fas fa-search" style="color:#8bc34a;"></i>
+                <input type="search" id="searchInput" class="search-input" placeholder="Buscar por nombre o variedad de planta..." />
             </div>
-            <div class="product-grid" id="grid-vivero"></div>
-        </div> 
+            <div class="tags-scroll" id="categoriesTags">
+                <button class="filter-tag active" data-category="todos">Todos</button>
+            </div>
+            <div class="sort-bar">
+                <select id="sortSelect" class="sort-select">
+                    <option value="recent">Más recientes</option>
+                    <option value="price-asc">Menor precio</option>
+                    <option value="price-desc">Mayor precio</option>
+                    <option value="name-asc">Nombre A-Z</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="products-grid" id="gridProductos">
+            <p style="text-align:center;grid-column:1/-1;color:var(--text-muted);font-family:var(--font-title);letter-spacing:1px;">
+                <i class="fas fa-circle-notch fa-spin" style="margin-right:8px;color:#8bc34a;"></i> Cargando plantas del vivero...
+            </p>
+        </div>
     </main>
 
-    <div class="modal-cat-overlay" id="modalCatalogo" onclick="cerrarModal(event)">
-        <div class="modal-cat-content">
-            <button class="close-cat-btn" onclick="cerrarModal(event, true)">&times;</button>
-            <div class="modal-cat-img-box">
-                <img id="modalImg" src="" alt="Producto">
-                <div class="img-water-loader" id="waterLoader">
-                    <svg viewBox="0 0 720 500" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" height="100%">
-                        <defs>
-                            <linearGradient id="waterGrad" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="rgba(100,180,100,0.35)"/>
-                                <stop offset="100%" stop-color="rgba(100,180,100,0.08)"/>
-                            </linearGradient>
-                        </defs>
-                        <path class="water-wave" d="M0,20 C80,0 160,40 240,20 C320,0 400,40 480,20 C560,0 640,40 720,20 L720,500 L0,500 Z" fill="url(#waterGrad)"/>
-                    </svg>
-                </div>
-                <button class="car-btn" id="carPrev" onclick="moverCarrusel(-1)"><i class="fas fa-chevron-left"></i></button>
-                <button class="car-btn" id="carNext" onclick="moverCarrusel(1)"><i class="fas fa-chevron-right"></i></button>
-                <div class="car-dots" id="carDots"></div>
+    <!-- MODAL DETALLE DE PRODUCTO -->
+    <div class="product-modal-overlay" id="productModal" onclick="cerrarModal(event)">
+        <div class="product-modal" style="border-color:rgba(139,195,74,0.6);">
+            <button class="product-modal-close" onclick="cerrarModal(event, true)" style="color:#8bc34a;">&times;</button>
+            <div class="product-modal-gallery">
+                <img id="modalImg" src="" alt="Planta" class="product-modal-img" />
+                <button class="modal-nav-arrow prev" id="modalPrev" onclick="cambiarFotoModal(-1)" style="display:none;color:#8bc34a;"><i class="fas fa-chevron-left"></i></button>
+                <button class="modal-nav-arrow next" id="modalNext" onclick="cambiarFotoModal(1)" style="display:none;color:#8bc34a;"><i class="fas fa-chevron-right"></i></button>
             </div>
-            <div class="modal-cat-info">
-                <h2 id="modalTitle">Nombre</h2>
-                <div class="cat-price" id="modalPrice">$0</div>
-                <div class="cat-desc" id="modalDesc">Descripción...</div>
-                <a href="#" id="modalWppBtn" target="_blank" class="cat-buy-btn"><i class="fab fa-whatsapp"></i> CONSULTAR</a>
+            <div class="product-modal-info">
+                <h3 class="modal-title" id="modalTitle" style="color:#8bc34a;">Nombre</h3>
+                <div class="modal-price" id="modalPrice">$0 UYU</div>
+                <div class="modal-desc" id="modalDesc">Descripción...</div>
+                <div class="modal-actions">
+                    <button class="btn-modal-add" id="modalAddBtn" style="background:#8bc34a;color:#0b1d14;">
+                        <i class="fas fa-shopping-bag"></i> AGREGAR AL PEDIDO
+                    </button>
+                    <a href="#" class="btn-modal-direct-wpp" id="modalWppBtn" target="_blank">
+                        <i class="fab fa-whatsapp"></i> Consultar directo por WhatsApp
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 
-    <button class="music-toggle" id="musicBtn"><i class="fas fa-volume-up"></i></button>
-
-    <footer id="contacto">
+    <!-- PIE DE PÁGINA -->
+    <footer class="site-footer" id="contacto">
         <div class="footer-content">
             <div class="footer-section">
-                <h3>CONTACTO</h3>
-                <p id="footer-email" onclick="copiarEmail(this)" title="Clic para copiar" style="cursor:pointer;"><i class="fas fa-envelope" id="footer-email-icon"></i> info@artilugios.com</p>
-                <a id="footer-telefono" href="tel:+59898496320" title="Clic para llamar" style="cursor:pointer;">☎️ +598 XX XXX XXX</a>
-                <p id="footer-direccion"><span id="footer-dir-icon">📍</span> El Pinar, Uruguay</p>
-                <a id="btn-como-llegar" onclick="comoLlegar()" title="Cómo llegar" style="cursor:pointer;display:inline-flex;align-items:center;gap:8px;margin-top:4px;padding:7px 14px;border:1px solid rgba(139,195,74,0.4);border-radius:20px;font-size:.82rem;letter-spacing:1px;font-family:'Cinzel',serif;color:#8BC34A;transition:all .3s;"><i class="fas fa-route"></i> CÓMO LLEGAR</a>
-                <div id="toast-copy" style="display:none;margin-top:6px;font-size:.8rem;color:#2ecc71;font-family:'Cinzel',serif;letter-spacing:1px;">✓ Copiado</div>
+                <h3 style="color:#8bc34a;">CONTACTO</h3>
+                <p id="footer-email" onclick="copiarTexto(this._val || 'info@artilugios.com', 'Email')" title="Clic para copiar" style="cursor:pointer;">
+                    <i class="fas fa-envelope" id="footer-email-icon" style="color:#8bc34a;"></i> info@artilugios.com
+                </p>
+                <a id="footer-telefono" href="tel:+59898496320" title="Clic para llamar">
+                    <i class="fas fa-phone-alt" style="color:#8bc34a;"></i> +598 98 496 320
+                </a>
+                <p id="footer-direccion">
+                    <span id="footer-dir-icon">📍</span> El Pinar, Canelones, Uruguay
+                </p>
+                <button class="btn-como-llegar" onclick="comoLlegar()" title="Abrir en Google Maps" style="color:#8bc34a;border-color:rgba(139,195,74,0.5);">
+                    <i class="fas fa-route"></i> CÓMO LLEGAR
+                </button>
             </div>
+
             <div class="footer-section">
-                <h3>HORARIOS</h3>
-                <p id="footer-horario1">Lunes a Viernes: 10:00 - 19:00</p>
-                <p id="footer-horario2">Sábados: 10:00 - 14:00</p>
-                <p id="footer-horario3">Domingos: Cerrado</p>
+                <h3 style="color:#8bc34a;">HORARIOS</h3>
+                <p id="footer-horario1"><i class="fas fa-clock" style="color:#8bc34a;"></i> Lunes a Viernes: 10:00 - 19:00</p>
+                <p id="footer-horario2"><i class="fas fa-clock" style="color:#8bc34a;"></i> Sábados: 10:00 - 14:00</p>
+                <p id="footer-horario3"><i class="fas fa-moon" style="color:#8bc34a;"></i> Domingos: Cerrado</p>
             </div>
+
             <div class="footer-section">
-                <h3>SÍGUENOS</h3>
+                <h3 style="color:#8bc34a;">SÍGUENOS</h3>
+                <p>Conectate con nuestro jardín vivo:</p>
                 <div class="social-links">
-                    <a id="footer-facebook" href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a id="footer-instagram" href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a id="footer-whatsapp" href="#" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-                    <a id="footer-youtube" href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a id="footer-facebook" class="social-link" href="#" title="Facebook" target="_blank" style="color:#8bc34a;"><i class="fab fa-facebook-f"></i></a>
+                    <a id="footer-instagram" class="social-link" href="#" title="Instagram" target="_blank" style="color:#8bc34a;"><i class="fab fa-instagram"></i></a>
+                    <a id="footer-whatsapp" class="social-link" href="#" title="WhatsApp" target="_blank" style="color:#8bc34a;"><i class="fab fa-whatsapp"></i></a>
+                    <a id="footer-youtube" class="social-link" href="#" title="YouTube" target="_blank" style="color:#8bc34a;"><i class="fab fa-youtube"></i></a>
                 </div>
             </div>
         </div>
-        <div class="footer-bottom"><p>&copy; 2025 Art.ilugioss - Proyecto vivo. Todos los derechos reservados.</p></div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 Art.ilugioss — Proyecto Vivo. Todos los derechos reservados.</p>
+        </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-config.js"></script>
+    <!-- SCRIPTS -->
     <script src="tracking.js"></script>
-
-    <script>
-    (async function() {
-        const debug = () => {};
-        debug('🌱 Iniciando Vivero...');
-
-        // Esperar que tracking.js cree el cliente global window._sb
-        await new Promise(resolve => {
-            if (window._sb) return resolve();
-            const check = setInterval(() => { if (window._sb) { clearInterval(check); resolve(); } }, 50);
-            setTimeout(() => { clearInterval(check); resolve(); }, 3000);
-        });
-        // Un solo cliente para toda la página — sin instancias duplicadas, sin warnings
-        const sb = window._sb;
-        if (!sb) { console.error('Supabase no disponible'); return; }
-        debug('🔗 Cliente Supabase listo');
-
-        const SECCION = 'vivero';
-        const container = document.getElementById('grid-vivero');
-        let allPlants = [];
-        let galeriaActual = [], indexActual = 0;
-
-        async function cargarVivero() {
-            debug(`📡 Query: productos WHERE seccion='${SECCION}' AND activo=true`);
-            container.innerHTML = '<p style="color:#8BC34A; text-align:center; width:100%; grid-column:1/-1;">Cultivando catálogo...</p>';
-
-            const { data, error } = await sb.from('productos').select('*').eq('seccion', SECCION).eq('activo', true).order('created_at', { ascending: false });
-            
-            if (error) { debug(`❌ Error Supabase: ${JSON.stringify(error)}`); container.innerHTML = `<p style="color:#c00; text-align:center; grid-column:1/-1;">Error: ${error.message}</p>`; return; }
-            if (!data || data.length === 0) { debug('⚠️ Sin productos (data vacío o null)'); container.innerHTML = '<p style="color:#A2CF6E; text-align:center; width:100%; grid-column:1/-1;">No hay plantas aún 🌱</p>'; return; }
-            
-            debug(`✅ ${data.length} productos cargados`);
-            allPlants = data;
-            renderVivero(data);
-        }
-
-        function renderVivero(data) {
-            container.innerHTML = data.map(p => {
-                const precio = p.precio ? `$${Number(p.precio).toLocaleString('es-UY')} UYU` : 'Consultar';
-                const img = p.imagen_url || p.imagenes?.[0] || 'img/jardin-fondo.jpg';
-                return `<div class="product-card" onclick="abrirModal('${p.id}')">
-                    <img src="${img}" alt="${p.nombre}" class="product-image" loading="lazy" onerror="this.src='img/jardin-fondo.jpg'">
-                    <div class="product-info">
-                        <h4>${p.nombre}</h4>
-                        <p>${p.descripcion_breve || p.descripcion || ''}</p>
-                        <span class="product-price">${precio}</span><br>
-                        <div class="consultar-btn">VER DETALLE</div>
-                    </div>
-                </div>`;
-            }).join('');
-        }
-
-        function abrirModal(id) {
-            const prod = allPlants.find(x => x.id == id);
-            if(!prod) return;
-            document.getElementById('modalTitle').textContent = prod.nombre;
-            document.getElementById('modalPrice').textContent = prod.precio ? `$${Number(prod.precio).toLocaleString('es-UY')} UYU` : 'Consultar';
-            document.getElementById('modalDesc').innerHTML = (prod.descripcion_larga || prod.descripcion || '').replace(/\n/g, '<br>');
-            const msg = encodeURIComponent(`Hola, me interesa: ${prod.nombre}`);
-            document.getElementById('modalWppBtn').href = `https://wa.me/${window._wppNum || '59898496320'}?text=${msg}`;
-            galeriaActual = (prod.galeria_urls && prod.galeria_urls.length) ? prod.galeria_urls : (prod.imagen_url ? [prod.imagen_url] : ['img/jardin-fondo.jpg']);
-            indexActual = 0; actualizarImagen();
-            document.getElementById('carPrev').style.display = galeriaActual.length > 1 ? 'flex' : 'none';
-            document.getElementById('carNext').style.display = galeriaActual.length > 1 ? 'flex' : 'none';
-            document.getElementById('carDots').innerHTML = galeriaActual.length > 1 ? galeriaActual.map((_, i) => `<div class="dot ${i===0?'active':''}"></div>`).join('') : '';
-            document.getElementById('modalCatalogo').classList.add('active');
-            document.body.style.overflow = 'hidden';
-            document.dispatchEvent(new CustomEvent('productoVisto', { detail: { id: prod.id, nombre: prod.nombre, seccion: 'vivero' } }));
-            debug(`👁️ Modal abierto: ${prod.nombre}`);
-        }
-
-        function moverCarrusel(dir) { indexActual += dir; if(indexActual >= galeriaActual.length) indexActual = 0; if(indexActual < 0) indexActual = galeriaActual.length - 1; actualizarImagen(); }
-        function actualizarImagen() {
-            const img = document.getElementById('modalImg');
-            const loader = document.getElementById('waterLoader');
-            img.style.opacity = '0';
-            loader.classList.add('visible');
-            const svg = loader.querySelector('svg');
-            loader.replaceChild(svg.cloneNode(true), svg);
-            const nueva = new Image();
-            nueva.onload = () => {
-                img.src = galeriaActual[indexActual];
-                img.style.opacity = '1';
-                setTimeout(() => loader.classList.remove('visible'), 200);
-            };
-            nueva.onerror = () => {
-                img.src = galeriaActual[indexActual];
-                img.style.opacity = '1';
-                loader.classList.remove('visible');
-            };
-            nueva.src = galeriaActual[indexActual];
-            document.querySelectorAll('.dot').forEach((d, i) => d.className = i === indexActual ? 'dot active' : 'dot');
-        }
-        function cerrarModal(e, force = false) { if (force || e.target.id === 'modalCatalogo') { document.getElementById('modalCatalogo').classList.remove('active'); document.body.style.overflow = ''; } }
-
-        // Exponer funciones al scope global para que los onclick del HTML las encuentren
-        window.abrirModal = abrirModal;
-        window.cerrarModal = cerrarModal;
-        window.moverCarrusel = moverCarrusel;
-
-        let tagActivo = 'todos';
-        function aplicarFiltros() {
-            const search = document.getElementById('search-input').value.toLowerCase();
-            const filtrados = allPlants.filter(p => {
-                const texto = (p.nombre + ' ' + (p.descripcion||'') + ' ' + (p.categoria||'')).toLowerCase();
-                return texto.includes(search) && (tagActivo === 'todos' || p.categoria?.toLowerCase() === tagActivo);
-            });
-            renderVivero(filtrados);
-            debug(`🔍 Filtro: "${search}" + tag "${tagActivo}" → ${filtrados.length} resultados`);
-        }
-
-        function bindTags() {
-            document.querySelectorAll('.tag').forEach(tag => {
-                tag.addEventListener('click', () => {
-                    document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
-                    tag.classList.add('active');
-                    tagActivo = tag.dataset.tag;
-                    aplicarFiltros();
-                });
-            });
-        }
-
-        async function cargarTags() {
-            try {
-                const { data } = await sb.from('categorias').select('nombre').eq('seccion', 'vivero').order('nombre');
-                const container = document.getElementById('tags-container');
-                const extras = (data || []).map(c => `<span class="tag" data-tag="${c.nombre}">${c.nombre.charAt(0).toUpperCase() + c.nombre.slice(1)}</span>`).join('');
-                container.innerHTML = '<span class="tag active" data-tag="todos">Todos</span>' + extras;
-                bindTags();
-                debug(`🏷️ ${data?.length || 0} categorías cargadas`);
-            } catch(e) { debug(`⚠️ Tags: ${e.message}`); }
-        }
-
-        document.getElementById('search-input').addEventListener('input', aplicarFiltros);
-
-        // INICIALIZACIÓN
-        await cargarTags();
-        await cargarVivero();
-
-        // REALTIME con reconexión automática
-        let rtChannel = null, rtTimer = null;
-        function activarRealtimeVivero() {
-            if (rtChannel) { sb.removeChannel(rtChannel); rtChannel = null; }
-            clearTimeout(rtTimer);
-            rtChannel = sb.channel('vivero-rt-' + Date.now())
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'productos', filter: `seccion=eq.${SECCION}` }, () => { setTimeout(() => cargarVivero(), 300); })
-                .subscribe((status) => {
-                    if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
-                        rtTimer = setTimeout(() => activarRealtimeVivero(), 4000);
-                    }
-                });
-        }
-        activarRealtimeVivero();
-        setInterval(() => { if (rtChannel && rtChannel.state !== 'joined') activarRealtimeVivero(); }, 30000);
-        document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { cargarVivero(); if (!rtChannel || rtChannel.state !== 'joined') activarRealtimeVivero(); } });
-        window.addEventListener('beforeunload', () => { if (rtChannel) sb.removeChannel(rtChannel); });
-        debug('⚡ Realtime activo');
-
-        // Partículas
-        const particlesContainer = document.getElementById('particles');
-        for (let i = 0; i < 60; i++) {
-            const p = document.createElement('div'); p.className = 'particle';
-            const s = Math.random() * 4 + 2;
-            p.style.cssText = `width:${s}px;height:${s}px;animation-duration:${Math.random()*12+8}s;animation-delay:${Math.random()*5}s;--drift:${(Math.random()*100-50)}px`;
-            particlesContainer.appendChild(p);
-        }
-
-        // UI handlers
-        document.getElementById('logoHeader')?.addEventListener('click', e => { e.preventDefault(); window.location.href = 'index.html'; });
-        const hamburgerBtn = document.getElementById('hamburgerBtn'), navLinks = document.getElementById('navLinks');
-        if (hamburgerBtn && navLinks) {
-            hamburgerBtn.addEventListener('click', () => {
-                navLinks.classList.toggle('active');
-                const icon = hamburgerBtn.querySelector('i');
-                icon.classList.toggle('fa-bars'); icon.classList.toggle('fa-times');
-            });
-            navLinks.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { if (window.innerWidth <= 768) { navLinks.classList.remove('active'); hamburgerBtn.querySelector('i').classList.replace('fa-times','fa-bars'); } }));
-        }
-    })();
-    </script>
-
-    <script>window._registrarVisita && window._registrarVisita('vivero');</script>
-    <script>
-    (async function cargarContacto() {
-        try {
-            const sb2 = window._sb || window._sbTrack;
-            const { data: d, error } = await sb2.from('contacto_info').select('*').eq('id', 1).maybeSingle();
-            if (error || !d) return;
-            const set = (id, text) => { const el = document.getElementById(id); if(el) el.textContent = text; };
-            const hide = (id) => { const el = document.getElementById(id); if(el) el.style.display = 'none'; };
-            const show = (id) => { const el = document.getElementById(id); if(el) el.style.display = ''; };
-            if (d.email) { const el = document.getElementById('footer-email'); if(el) { const icon = document.getElementById('footer-email-icon'); if(icon) icon.className = 'fas ' + (d.email_icono||'fa-envelope'); el.childNodes[el.childNodes.length-1].textContent = ' ' + d.email; el._emailVal = d.email; } }
-            if (d.telefono) { const el = document.getElementById('footer-telefono'); if(el) { el.textContent = (d.tel_icono||'☎️') + ' ' + d.telefono; el.href = 'tel:' + d.telefono.replace(/\s/g,''); } }
-            if (d.direccion) { const el = document.getElementById('footer-direccion'); if(el) { const icon = document.getElementById('footer-dir-icon'); if(icon) { if(d.dir_icono?.startsWith('fa-')) icon.innerHTML = '<i class="fas '+d.dir_icono+'"></i>'; else icon.textContent = d.dir_icono; } el._dirVal = d.direccion; el.childNodes[el.childNodes.length-1].textContent = ' ' + d.direccion; } }
-            if (d.horario1) set('footer-horario1', d.horario1); if (d.horario2) set('footer-horario2', d.horario2); if (d.horario3) set('footer-horario3', d.horario3);
-            if (d.vis_email === false) hide('footer-email'); else show('footer-email');
-            if (d.vis_telefono === false) hide('footer-telefono'); else show('footer-telefono');
-            if (d.vis_direccion === false) hide('footer-direccion'); else show('footer-direccion');
-            ['facebook','instagram','whatsapp','youtube'].forEach(r => { const el = document.getElementById('footer-'+r); if(!el) return; if(d[r] && d[r] !== '#') { el.href = d[r]; show('footer-'+r); } else hide('footer-'+r); });
-            window._wppNum = d.whatsapp && d.whatsapp !== '#' ? (d.whatsapp.match(/(\d{6,15})/)||[])[1] : null;
-            window._ubicLat = d.lat || null; window._ubicLng = d.lng || null;
-        } catch(e) { console.error('cargarContacto:', e); }
-    })();
-    function copiarEmail(el) { const email = el._emailVal || el.textContent.trim(); navigator.clipboard.writeText(email).then(() => { const t = document.getElementById('toast-copy'); if(t) { t.style.display='block'; setTimeout(()=>t.style.display='none',2000); } }); }
-    function comoLlegar() { const lat = window._ubicLat, lng = window._ubicLng; let dest = (lat && lng) ? lat+','+lng : encodeURIComponent(document.getElementById('footer-direccion')?._dirVal || 'El Pinar, Uruguay'); window.open('https://www.google.com/maps/dir/?api=1&destination='+dest, '_blank'); }
-    </script>
-
-    <script>
-    (async () => { if(!('serviceWorker' in navigator)) return; try { navigator.serviceWorker.addEventListener('message', e => { if(e.data?.type === 'SW_CLEANUP_DONE') window.location.reload(); }); await navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }); } catch(e) {} })();
-    </script>
-
+    <script src="js/cart.js"></script>
+    <script src="js/ui.js"></script>
     <script>var MUSIC_GROUP = "main";</script>
     <script src="music-manager.js"></script>
     <script src="whatsapp-btn.js"></script>
+
+    <script>
+    let todosProductos = [];
+    let categoriaActiva = 'todos';
+    let productoModalActual = null;
+    let galeriaModal = [];
+    let indexFotoModal = 0;
+
+    // Contacto dinámico
+    (async function cargarContacto() {
+        try {
+            const sb = window._sb || (typeof supabase !== 'undefined' ? supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY) : null);
+            if (!sb) return;
+            const { data: d } = await sb.from('contacto_info').select('*').eq('id', 1).maybeSingle();
+            if (!d) return;
+
+            const set = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
+            if (d.email) {
+                const el = document.getElementById('footer-email');
+                if (el) { el._val = d.email; el.childNodes[el.childNodes.length - 1].textContent = ' ' + d.email; }
+            }
+            if (d.telefono) {
+                const el = document.getElementById('footer-telefono');
+                if (el) { el.innerHTML = `<i class="fas fa-phone-alt"></i> ${d.telefono}`; el.href = 'tel:' + d.telefono.replace(/\s/g,''); }
+            }
+            if (d.direccion) {
+                const el = document.getElementById('footer-direccion');
+                if (el) el.innerHTML = `<span id="footer-dir-icon">📍</span> ${d.direccion}`;
+            }
+            if (d.horario1) set('footer-horario1', d.horario1);
+            if (d.horario2) set('footer-horario2', d.horario2);
+            if (d.horario3) set('footer-horario3', d.horario3);
+
+            ['facebook','instagram','whatsapp','youtube'].forEach(r => {
+                const el = document.getElementById('footer-' + r);
+                if (el && d[r] && d[r] !== '#') el.href = d[r];
+            });
+
+            window._wppNum = d.whatsapp && d.whatsapp !== '#' ? (d.whatsapp.match(/(\d{6,15})/)||[])[1] : null;
+            window._ubicLat = d.lat || null;
+            window._ubicLng = d.lng || null;
+        } catch(e) {}
+    })();
+
+    // Cargar Categorías
+    async function cargarCategorias() {
+        const sb = window._sb || (typeof supabase !== 'undefined' ? supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY) : null);
+        if (!sb) return;
+        const { data } = await sb.from('categorias').select('nombre').eq('seccion', 'vivero').order('nombre');
+        const cont = document.getElementById('categoriesTags');
+        if (data && data.length > 0) {
+            const btns = data.map(c => `<button class="filter-tag" data-category="${c.nombre}">${c.nombre}</button>`).join('');
+            cont.innerHTML = '<button class="filter-tag active" data-category="todos">Todos</button>' + btns;
+        }
+        cont.querySelectorAll('.filter-tag').forEach(tag => {
+            tag.addEventListener('click', () => {
+                cont.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+                tag.classList.add('active');
+                categoriaActiva = tag.dataset.category;
+                aplicarFiltros();
+            });
+        });
+    }
+
+    // Renderizar Productos
+    function renderGrid(productos) {
+        const grid = document.getElementById('gridProductos');
+        if (!productos || productos.length === 0) {
+            grid.innerHTML = '<div style="text-align:center;grid-column:1/-1;padding:60px 20px;color:var(--text-muted);"><i class="fas fa-seedling" style="font-size:2.5rem;margin-bottom:14px;color:rgba(139,195,74,0.4);display:block;"></i>No se encontraron plantas con ese criterio.</div>';
+            return;
+        }
+
+        grid.innerHTML = productos.map(p => {
+            const precio = p.precio ? `$${Number(p.precio).toLocaleString('es-UY')}` : 'Consultar';
+            const img = p.imagen_url ? `<img src="${p.imagen_url}" alt="${p.nombre}" loading="lazy">` : `<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#8bc34a;font-size:3rem;"><i class="fas fa-leaf"></i></div>`;
+
+            return `
+            <div class="product-card" style="border-color:rgba(139,195,74,0.3);">
+                <div class="product-card-img-wrap" onclick="abrirModal('${p.id}')">
+                    ${img}
+                    ${p.categoria ? `<span class="product-badge-category" style="color:#8bc34a;border-color:rgba(139,195,74,0.4);">${p.categoria}</span>` : ''}
+                </div>
+                <div class="product-card-content">
+                    <h3 class="product-card-title" onclick="abrirModal('${p.id}')">${p.nombre}</h3>
+                    <p class="product-card-desc">${p.descripcion || ''}</p>
+                    <div class="product-card-footer">
+                        <div class="product-card-price">${precio} <span style="color:#8bc34a;">UYU</span></div>
+                        <div class="product-card-actions">
+                            <button class="btn-add-cart" onclick="agregarAlPedido('${p.id}')" title="Agregar al pedido" style="border-color:#8bc34a;color:#8bc34a;">
+                                <i class="fas fa-plus"></i> PEDIR
+                            </button>
+                            <button class="btn-ver-detalle" onclick="abrirModal('${p.id}')" title="Ver detalles">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    function aplicarFiltros() {
+        const query = document.getElementById('searchInput').value.toLowerCase().trim();
+        const sort = document.getElementById('sortSelect').value;
+
+        let filtrados = todosProductos.filter(p => {
+            const matchTexto = p.nombre.toLowerCase().includes(query) || (p.descripcion && p.descripcion.toLowerCase().includes(query));
+            const matchCat = categoriaActiva === 'todos' || (p.categoria && p.categoria.toLowerCase() === categoriaActiva.toLowerCase());
+            return matchTexto && matchCat;
+        });
+
+        if (sort === 'price-asc') {
+            filtrados.sort((a,b) => (Number(a.precio) || 0) - (Number(b.precio) || 0));
+        } else if (sort === 'price-desc') {
+            filtrados.sort((a,b) => (Number(b.precio) || 0) - (Number(a.precio) || 0));
+        } else if (sort === 'name-asc') {
+            filtrados.sort((a,b) => a.nombre.localeCompare(b.nombre));
+        }
+
+        renderGrid(filtrados);
+    }
+
+    async function cargarProductos() {
+        const sb = window._sb || (typeof supabase !== 'undefined' ? supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY) : null);
+        if (!sb) return;
+
+        const { data, error } = await sb
+            .from('productos')
+            .select('*')
+            .eq('seccion', 'vivero')
+            .eq('activo', true)
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error(error);
+            return;
+        }
+
+        todosProductos = data || [];
+        aplicarFiltros();
+    }
+
+    function agregarAlPedido(id) {
+        const prod = todosProductos.find(x => x.id === id);
+        if (prod && window.Cart) {
+            window.Cart.add(prod);
+        }
+    }
+
+    function abrirModal(id) {
+        const prod = todosProductos.find(x => x.id === id);
+        if (!prod) return;
+        productoModalActual = prod;
+
+        document.getElementById('modalTitle').textContent = prod.nombre;
+        document.getElementById('modalPrice').textContent = prod.precio ? `$${Number(prod.precio).toLocaleString('es-UY')} UYU` : 'Consultar';
+        document.getElementById('modalDesc').textContent = prod.descripcion_larga || prod.descripcion || '';
+
+        galeriaModal = (prod.galeria_urls && prod.galeria_urls.length > 0) ? prod.galeria_urls : (prod.imagen_url ? [prod.imagen_url] : ['logo.jpg']);
+        indexFotoModal = 0;
+        actualizarFotoModal();
+
+        const prevBtn = document.getElementById('modalPrev');
+        const nextBtn = document.getElementById('modalNext');
+        if (galeriaModal.length > 1) {
+            prevBtn.style.display = 'flex';
+            nextBtn.style.display = 'flex';
+        } else {
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+        }
+
+        const addBtn = document.getElementById('modalAddBtn');
+        addBtn.onclick = () => {
+            if (window.Cart) {
+                window.Cart.add(prod);
+                cerrarModal(null, true);
+            }
+        };
+
+        const wppBtn = document.getElementById('modalWppBtn');
+        const phone = window._wppNum || '59898496320';
+        wppBtn.href = `https://wa.me/${phone.replace(/\D/g,'')}?text=${encodeURIComponent('Hola Artilugios, consulto por la planta: ' + prod.nombre)}`;
+
+        document.getElementById('productModal').classList.add('open');
+        document.body.style.overflow = 'hidden';
+
+        document.dispatchEvent(new CustomEvent('productoVisto', { detail: { id: prod.id, nombre: prod.nombre, seccion: 'vivero' } }));
+    }
+
+    function cambiarFotoModal(delta) {
+        indexFotoModal = (indexFotoModal + delta + galeriaModal.length) % galeriaModal.length;
+        actualizarFotoModal();
+    }
+
+    function actualizarFotoModal() {
+        const img = document.getElementById('modalImg');
+        img.src = galeriaModal[indexFotoModal];
+    }
+
+    function cerrarModal(e, force = false) {
+        if (force || (e && e.target.id === 'productModal')) {
+            document.getElementById('productModal').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('searchInput').addEventListener('input', aplicarFiltros);
+        document.getElementById('sortSelect').addEventListener('change', aplicarFiltros);
+        cargarCategorias();
+        cargarProductos();
+        if (window._registrarVisita) window._registrarVisita('vivero');
+    });
+    </script>
 </body>
 </html>

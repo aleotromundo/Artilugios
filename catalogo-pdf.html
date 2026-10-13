@@ -6,6 +6,7 @@
 <title>Generador de Catálogo PDF — Art.ilugioss</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
@@ -535,6 +536,18 @@ async function generarPDF(sec) {
   btn.disabled = false;
   btn.textContent = '✓ DESCARGAR OTRA VEZ';
 }
+
+window.addEventListener('DOMContentLoaded', () => {
+  if (window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
+    const u = document.getElementById('sbUrl');
+    const k = document.getElementById('sbKey');
+    if (u && k) {
+      u.value = window.SUPABASE_URL;
+      k.value = window.SUPABASE_ANON_KEY;
+      conectar();
+    }
+  }
+});
 </script>
 </body>
 </html>
