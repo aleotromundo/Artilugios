@@ -66,39 +66,57 @@
             height: auto;
             position: relative;
             z-index: 4;
-            filter: drop-shadow(0 0 16px rgba(212, 175, 55, 0.6));
+            filter: drop-shadow(0 0 14px rgba(212, 175, 55, 0.6));
             cursor: pointer;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), filter 0.3s ease;
             animation: heroLogoGlow 4s ease-in-out infinite;
+            will-change: transform, filter;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transform: translateZ(0);
         }
 
         .hero-logo-img:hover {
-            transform: scale(1.04);
-            filter: drop-shadow(0 0 28px rgba(212, 175, 55, 0.9));
+            transform: translateZ(0) scale(1.05);
+            filter: drop-shadow(0 0 28px rgba(212, 175, 55, 0.95));
         }
 
         @keyframes heroLogoGlow {
-            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 14px rgba(212, 175, 55, 0.6)); }
-            50% { transform: scale(1.03); filter: drop-shadow(0 0 26px rgba(212, 175, 55, 0.9)); }
+            0%, 100% {
+                transform: translateZ(0) scale(1);
+                filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.55));
+            }
+            50% {
+                transform: translateZ(0) scale(1.03);
+                filter: drop-shadow(0 0 26px rgba(212, 175, 55, 0.85));
+            }
         }
 
         #laurel {
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            margin-top: 5%;
+            transform: translate(-50%, -46%);
             width: 100%;
             height: auto;
             pointer-events: none;
             z-index: 3;
-            animation: laurelSpin 120s linear infinite;
             filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.4));
+            animation: laurelPulse 4s ease-in-out infinite;
+            will-change: transform, filter;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
 
-        @keyframes laurelSpin {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(360deg); }
+        @keyframes laurelPulse {
+            0%, 100% {
+                transform: translate(-50%, -46%) scale(0.98);
+                filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.4));
+            }
+            50% {
+                transform: translate(-50%, -46%) scale(1.02);
+                filter: drop-shadow(0 0 22px rgba(212, 175, 55, 0.75));
+            }
         }
 
         .hero-symbol {
@@ -108,14 +126,33 @@
             z-index: 2;
             filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
             pointer-events: none;
+            will-change: transform;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
 
-        #sol { top: 50%; left: 6%; transform: translate(-50%, -50%); animation: floatSymbol 4s ease-in-out infinite; }
-        #luna { top: 50%; right: 6%; transform: translate(50%, -50%); animation: floatSymbol 4s ease-in-out 2s infinite; }
+        #sol {
+            top: 50%;
+            left: 6%;
+            transform: translate(-50%, -50%);
+            animation: floatSol 4s ease-in-out infinite;
+        }
 
-        @keyframes floatSymbol {
-            0%, 100% { transform: translate(var(--tx, 0), -50%) translateY(0); }
-            50% { transform: translate(var(--tx, 0), -50%) translateY(-8px); }
+        #luna {
+            top: 50%;
+            right: 6%;
+            transform: translate(50%, -50%);
+            animation: floatLuna 4s ease-in-out 2s infinite;
+        }
+
+        @keyframes floatSol {
+            0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+            50% { transform: translate(-50%, -50%) translateY(-8px); }
+        }
+
+        @keyframes floatLuna {
+            0%, 100% { transform: translate(50%, -50%) translateY(0); }
+            50% { transform: translate(50%, -50%) translateY(-8px); }
         }
 
         .hero-title {
@@ -817,9 +854,15 @@
     document.getElementById('heroLogoTrigger').addEventListener('click', () => {
         if (window.showSiteToast) window.showSiteToast('✨ Bendición del santuario activada');
         const logo = document.getElementById('hero-logo');
-        if (logo) {
-            logo.style.transform = 'scale(1.15)';
-            setTimeout(() => { logo.style.transform = ''; }, 300);
+        if (logo && typeof logo.animate === 'function') {
+            logo.animate([
+                { transform: 'translateZ(0) scale(1)' },
+                { transform: 'translateZ(0) scale(1.12)' },
+                { transform: 'translateZ(0) scale(1)' }
+            ], {
+                duration: 400,
+                easing: 'cubic-bezier(0.25, 0.8, 0.25, 1)'
+            });
         }
     });
 
