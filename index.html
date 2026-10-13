@@ -683,6 +683,7 @@
 
     <!-- SCRIPTS MODULARES -->
     <script src="tracking.js"></script>
+    <script src="js/mock-products.js"></script>
     <script src="js/cart.js"></script>
     <script src="js/ui.js"></script>
     <script>var MUSIC_GROUP = "main";</script>
@@ -757,19 +758,32 @@
         const grid = document.getElementById('homeProductsGrid');
         if (!grid) return;
         try {
+            let loadedFromSb = false;
             const sb = window._sb || (typeof supabase !== 'undefined' ? supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY) : null);
-            if (!sb) return;
+            if (sb) {
+                const { data, error } = await sb
+                    .from('productos')
+                    .select('*')
+                    .eq('activo', true)
+                    .order('created_at', { ascending: false })
+                    .limit(6);
 
-            const { data, error } = await sb
-                .from('productos')
-                .select('*')
-                .eq('activo', true)
-                .order('created_at', { ascending: false })
-                .limit(6);
+                if (!error && data && data.length > 0) {
+                    homeProducts = data;
+                    loadedFromSb = true;
+                }
+            }
 
-            if (error || !data || data.length === 0) {
-                grid.innerHTML = '<p style="text-align:center;grid-column:1/-1;color:var(--text-muted);">Pronto encontrarás nuevos tesoros aquí.</p>';
-                return;
+            if (!loadedFromSb) {
+                if (window.MOCK_PRODUCTOS) {
+                    const s = window.MOCK_PRODUCTOS.filter(p => p.seccion === 'santeria').slice(0, 2);
+                    const v = window.MOCK_PRODUCTOS.filter(p => p.seccion === 'vivero').slice(0, 2);
+                    const o = window.MOCK_PRODUCTOS.filter(p => p.seccion === 'oraculo').slice(0, 2);
+                    homeProducts = [...s, ...v, ...o];
+                } else {
+                    grid.innerHTML = '<p style="text-align:center;grid-column:1/-1;color:var(--text-muted);">Pronto encontrarás nuevos tesoros aquí.</p>';
+                    return;
+                }
             }
 
             homeProducts = data;
