@@ -447,11 +447,22 @@
         }
     }
 
+    function suscribirRealtime() {
+        const sb = window._sb || (typeof supabase !== 'undefined' ? supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY) : null);
+        if (!sb) return;
+        sb.channel('vivero-live-' + Date.now())
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'productos', filter: 'seccion=eq.vivero' }, () => {
+              cargarProductos();
+          })
+          .subscribe();
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('searchInput').addEventListener('input', aplicarFiltros);
         document.getElementById('sortSelect').addEventListener('change', aplicarFiltros);
         cargarCategorias();
         cargarProductos();
+        suscribirRealtime();
         if (window._registrarVisita) window._registrarVisita('vivero');
     });
     </script>
