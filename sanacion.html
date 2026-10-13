@@ -273,6 +273,7 @@
 
     <!-- SCRIPTS -->
     <script src="tracking.js"></script>
+    <script src="js/mock-products.js"></script>
     <script src="js/cart.js"></script>
     <script src="js/ui.js"></script>
     <script>var MUSIC_GROUP = "oraculo";</script>
@@ -345,12 +346,23 @@
 
     // Cargar Categorías
     async function cargarCategorias() {
-        const sb = window._sb || (typeof supabase !== 'undefined' ? supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY) : null);
-        if (!sb) return;
-        const { data } = await sb.from('categorias').select('nombre').eq('seccion', 'oraculo').order('nombre');
         const cont = document.getElementById('categoriesTags');
-        if (data && data.length > 0) {
-            const btns = data.map(c => `<button class="filter-tag" data-category="${c.nombre}">${c.nombre}</button>`).join('');
+        let cats = [];
+        try {
+            const sb = window._sb || (typeof supabase !== 'undefined' ? supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY) : null);
+            if (sb) {
+                const { data } = await sb.from('categorias').select('nombre').eq('seccion', 'oraculo').order('nombre');
+                if (data && data.length > 0) cats = data.map(c => c.nombre);
+            }
+        } catch(e) {}
+
+        if (cats.length === 0 && window.getMockProductos) {
+            const mock = window.getMockProductos('oraculo');
+            cats = [...new Set(mock.map(p => p.categoria).filter(Boolean))];
+        }
+
+        if (cats.length > 0) {
+            const btns = cats.map(c => `<button class="filter-tag" data-category="${c}">${c}</button>`).join('');
             cont.innerHTML = '<button class="filter-tag active" data-category="todos">Todos</button>' + btns;
         }
         cont.querySelectorAll('.filter-tag').forEach(tag => {
@@ -422,22 +434,30 @@
     }
 
     async function cargarProductos() {
-        const sb = window._sb || (typeof supabase !== 'undefined' ? supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY) : null);
-        if (!sb) return;
+        let cargados = false;
+        try {
+            const sb = window._sb || (typeof supabase !== 'undefined' ? supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY) : null);
+            if (sb) {
+                const { data, error } = await sb
+                    .from('productos')
+                    .select('*')
+                    .eq('seccion', 'oraculo')
+                    .eq('activo', true)
+                    .order('created_at', { ascending: false });
 
-        const { data, error } = await sb
-            .from('productos')
-            .select('*')
-            .eq('seccion', 'oraculo')
-            .eq('activo', true)
-            .order('created_at', { ascending: false });
-
-        if (error) {
-            console.error(error);
-            return;
+                if (!error && data && data.length > 0) {
+                    todosProductos = data;
+                    cargados = true;
+                }
+            }
+        } catch(e) {
+            console.warn('Error conectando a Supabase, activando catalogo local:', e);
         }
 
-        todosProductos = data || [];
+        if (!cargados && window.getMockProductos) {
+            todosProductos = window.getMockProductos('oraculo');
+        }
+
         aplicarFiltros();
     }
 
