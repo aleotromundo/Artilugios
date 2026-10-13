@@ -106,10 +106,17 @@
       <input id="sbKey" type="password" placeholder="eyJhbGciOi..." autocomplete="off">
     </div>
   </div>
-  <div class="field-row single">
+  <div class="field-row">
     <div>
-      <label>NOMBRE DEL NEGOCIO (opcional)</label>
-      <input id="bizName" type="text" placeholder="Art.ilugioss" value="Art.ilugioss">
+      <label>NOMBRE DEL NEGOCIO</label>
+      <input id="bizName" type="text" placeholder="Artilugios" value="Artilugios">
+    </div>
+    <div>
+      <label>PROPORCIÓN DE FOTOS EN PDF</label>
+      <select id="imgFitMode" style="width:100%;background:#0d0d0d;border:1px solid rgba(212,175,55,.25);border-radius:8px;padding:10px 14px;color:#e0e0e0;font-size:.88rem;font-family:'Inter',sans-serif;cursor:pointer;">
+        <option value="contain" selected>✦ Producto completo (sin recortes, 100% fiel)</option>
+        <option value="cover">✦ Llenar marco (Cover - centrado estético)</option>
+      </select>
     </div>
   </div>
   <button class="connect-btn" id="connectBtn" onclick="conectar()">CONECTAR Y CARGAR PRODUCTOS</button>
@@ -286,23 +293,121 @@ function setProgreso(sec, pct, label) {
   document.getElementById('plabel-' + sec).textContent = label;
 }
 
-// ─── GENERACIÓN PDF ─────────────────────────────────────────────────────────
+// ─── GENERACIÓN PDF CON IMÁGENES 100% PROPORCIONALES ───────────────────────
 
-async function cargarImagenBase64(url) {
+async function cargarImagenElemento(url) {
   if (!url) return null;
+
+  return new Promise((resolve) => {
+    const img = new Image();
+    const esRemota = url.startsWith('http://') || url.startsWith('https://');
+    if (esRemota) {
+      img.crossOrigin = 'anonymous';
+    }
+
+    let terminado = false;
+    const timer = setTimeout(() => {
+      if (!terminado) {
+        terminado = true;
+        resolve(null);
+      }
+    }, 7000);
+
+    img.onload = () => {
+      if (!terminado) {
+        terminado = true;
+        clearTimeout(timer);
+        resolve(img);
+      }
+    };
+
+    img.onerror = () => {
+      if (terminado) return;
+      if (esRemota) {
+        // Reintento con proxy sin forzar dimensiones fijas para no deformar
+        const proxyImg = new Image();
+        proxyImg.crossOrigin = 'anonymous';
+        proxyImg.onload = () => {
+          if (!terminado) {
+            terminado = true;
+            clearTimeout(timer);
+            resolve(proxyImg);
+          }
+        };
+        proxyImg.onerror = () => {
+          if (!terminado) {
+            terminado = true;
+            clearTimeout(timer);
+            resolve(null);
+          }
+        };
+        proxyImg.src = `https://images.weserv.nl/?url=${encodeURIComponent(url)}&output=jpg&q=80`;
+      } else {
+        terminado = true;
+        clearTimeout(timer);
+        resolve(null);
+      }
+    };
+
+    img.src = url;
+  });
+}
+
+function procesarImagenParaPDF(imgEl, boxW_mm, boxH_mm, fitMode = 'contain', bgRgb = [20, 15, 5]) {
+  if (!imgEl) return null;
+  const dpr = 5; // 5 px por mm -> para 85mm x 43mm = 425 x 215 px. Alta nitidez y muy liviano
+  const cw = Math.round(boxW_mm * dpr);
+  const ch = Math.round(boxH_mm * dpr);
+  const canvas = document.createElement('canvas');
+  canvas.width = cw;
+  canvas.height = ch;
+  const ctx = canvas.getContext('2d');
+
+  // Fondo oscuro que armoniza con la tarjeta
+  ctx.fillStyle = `rgb(${bgRgb[0]}, ${bgRgb[1]}, ${bgRgb[2]})`;
+  ctx.fillRect(0, 0, cw, ch);
+
+  const iw = imgEl.naturalWidth || imgEl.width;
+  const ih = imgEl.naturalHeight || imgEl.height;
+  if (!iw || !ih) return null;
+
+  let dw, dh, dx, dy;
+  if (fitMode === 'cover') {
+    // Escala uniforme para cubrir todo el marco con recorte centrado (sin deformar)
+    const scale = Math.max(cw / iw, ch / ih);
+    dw = iw * scale;
+    dh = ih * scale;
+    dx = (cw - dw) / 2;
+    dy = (ch - dh) / 2;
+  } else {
+    // Escala uniforme para contener el producto completo (sin recortes, 100% proporcional)
+    const pad = Math.round(3 * dpr); // 3mm de margen interno
+    const maxW = cw - pad * 2;
+    const maxH = ch - pad * 2;
+    const scale = Math.min(maxW / iw, maxH / ih);
+    dw = iw * scale;
+    dh = ih * scale;
+    dx = (cw - dw) / 2;
+    dy = (ch - dh) / 2;
+
+    // Resplandor radial místico detrás del producto
+    const grad = ctx.createRadialGradient(cw/2, ch/2, 10, cw/2, ch/2, Math.max(dw, dh)/1.3);
+    grad.addColorStop(0, 'rgba(255, 255, 255, 0.08)');
+    grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, cw, ch);
+  }
+
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(imgEl, dx, dy, dw, dh);
+
   try {
-    // Usar un proxy de imagen para evitar CORS
-    const proxyUrl = `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=400&h=400&fit=cover&output=jpg&q=75`;
-    const res = await fetch(proxyUrl, { signal: AbortSignal.timeout(8000) });
-    if (!res.ok) return null;
-    const blob = await res.blob();
-    return new Promise(resolve => {
-      const fr = new FileReader();
-      fr.onload = () => resolve(fr.result);
-      fr.onerror = () => resolve(null);
-      fr.readAsDataURL(blob);
-    });
-  } catch { return null; }
+    return canvas.toDataURL('image/jpeg', 0.88);
+  } catch(e) {
+    console.warn('Canvas toDataURL no disponible en este entorno:', e);
+    return null;
+  }
 }
 
 async function generarPDF(sec) {
@@ -315,14 +420,17 @@ async function generarPDF(sec) {
   btn.textContent = 'GENERANDO...';
   setProgreso(sec, 0, 'Iniciando...');
 
-  const bizName = document.getElementById('bizName').value.trim() || 'Art.ilugioss';
+  const bizName = document.getElementById('bizName').value.trim() || 'Artilugios';
+  const fitMode = document.getElementById('imgFitMode') ? document.getElementById('imgFitMode').value : 'contain';
 
-  // PDF A4 vertical
+  // PDF A4 vertical (210 x 297 mm)
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const W = 210, H = 297;
   const MARGIN = 14;
-  const CARD_W = (W - MARGIN * 2 - 8) / 2;
-  const CARD_H = 90;
+  const GAP_X = 8;
+  const GAP_Y = 6;
+  const CARD_W = (W - MARGIN * 2 - GAP_X) / 2; // (210 - 28 - 8) / 2 = 87 mm
+  const CARD_H = 82; // 82 mm de alto (permite exactamente 3 filas x 2 cols = 6 por página)
   const COLS = 2;
   let page = 1;
 
@@ -340,7 +448,7 @@ async function generarPDF(sec) {
     doc.setFillColor(...cfg.textColor);
     doc.rect(0, 0, W, 3, 'F');
 
-    // Línea dorada central
+    // Líneas centrales
     doc.setDrawColor(...cfg.textColor);
     doc.setLineWidth(0.3);
     doc.line(MARGIN, H/2 - 30, W - MARGIN, H/2 - 30);
@@ -413,88 +521,29 @@ async function generarPDF(sec) {
     doc.setFontSize(7);
     doc.setTextColor(...cfg.subColor);
     doc.text(`Pág. ${page}`, W - MARGIN, H - 4, { align: 'right' });
-    doc.text('www.artilugios.com', MARGIN, H - 4);
+    doc.text('www.artilugios.com — El Pinar, Canelones', MARGIN, H - 4);
   }
 
-  function dibujarTarjeta(prod, x, y, imgData) {
-    const R = 3;
-    // Sombra suave
-    doc.setFillColor(0, 0, 0);
-    doc.roundedRect(x + 1, y + 1, CARD_W, CARD_H, R, R, 'F');
+  function dibujarImagenProporcionalDirecta(imgEl, boxX, boxY, boxW, boxH) {
+    const iw = imgEl.naturalWidth || imgEl.width || 1;
+    const ih = imgEl.naturalHeight || imgEl.height || 1;
 
-    // Fondo tarjeta
-    doc.setFillColor(...cfg.headerBg);
-    doc.roundedRect(x, y, CARD_W, CARD_H, R, R, 'F');
-
-    // Borde
-    doc.setDrawColor(...cfg.textColor);
-    doc.setLineWidth(0.3);
-    doc.roundedRect(x, y, CARD_W, CARD_H, R, R, 'S');
-
-    const IMG_H = 44;
-    const IMG_W = CARD_W;
-
-    // Imagen
-    if (imgData) {
-      try {
-        doc.addImage(imgData, 'JPEG', x, y, IMG_W, IMG_H, '', 'FAST');
-        // Overlay gradiente sobre imagen
-        doc.setFillColor(0, 0, 0);
-        doc.setGState(doc.GState({ opacity: 0.25 }));
-        doc.rect(x, y, IMG_W, IMG_H, 'F');
-        doc.setGState(doc.GState({ opacity: 1 }));
-      } catch(e) {
-        dibujarPlaceholderImg(x, y, IMG_W, IMG_H);
-      }
+    let scale;
+    if (fitMode === 'cover') {
+      scale = Math.max(boxW / iw, boxH / ih);
     } else {
-      dibujarPlaceholderImg(x, y, IMG_W, IMG_H);
+      scale = Math.min((boxW - 4) / iw, (boxH - 4) / ih);
     }
+    const dw = iw * scale;
+    const dh = ih * scale;
+    const dx = boxX + (boxW - dw) / 2;
+    const dy = boxY + (boxH - dh) / 2;
 
-    // Clip redondo superior de la imagen
-    doc.setFillColor(...cfg.headerBg);
-    doc.rect(x, y + IMG_H - 2, IMG_W, 3, 'F');
-
-    // Contenido texto
-    const TY = y + IMG_H + 5;
-
-    // Nombre
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(8.5);
-    doc.setTextColor(...cfg.textColor);
-    const nombre = prod.nombre.length > 30 ? prod.nombre.slice(0, 28) + '…' : prod.nombre;
-    doc.text(nombre, x + 5, TY);
-
-    // Precio
-    const precio = prod.precio
-      ? `$${Number(prod.precio).toLocaleString('es-UY')} UYU`
-      : 'Consultar';
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(8);
-    doc.setTextColor(...cfg.subColor);
-    doc.text(precio, x + 5, TY + 7);
-
-    // Descripción
-    if (prod.descripcion) {
-      const desc = prod.descripcion.length > 70 ? prod.descripcion.slice(0, 68) + '…' : prod.descripcion;
-      doc.setFontSize(6.5);
-      doc.setTextColor(...cfg.bodyColor);
-      doc.setFont('helvetica', 'normal');
-      const lines = doc.splitTextToSize(desc, CARD_W - 10);
-      doc.text(lines.slice(0, 2), x + 5, TY + 14);
+    try {
+      doc.addImage(imgEl, 'JPEG', dx, dy, dw, dh, '', 'FAST');
+    } catch(e) {
+      dibujarPlaceholderImg(boxX, boxY, boxW, boxH);
     }
-
-    // Botón "Ver detalle"
-    const BTN_Y = y + CARD_H - 11;
-    const BTN_W = CARD_W - 10;
-    doc.setDrawColor(...cfg.textColor);
-    doc.setLineWidth(0.3);
-    doc.roundedRect(x + 5, BTN_Y, BTN_W, 7, 2, 2, 'S');
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(6);
-    doc.setTextColor(...cfg.textColor);
-    doc.setCharSpace(1);
-    doc.text('VER DETALLE', x + 5 + BTN_W / 2, BTN_Y + 4.5, { align: 'center' });
-    doc.setCharSpace(0);
   }
 
   function dibujarPlaceholderImg(x, y, w, h) {
@@ -507,44 +556,139 @@ async function generarPDF(sec) {
     doc.setGState(doc.GState({ opacity: 1 }));
   }
 
+  function dibujarTarjeta(prod, x, y, imgInfo) {
+    const R = 3;
+    // Sombra suave
+    doc.setFillColor(0, 0, 0);
+    doc.roundedRect(x + 1, y + 1, CARD_W, CARD_H, R, R, 'F');
+
+    // Fondo tarjeta
+    doc.setFillColor(...cfg.headerBg);
+    doc.roundedRect(x, y, CARD_W, CARD_H, R, R, 'F');
+
+    // Borde de la tarjeta
+    doc.setDrawColor(...cfg.textColor);
+    doc.setLineWidth(0.3);
+    doc.roundedRect(x, y, CARD_W, CARD_H, R, R, 'S');
+
+    const IMG_X = x + 1;
+    const IMG_Y = y + 1;
+    const IMG_W = CARD_W - 2; // 85 mm
+    const IMG_H = 43;         // 43 mm
+
+    // Contenedor de la foto
+    doc.setFillColor(...cfg.bg);
+    doc.rect(IMG_X, IMG_Y, IMG_W, IMG_H, 'F');
+
+    // Dibujar imagen proporcionalmente
+    if (imgInfo && imgInfo.data) {
+      try {
+        doc.addImage(imgInfo.data, 'JPEG', IMG_X, IMG_Y, IMG_W, IMG_H, '', 'FAST');
+      } catch(e) {
+        if (imgInfo.el) {
+          dibujarImagenProporcionalDirecta(imgInfo.el, IMG_X, IMG_Y, IMG_W, IMG_H);
+        } else {
+          dibujarPlaceholderImg(IMG_X, IMG_Y, IMG_W, IMG_H);
+        }
+      }
+    } else if (imgInfo && imgInfo.el) {
+      dibujarImagenProporcionalDirecta(imgInfo.el, IMG_X, IMG_Y, IMG_W, IMG_H);
+    } else {
+      dibujarPlaceholderImg(IMG_X, IMG_Y, IMG_W, IMG_H);
+    }
+
+    // Línea divisoria suave
+    doc.setDrawColor(...cfg.textColor);
+    doc.setLineWidth(0.2);
+    doc.line(x + 4, y + IMG_H + 2, x + CARD_W - 4, y + IMG_H + 2);
+
+    // Contenido textual
+    const TY = y + IMG_H + 6;
+
+    // Nombre (hasta 2 líneas, envolvente)
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7.8);
+    doc.setTextColor(...cfg.textColor);
+    const nombreLines = doc.splitTextToSize(prod.nombre, CARD_W - 8);
+    doc.text(nombreLines.slice(0, 2), x + 4, TY);
+
+    // Precio
+    const precioY = TY + (nombreLines.length > 1 ? 6.5 : 4.5);
+    const precio = prod.precio
+      ? `$${Number(prod.precio).toLocaleString('es-UY')} UYU`
+      : 'Consultar';
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8.5);
+    doc.setTextColor(...cfg.accentLight ? hexToRgb(cfg.accentLight) : cfg.textColor);
+    doc.text(precio, x + 4, precioY);
+
+    // Descripción corta
+    const descY = precioY + 4.2;
+    if (prod.descripcion) {
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(6.2);
+      doc.setTextColor(...cfg.bodyColor);
+      const descLines = doc.splitTextToSize(prod.descripcion, CARD_W - 8);
+      doc.text(descLines.slice(0, 2), x + 4, descY);
+    }
+
+    // Botón / Pie de tarjeta
+    const BTN_Y = y + CARD_H - 7.5;
+    const BTN_W = CARD_W - 8;
+    const BTN_H = 5;
+    doc.setDrawColor(...cfg.textColor);
+    doc.setLineWidth(0.25);
+    doc.roundedRect(x + 4, BTN_Y, BTN_W, BTN_H, 1.5, 1.5, 'S');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(5.8);
+    doc.setTextColor(...cfg.textColor);
+    doc.setCharSpace(1);
+    doc.text('CONSULTAR EN ARTILUGIOS', x + 4 + BTN_W / 2, BTN_Y + 3.4, { align: 'center' });
+    doc.setCharSpace(0);
+  }
+
   // ── INICIO GENERACIÓN ──
   dibujarPortada();
 
-  // Cargar imágenes y dibujar tarjetas
-  let posX = MARGIN, posY = 20, col = 0;
+  // Cargar imágenes y dibujar tarjetas (6 por página)
+  let posX = MARGIN, posY = 16, col = 0;
   nuevaPagina();
-  posY = 18;
 
   for (let i = 0; i < prods.length; i++) {
     const prod = prods[i];
     const pct = Math.round(((i + 1) / prods.length) * 90);
     setProgreso(sec, pct, `Procesando ${i+1} de ${prods.length}...`);
 
-    // Cargar imagen
+    // Cargar y procesar imagen manteniendo proporción real
     const imgUrl = prod.imagen_url || (prod.galeria_urls && prod.galeria_urls[0]);
-    let imgData = null;
+    let imgInfo = null;
     if (imgUrl) {
-      imgData = await cargarImagenBase64(imgUrl);
+      const imgEl = await cargarImagenElemento(imgUrl);
+      if (imgEl) {
+        const dataUrl = procesarImagenParaPDF(imgEl, CARD_W - 2, 43, fitMode, cfg.headerBg);
+        imgInfo = { el: imgEl, data: dataUrl };
+      }
     }
 
-    // Nueva fila si necesario
+    // Salto de fila
     if (col === COLS) {
       col = 0;
       posX = MARGIN;
-      posY += CARD_H + 8;
+      posY += CARD_H + GAP_Y;
     }
-    // Nueva página si necesario
-    if (posY + CARD_H + 8 > H - 14) {
+
+    // Salto de página (máximo 3 filas = 6 productos por página A4)
+    if (posY + CARD_H > H - 14) {
       nuevaPagina();
-      posY = 18;
+      posY = 16;
       col = 0;
       posX = MARGIN;
     }
 
-    dibujarTarjeta(prod, posX, posY, imgData);
+    dibujarTarjeta(prod, posX, posY, imgInfo);
 
     col++;
-    posX += CARD_W + 8;
+    posX += CARD_W + GAP_X;
   }
 
   setProgreso(sec, 95, 'Guardando...');
