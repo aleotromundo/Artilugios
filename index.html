@@ -171,6 +171,17 @@
             margin: 0 auto 36px;
             line-height: 1.7;
         }
+@media (min-width: 861px) {
+    #hero {
+        justify-content: flex-start;
+        padding-top: calc(var(--header-height) + 10px);  /* antes +40px */
+    }
+    .hero-logo-box {
+        width: min(80vw, 360px);   /* antes 420px */
+        margin-top: -20px;         /* sube el logo, el cuadrado tiene aire vacío arriba */
+        margin-bottom: 8px;        /* antes 24px */
+    }
+}
 
         /* Los 3 Portales Místicos */
         .portales-grid {
