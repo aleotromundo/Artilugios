@@ -326,7 +326,7 @@
 
         grid.innerHTML = productos.map(p => {
             const precio = p.precio ? `$${Number(p.precio).toLocaleString('es-UY')}` : 'Consultar';
-            const img = p.imagen_url ? `<img src="${p.imagen_url}" alt="${p.nombre}" loading="lazy">` : `<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#8bc34a;font-size:3rem;"><i class="fas fa-leaf"></i></div>`;
+            const img = p.imagen_url ? `<img src="${p.imagen_url}" alt="${p.nombre}" loading="lazy" onerror="this.onerror=null;this.src='logo.jpg'">` : `<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#8bc34a;font-size:3rem;"><i class="fas fa-leaf"></i></div>`;
 
             return `
             <div class="product-card" style="border-color:rgba(139,195,74,0.3);">
@@ -457,6 +457,7 @@
 
     function actualizarFotoModal() {
         const img = document.getElementById('modalImg');
+        img.onerror = () => { img.src = 'logo.jpg'; };
         img.src = galeriaModal[indexFotoModal];
     }
 
