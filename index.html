@@ -786,11 +786,10 @@
                 }
             }
 
-            homeProducts = data;
-            grid.innerHTML = data.map(p => {
+            grid.innerHTML = homeProducts.map(p => {
                 const precio = p.precio ? `$${Number(p.precio).toLocaleString('es-UY')}` : 'Consultar';
                 const seccionNombre = p.seccion === 'vivero' ? 'VIVERO' : (p.seccion === 'oraculo' ? 'MANCIAS' : 'TIENDA');
-                const img = p.imagen_url ? `<img src="${p.imagen_url}" alt="${p.nombre}" loading="lazy">` : `<div style="height:100%;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:3rem;"><i class="fas fa-sparkles"></i></div>`;
+                const img = p.imagen_url ? `<img src="${p.imagen_url}" alt="${p.nombre}" loading="lazy" onerror="this.onerror=null;this.src='logo.jpg'">` : `<div style="height:100%;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:3rem;"><i class="fas fa-sparkles"></i></div>`;
 
                 return `
                 <div class="product-card">
@@ -837,6 +836,7 @@
         document.getElementById('modalHomeDesc').textContent = prod.descripcion_larga || prod.descripcion || 'Sin descripción disponible.';
 
         const imgEl = document.getElementById('modalHomeImg');
+        imgEl.onerror = () => { imgEl.src = 'logo.jpg'; };
         imgEl.src = prod.imagen_url || 'logo.jpg';
 
         const wppBtn = document.getElementById('modalHomeWppBtn');
