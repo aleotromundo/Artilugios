@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
+<script src="js/mock-products.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
@@ -219,21 +220,32 @@ async function conectar() {
   setStatus('Conectando...', 'loading');
 
   try {
-    sb = createClient(url, key);
-    const { data, error } = await sb
-      .from('productos')
-      .select('id,nombre,descripcion,descripcion_larga,precio,imagen_url,galeria_urls,seccion,activo')
-      .eq('activo', true)
-      .order('created_at', { ascending: false });
+    let list = [];
+    try {
+      sb = createClient(url, key);
+      const { data, error } = await sb
+        .from('productos')
+        .select('id,nombre,descripcion,descripcion_larga,precio,imagen_url,galeria_urls,seccion,activo')
+        .eq('activo', true)
+        .order('created_at', { ascending: false });
 
-    if (error) throw error;
+      if (!error && data && data.length > 0) {
+        list = data;
+      }
+    } catch(err) {
+      console.warn('Conexión directa falló, revisando catálogo local...');
+    }
 
-    allData.santeria = data.filter(p => p.seccion === 'santeria');
-    allData.vivero   = data.filter(p => p.seccion === 'vivero');
-    allData.oraculo  = data.filter(p => p.seccion === 'oraculo');
+    if (list.length === 0 && window.MOCK_PRODUCTOS) {
+      list = window.MOCK_PRODUCTOS;
+      setStatus(`✓ Modo demo: ${list.length} productos simulados listos`, 'ok');
+    } else {
+      setStatus(`✓ ${list.length} productos cargados desde Supabase`, 'ok');
+    }
 
-    const total = data.length;
-    setStatus(`✓ ${total} productos cargados`, 'ok');
+    allData.santeria = list.filter(p => p.seccion === 'santeria');
+    allData.vivero   = list.filter(p => p.seccion === 'vivero');
+    allData.oraculo  = list.filter(p => p.seccion === 'oraculo');
 
     ['santeria','vivero','oraculo'].forEach(s => activarSeccion(s));
     btn.textContent = '↺ RECARGAR';
